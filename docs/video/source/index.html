@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fracxion — Comercial 3D</title>
+  <style>
+    @font-face { font-family: Studio; src: url('./vendor/AdwaitaSans.ttf'); font-weight: 100 900; font-display: block; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+    body { color: #24203f; font-family: Studio, sans-serif; background: #eeeaf6; }
+    #stage { position: relative; width: 1920px; height: 1080px; background: radial-gradient(ellipse at 73% 35%, #fff 0%, #f5f3fb 34%, #eae5f5 74%, #e3ddf0 100%); }
+    #scene { position: absolute; left: 345px; top: 130px; width: 1575px; height: 905px; }
+    .brand { position: absolute; left: 112px; top: 82px; display: flex; align-items: center; gap: 17px; font-size: 43px; font-weight: 720; letter-spacing: -1.8px; }
+    .brand-icon { width: 57px; height: 57px; border-radius: 18px; display: grid; place-items: center; background: #ccf47f; }
+    .brand-icon svg { width: 29px; height: 29px; }
+    .top-note { position: absolute; right: 116px; top: 100px; font-size: 17px; letter-spacing: 2.8px; color: #777086; }
+    .copy { position: absolute; left: 112px; top: 314px; width: 435px; }
+    .eyebrow { color: #756697; font-size: 18px; font-weight: 620; letter-spacing: 3px; margin: 0 0 31px; }
+    h1 { font-size: 81px; line-height: 1.04; letter-spacing: -5.5px; font-weight: 650; margin: 0; }
+    h1 span { color: #6750c8; }
+    .description { margin-top: 31px; max-width: 350px; font-size: 24px; line-height: 1.52; color: #6a627c; }
+    .line { margin-top: 36px; width: 52px; height: 3px; border-radius: 3px; background: #8e76d8; }
+    .chapters { position: absolute; left: 112px; bottom: 158px; height: 56px; width: 510px; }
+    .chapter { position: absolute; inset: 0; display: flex; align-items: center; gap: 13px; font-size: 19px; color: #504661; opacity: 0; }
+    .chapter span:first-child { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #b9abce; border-radius: 50%; font-size: 12px; }
+    .bottom-line { position: absolute; left: 112px; right: 112px; bottom: 85px; height: 1px; background: #d7cfe6; }
+    .footer { position: absolute; left: 112px; bottom: 42px; right: 112px; display: flex; justify-content: space-between; font-size: 16px; color: #83798f; }
+    .closing { position: absolute; left: 112px; top: 735px; font-size: 19px; color: #504661; opacity: 0; }
+    .closing strong { font-weight: 640; }
+  </style>
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+</head>
+<body>
+  <main id="stage">
+    <canvas id="scene"></canvas>
+    <div class="brand"><div class="brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3l2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1v18l-2-1-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div><span>Fracxion</span></div>
+    <div class="top-note">GESTIÓN EMPRESARIAL</div>
+    <div class="copy"><p class="eyebrow">SIMPLE POR NATURALEZA</p><h1>Tu negocio.<br><span>Más claro.</span></h1><p class="description">Clientes, comprobantes<br>y cobros. En un mismo lugar.</p><div class="line"></div></div>
+    <div class="chapters"><div class="chapter" id="chapter-1"><span>01</span><span>Clientes y catálogo.</span></div><div class="chapter" id="chapter-2"><span>02</span><span>Creá tus comprobantes.</span></div><div class="chapter" id="chapter-3"><span>03</span><span>Registrá pagos y saldos.</span></div></div>
+    <div class="closing">Menos complejidad. <strong>Más claridad.</strong></div>
+    <div class="bottom-line"></div><div class="footer"><span>Gestión y facturación interna</span><span>Una experiencia en escritorio y móvil.</span></div>
+  </main>
+  <script type="module" src="./scene.mjs"></script>
+</body>
+</html>

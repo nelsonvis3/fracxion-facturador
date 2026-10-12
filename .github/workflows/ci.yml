@@ -1,0 +1,102 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: synthetic-ci-password
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DJANGO_ENV: development
+      DJANGO_DEBUG: "False"
+      DJANGO_SECRET_KEY: synthetic-ci-key-never-for-production
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: synthetic-ci-password
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+    defaults:
+      run: {working-directory: backend}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.14", cache: pip, cache-dependency-path: backend/requirements-dev.txt}
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: python manage.py check
+      - run: python manage.py makemigrations --check --dry-run
+      - run: python manage.py spectacular --validate --fail-on-warn --file /tmp/schema.yaml
+      - run: coverage run manage.py test --settings=config.test_settings --noinput
+      - run: coverage report --fail-under=85
+      - run: pip-audit -r requirements.txt
+
+  frontend-and-e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: test_facturador_e2e
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: synthetic-ci-password
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DJANGO_ENV: development
+      DJANGO_DEBUG: "False"
+      DJANGO_SECRET_KEY: synthetic-ci-key-never-for-production
+      DB_NAME: test_facturador_e2e
+      DB_USER: postgres
+      DB_PASSWORD: synthetic-ci-password
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+      DJANGO_SETTINGS_MODULE: config.e2e_settings
+      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8001
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.14"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22", cache: npm, cache-dependency-path: frontend/package-lock.json}
+      - run: pip install -r backend/requirements.txt
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run lint
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
+      - run: npm audit --omit=dev
+        working-directory: frontend
+      - run: python backend/scripts/seed_e2e.py
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - name: Arrancar API y frontend de pruebas
+        run: |
+          cd backend
+          python manage.py runserver 127.0.0.1:8001 --settings=config.e2e_settings --noreload > /tmp/backend-e2e.log 2>&1 &
+          cd ../frontend
+          PORT=3010 HOSTNAME=127.0.0.1 npm run start > /tmp/frontend-e2e.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8001/health/ && curl --fail --silent http://127.0.0.1:3010/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - run: npm run test:e2e
+        working-directory: frontend
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: {name: playwright-failures, path: frontend/test-results, retention-days: 7}

@@ -1,0 +1,13 @@
+{$SITE_DOMAIN} {
+	header >Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	encode zstd gzip
+	@backend path /api/* /admin/* /static/* /health/ /ready/
+	handle @backend {
+		reverse_proxy backend:8000 {
+			header_up X-Client-IP {http.request.remote.host}
+		}
+	}
+	handle {
+		reverse_proxy frontend:3000
+	}
+}

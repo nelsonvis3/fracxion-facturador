@@ -1,0 +1,31 @@
+{
+  "duration_seconds": 19.0,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "fps": "60/1",
+  "frames_decoded": 1140,
+  "codecs": [
+    "h264",
+    "aac"
+  ],
+  "max_consecutive_duplicate_frames": 1,
+  "mean_pixel_change": 0.2508825510099434,
+  "max_pixel_change": 0.4793402850627899,
+  "max_mobile_scroll_px_per_second": 53.33333333333826,
+  "camera_horizontal_travel": 4.066932183945578,
+  "max_camera_step": 0.018450632615792804,
+  "features": [
+    "customers",
+    "invoice-builder",
+    "invoice-issued",
+    "payment-mobile",
+    "invoice-paid"
+  ],
+  "max_audio_peak": 0.23994660377502441,
+  "browser_errors": [],
+  "screens_visible_and_in_frame": "passed",
+  "full_decode": "passed",
+  "sha256": "322313b286ea8dfd30ad78745a86474e45c1b12edbfe5757abddbaa30a8f417f"
+}

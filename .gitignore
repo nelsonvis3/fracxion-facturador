@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+backend/.venv/
+
+# Django
+backend/db.sqlite3
+backend/staticfiles/
+backend/media/
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Node.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+
+# Logs
+*.log
+
+# Editores
+.vscode/
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Informes y artefactos locales
+.coverage
+htmlcov/
+.ruff_cache/
+*.tsbuildinfo
+frontend/test-results/
+frontend/playwright-report/
+backups/
+frontend/e2e/reset-fixture.json
