@@ -238,3 +238,4 @@ docs/              Auditoría, pruebas y operación
 ```
 
 Las reglas comerciales residen en el backend. Una funcionalidad nueva debe conservar el aislamiento por empresa, roles, precisión decimal y auditoría transaccional. Notas de crédito/débito, conciliación automática, inventario, integración fiscal, invitaciones de miembros y planes de suscripción necesitan sus propios flujos y criterios de aceptación antes de incorporarse.
+# fracxion-facturador
