@@ -1,251 +1,475 @@
-# Fracxion — Gestión y facturación interna
+# Fracxion
 
-Aplicación full stack para administrar clientes, productos y servicios, comprobantes internos y cobros de varias empresas. Cada usuario accede mediante una membresía con permisos definidos por empresa. Las operaciones comerciales conservan un historial de auditoría.
+Sistema de gestión empresarial para organizar clientes, catálogo, facturas internas y cobros de varias empresas desde una misma aplicación.
 
-**Alcance:** los documentos emitidos son comprobantes de gestión interna. No tienen autorización fiscal de ARCA, CAE ni numeración fiscal. El proyecto incluye registro público con creación de empresa; no incluye suscripciones SaaS ni cobro de planes.
+Fracxion conecta el recorrido comercial completo: dar de alta un cliente, preparar un documento con los precios del catálogo, emitirlo, registrar sus cobros y consultar qué ocurrió en cada operación. Cada empresa tiene sus propios datos y cada usuario trabaja con los permisos de su membresía.
 
-![Dashboard de Fracxion y selección de empresa](docs/screenshots/dashboard-desktop.png)
+El backend está construido con Django y Django REST Framework; el frontend, con Next.js, React y TypeScript. PostgreSQL conserva los datos comerciales, las sesiones y las restricciones que acompañan a las reglas de negocio.
 
-Captura real del flujo automatizado en Chromium, con empresa, cuentas y operaciones sintéticas. No contiene datos de clientes reales.
+**Los comprobantes son de gestión interna.** La aplicación no emite documentos autorizados por ARCA ni gestiona CAE. El alcance implementado está explicado al final de este documento.
 
-Otras vistas verificadas: [dashboard móvil](docs/screenshots/dashboard-mobile.png), [resumen de empresa](docs/screenshots/company-dashboard-desktop.png), [resumen móvil](docs/screenshots/company-dashboard-mobile.png) y [factura con historial de cobros](docs/screenshots/invoice.png).
+![Dashboard de Fracxion con selección de empresa](docs/screenshots/dashboard-desktop.png)
 
-## Funcionalidad
+Captura del sistema en ejecución con cuentas y operaciones sintéticas. Más vistas: [dashboard móvil](docs/screenshots/dashboard-mobile.png), [resumen de empresa](docs/screenshots/company-dashboard-desktop.png), [resumen móvil](docs/screenshots/company-dashboard-mobile.png) y [detalle de factura](docs/screenshots/invoice.png).
 
-| Módulo | Comportamiento disponible |
+## Contenido
+
+- [Qué permite hacer](#qué-permite-hacer)
+- [Un recorrido por el sistema](#un-recorrido-por-el-sistema)
+- [Arquitectura y decisiones técnicas](#arquitectura-y-decisiones-técnicas)
+- [Usuarios, empresas y permisos](#usuarios-empresas-y-permisos)
+- [Desarrollo local](#desarrollo-local)
+- [Contrato de la API](#contrato-de-la-api)
+- [Pruebas y estado de la verificación](#pruebas-y-estado-de-la-verificación)
+- [Despliegue y operación](#despliegue-y-operación)
+- [Alcance actual y siguientes pasos](#alcance-actual-y-siguientes-pasos)
+- [Documentación del repositorio](#documentación-del-repositorio)
+
+## Qué permite hacer
+
+El trabajo se organiza por empresa. Después de iniciar sesión, el usuario ve los espacios a los que pertenece y puede entrar al resumen de cada uno. Desde allí accede a sus módulos y a los contadores de clientes, catálogo, facturas y pagos.
+
+| Área | Funciones disponibles |
 | --- | --- |
-| Acceso | Registro de cuenta y empresa, login por correo, sesión con cookies, logout, selección de empresa y recuperación con enlace de un solo uso. |
-| Clientes | Alta, edición, búsqueda, filtros, paginación, desactivación y reactivación. Países y provincias/estados proceden de la API de referencia. |
-| Catálogo | Productos y servicios, SKU, unidad, moneda, precio e impuesto; edición y cambio de estado sin eliminación física. |
-| Facturas internas | Borradores de hasta 100 líneas, precios del catálogo, snapshots del cliente, emisión con numeración por empresa, detalle e impresión desde el navegador. |
-| Cobros | Pagos parciales o totales, métodos y referencias, saldo pendiente y reversión con motivo conservando el pago original. |
-| Auditoría | Consulta por acción y entidad, con actor, fecha, cambios y metadatos. Reservada a propietarios y administradores. |
-| Administración | Django Admin para cuentas, empresas y membresías; registros comerciales en modo lectura. Comando de alta inicial de empresa. |
+| Acceso | Registro de cuenta con empresa propia, login por correo, selección de empresa, recuperación de contraseña y cierre de sesión. |
+| Clientes | Alta, edición, búsqueda, filtros, paginación, desactivación y reactivación. Incluye datos de contacto, identificación y domicilio. |
+| Productos y servicios | Catálogo con SKU, unidad, moneda, precio e impuesto. Los registros se pueden editar o desactivar conservando sus referencias. |
+| Facturas internas | Creación de borradores de hasta 100 líneas, cálculo de importes en el servidor, emisión con numeración por empresa, consulta e impresión desde el navegador. |
+| Cobros | Pagos parciales o totales, método, referencia, saldo pendiente y reversión con motivo. El pago original permanece en el historial. |
+| Auditoría | Consulta de acciones, entidades, actor, fecha, cambios y metadatos. Disponible para propietarios y administradores de la empresa. |
+| Administración de plataforma | Django Admin para usuarios, empresas y membresías. Los registros comerciales se consultan en modo lectura. |
 
-La interfaz adapta la navegación a escritorio y móvil. Incluye estados de carga, errores, formularios, diálogos nativos y acciones ajustadas al rol. El backend vuelve a comprobar todos los permisos, independientemente de la interfaz.
+Los formularios utilizan los países y provincias/estados publicados por la API de referencia. La validación comprueba formato y coherencia de documentos, teléfonos y domicilios; no verifica la identidad de una persona ni la existencia de una dirección.
 
-El login incorpora una introducción interactiva con Hyperframes: la F despliega el
-nombre Fracxion, recupera las letras y se desplaza al logo antes de revelar el
-formulario. Se repite al refrescar el login; la navegación interna no la repite en
-el mismo documento. El acceso y cierre confirmados muestran una bienvenida o
-despedida con el nombre del usuario o empresa. La F gira mientras carga el dashboard,
-que se revela con un fundido al terminar las consultas. Después de la despedida se
-reproduce la introducción completa antes del login. Los saludos se pueden omitir
-y respetan movimiento reducido. Implementación, capturas
-y verificación local en [LOGIN_INTRO.md](docs/LOGIN_INTRO.md).
+La interfaz adapta su navegación a escritorio y móvil. Los estados de carga, error, reintento y lista vacía forman parte del flujo: por ejemplo, el módulo de pagos explica por qué no hay facturas disponibles y permite buscar entre los documentos emitidos con saldo.
 
-Para registrar un pago, primero guardar y emitir el documento desde **Facturas internas**: abrir el borrador y pulsar **Emitir factura interna** con rol propietario o administrador. Después, en **Pagos → Registrar pago**, el campo **Factura emitida** ofrece los documentos emitidos de esa empresa con número, cliente y saldo. Los borradores no aparecen. Si no hay emitidas, el formulario lo explica y ofrece acceso a Facturas; una búsqueda sin coincidencias muestra un mensaje diferente. Propietarios, administradores y contadores pueden registrar el cobro, sin superar el saldo pendiente.
+### Acceso y transiciones
 
-## Arquitectura
+La entrada al login utiliza una composición de Hyperframes: la F despliega `racxion`, recupera las letras y se desplaza al logo antes de revelar el formulario. Durante la secuencia, el scroll permanece oculto; se habilita cuando el login queda disponible.
+
+Un acceso confirmado muestra la bienvenida con el nombre del usuario o, si falta, el de una empresa a la que tiene acceso. La F gira mientras termina de cargar el dashboard y la pantalla aparece con un fundido. Al salir, primero se confirma el logout en Django, se retiran las vistas privadas y se muestra la despedida; después se reproduce la introducción completa del login.
+
+Las animaciones se pueden omitir y respetan movimiento reducido. La introducción se repite al recargar el login, pero no en una navegación interna del mismo documento después de completarla. Los recursos visuales se sirven desde la aplicación. El detalle de reproducción, fallbacks, accesibilidad y pruebas está en [LOGIN_INTRO.md](docs/LOGIN_INTRO.md).
+
+## Un recorrido por el sistema
+
+Este es el flujo que puede probarse desde la interfaz con una cuenta propietaria:
+
+1. **Crear la cuenta y la empresa.** El registro abre la sesión y asigna al usuario como propietario del nuevo espacio.
+2. **Dar de alta un cliente.** Sus datos quedan vinculados a esa empresa.
+3. **Agregar un producto o servicio.** Por ejemplo, un servicio de ARS 100,00 con un impuesto del 21%.
+4. **Guardar una factura interna en borrador.** Con una unidad del servicio, el servidor calcula un subtotal de ARS 100,00, impuesto de ARS 21,00 y total de ARS 121,00.
+5. **Emitir el documento.** Se verifica su consistencia y se le asigna un número interno único dentro de la empresa.
+6. **Registrar un cobro.** Un pago de ARS 40,00 deja un saldo de ARS 81,00. El selector de pagos ofrece facturas emitidas con saldo; los borradores quedan fuera de ese flujo.
+7. **Consultar el historial.** El detalle muestra los cobros y el saldo. Si el pago fue incorrecto, una reversión con motivo conserva el registro original y devuelve el saldo a ARS 121,00.
+
+Este recorrido también está cubierto por pruebas de navegador que contrastan los resultados con la API y vuelven a consultar los datos después de las escrituras.
+
+## Arquitectura y decisiones técnicas
+
+El repositorio contiene un backend organizado por dominios y un frontend que consume su API. La lógica comercial está en los servicios de Django: la interfaz envía la intención del usuario y presenta la respuesta del servidor.
 
 ```mermaid
 flowchart LR
-    U[Usuario] -->|HTTPS| C[Caddy]
-    C -->|Páginas y assets Next| N[Next.js standalone]
-    C -->|API, admin y estáticos Django| D[Gunicorn + Django REST Framework]
+    U[Navegador] -->|HTTPS| C[Caddy]
+    C -->|Páginas y assets| N[Next.js standalone]
+    C -->|API y administración| D[Django + DRF + Gunicorn]
     D --> P[(PostgreSQL)]
     D --> R[(Redis: límites de intentos)]
-    D --> M[SMTP: recuperación de contraseña]
+    D --> M[SMTP: recuperación de acceso]
 ```
 
-La instalación de referencia utiliza un solo dominio. El navegador consulta `/api/` con cookies; Caddy dirige cada ruta al servicio correspondiente. PostgreSQL guarda los datos comerciales y las sesiones. Redis comparte los límites de autenticación entre workers.
+El diagrama representa la configuración de producción incluida en el repositorio. En desarrollo, Next.js y Django se ejecutan en puertos distintos; Django puede usar caché local y correo de consola. En producción, Caddy expone un único dominio y dirige `/api/`, `/admin/`, `/static/`, `/health/` y `/ready/` al backend. Las páginas y los recursos de Next.js van al frontend.
 
-| Capa | Tecnología |
-| --- | --- |
-| Backend | Python 3.14, Django 5.2.18, Django REST Framework 3.18.1 |
-| Datos | PostgreSQL 17, psycopg 3, restricciones, transacciones y bloqueos de filas |
-| Frontend | Next.js 16.4.0, React 19.3.0, TypeScript, Tailwind CSS 4 |
-| Producción | Gunicorn, WhiteNoise, Redis 8, Caddy 2, Docker Compose |
-| Verificación | Django TestCase/TransactionTestCase, Coverage, Ruff, ESLint, TypeScript, Playwright, pip-audit y npm audit |
+| Capa | Tecnología | Responsabilidad |
+| --- | --- | --- |
+| Backend | Python 3.14, Django 5.2.18, DRF 3.18.1 | Autenticación, permisos, validación, operaciones comerciales y administración. |
+| Persistencia | PostgreSQL, psycopg 3 | Datos, sesiones, restricciones de unicidad, transacciones y bloqueos de filas. Compose y CI configuran PostgreSQL 17. |
+| Frontend | Next.js 16.4.0, React 19.3.0, TypeScript, Tailwind CSS 4 | Navegación, formularios, estados de interfaz y presentación de respuestas de la API. |
+| Animación | Hyperframes 0.8.155 y GSAP 3.15.0 | Introducción de marca y transiciones de sesión con recursos locales. |
+| Infraestructura | Gunicorn, WhiteNoise, Redis 8 y Caddy 2 | Servidor Django, estáticos, límites compartidos y proxy HTTPS. |
+| Calidad | Django TestCase/TransactionTestCase, Coverage, Ruff, ESLint, TypeScript y Playwright | Regresiones del dominio, concurrencia, comprobaciones estáticas y flujos de navegador. |
 
-Las dependencias Python están fijadas en `backend/requirements.txt`; las de desarrollo están separadas. El frontend utiliza `package-lock.json` y `npm ci` para instalaciones reproducibles.
+Las dependencias Python están fijadas en [requirements.txt](backend/requirements.txt), con las herramientas de desarrollo en [requirements-dev.txt](backend/requirements-dev.txt). El frontend conserva su resolución en `package-lock.json` y se instala con `npm ci`. Los Dockerfiles y CI utilizan Node.js 22.
 
-## Permisos por empresa
+### Aislamiento por empresa
 
-| Operación | owner | admin | accountant | sales | viewer |
+Las empresas comparten la base de datos y las tablas del dominio. La separación se implementa con la relación `tenant`, los permisos y los filtros del servidor.
+
+La empresa de una petición se obtiene del `tenant_id` de la ruta. [TenantAccessPermission](backend/tenancy/permissions.py) comprueba que el usuario, la membresía y la empresa estén activos y que el rol permita la operación. El contexto autorizado se utiliza para limitar el queryset y asignar la empresa durante las escrituras.
+
+El aislamiento también se aplica a las relaciones: al crear una factura, el cliente y cada producto deben pertenecer a la misma empresa. Un UUID válido de otro espacio no alcanza para leer un objeto ni vincularlo a un documento.
+
+Esta política se comparte entre módulos mediante [los mixins de tenancy](backend/tenancy/mixins.py). Los servicios comerciales vuelven a comprobar el contexto y los permisos dentro de sus transacciones.
+
+### Importes calculados en el backend
+
+El cliente envía producto y cantidad. El servidor obtiene el precio y el impuesto del catálogo autorizado y calcula los totales con `Decimal`.
+
+El precio de línea conserva cuatro decimales y la cantidad admite tres. El subtotal se redondea a centavos con `ROUND_HALF_UP`; después se calcula y redondea el impuesto sobre ese subtotal. El total del documento suma los importes de sus líneas. Los importes de la API se devuelven como cadenas para conservar su representación decimal.
+
+El frontend formatea los valores recibidos. Las reglas de cálculo y los controles de saldo viven en [billing/services.py](backend/billing/services.py), junto con los servicios de creación, emisión, cobro y reversión.
+
+### Operaciones simultáneas
+
+Emitir una factura o registrar un cobro requiere comprobar datos que pueden cambiar mientras otra petición está en curso. Por eso estas operaciones se ejecutan dentro de `transaction.atomic()` y utilizan `select_for_update()`.
+
+La emisión bloquea la empresa para serializar su numeración, bloquea el documento y comprueba las líneas antes de emitirlo. PostgreSQL agrega una restricción de unicidad para el número dentro de cada empresa. El registro de pagos bloquea la empresa y la factura y vuelve a calcular el saldo antes de aceptar el importe.
+
+Así se evita que dos solicitudes de emisión asignen el mismo número o que dos cobros simultáneos se aprueben contra un saldo desactualizado. Las pruebas de concurrencia utilizan conexiones independientes contra PostgreSQL.
+
+El bloqueo por empresa simplifica la consistencia de estas operaciones, a costa de serializar esas escrituras dentro del mismo espacio. Un cambio de estrategia necesita mediciones de carga y debe conservar las regresiones de numeración y saldo.
+
+### Historia del documento y auditoría
+
+Al crear un borrador se guardan copias de los datos del cliente, las descripciones, los precios y los impuestos. Estas copias —los snapshots— explican qué se usó para calcular el documento aunque luego cambie el catálogo o se edite el cliente.
+
+Las API no ofrecen edición ni eliminación de facturas emitidas o pagos. Una reversión crea un registro separado. Las referencias externas de pago son únicas por empresa y método, incluso si el pago fue revertido.
+
+La operación comercial y su evento de auditoría se guardan en la misma transacción: si falla el registro de auditoría, la escritura también se revierte. La auditoría evita copiar notas y descripciones libres, pero conserva datos estructurados de la operación; por eso su consulta tiene permisos propios.
+
+### Sesión y protección de escrituras
+
+La autenticación utiliza las sesiones de Django y cookies HttpOnly. El navegador obtiene el token CSRF enmascarado por JSON y lo envía en `X-CSRFToken` junto con las cookies al realizar una escritura. [El cliente HTTP](frontend/src/lib/api.ts) obtiene el token antes de cada mutación para respetar su rotación.
+
+Las respuestas de la API llevan `Cache-Control: private, no-store`. El logout y una sesión inválida en una ruta privada provocan una navegación que descarta el documento del navegador, incluidos los datos que el router pudiera conservar en vistas ocultas.
+
+Login, registro y recuperación tienen límites de intentos. La recuperación responde de forma genérica; su enlace vence en una hora y deja de ser válido después del cambio de contraseña. En producción, Redis comparte los límites entre workers y la aplicación exige HTTPS, cookies Secure y una configuración explícita de proxy de confianza.
+
+### Dónde está cada responsabilidad
+
+```text
+backend/
+  accounts/        Usuarios, registro, sesiones y recuperación de acceso
+  tenancy/         Empresas, membresías, permisos y contexto autorizado
+  customers/       Clientes, validaciones y cambios de estado
+  catalog/         Productos y servicios
+  billing/         Facturas, líneas, pagos, reversiones y servicios del dominio
+  auditlog/        Historial de operaciones
+  config/          Configuración, rutas, referencia, middleware y salud
+frontend/
+  src/app/         Login, registro, recuperación y módulos por empresa
+  src/components/ Navegación, formularios y transiciones compartidas
+  src/lib/         Cliente HTTP, contratos TypeScript y acceso a la API
+  public/          Recursos locales y composición Hyperframes
+  scripts/         Preparación de assets y salida standalone
+  e2e/             Escenarios Playwright
+deploy/            Configuración de Caddy
+docs/              Operación, pruebas, auditoría y capturas
+.github/workflows/ CI de backend y frontend/E2E
+```
+
+## Usuarios, empresas y permisos
+
+Una cuenta puede pertenecer a varias empresas y tener un rol distinto en cada una. Los permisos comerciales se determinan por la membresía del espacio al que se está accediendo.
+
+| Operación | `owner` | `admin` | `accountant` | `sales` | `viewer` |
 | --- | :---: | :---: | :---: | :---: | :---: |
 | Consultar clientes, catálogo, facturas y pagos | Sí | Sí | Sí | Sí | Sí |
-| Crear/editar clientes y catálogo | Sí | Sí | — | — | — |
-| Crear borradores y emitir | Sí | Sí | — | — | — |
+| Crear o editar clientes y catálogo | Sí | Sí | — | — | — |
+| Crear borradores y emitir facturas internas | Sí | Sí | — | — | — |
 | Registrar pagos | Sí | Sí | Sí | — | — |
 | Revertir pagos | Sí | Sí | — | — | — |
 | Consultar auditoría | Sí | Sí | — | — | — |
 
-Un superusuario de plataforma no obtiene acceso a las API de empresa sin una membresía. Las membresías inactivas, empresas desactivadas y usuarios inactivos quedan excluidos. La gestión de cuentas y membresías se realiza desde Django Admin, con una cuenta de plataforma autorizada.
+El rol `sales` está definido en el dominio y actualmente tiene acceso de consulta a estos módulos. La tabla describe los permisos implementados, incluidos los controles del backend; ocultar un botón en la interfaz no concede ni revoca autorización.
 
-El registro público en `/register` crea una cuenta normal, una empresa nueva y una membresía `owner`; abre la sesión y lleva al resumen de esa empresa. Solicita nombre, apellido opcional, correo, nombre de empresa y contraseña con confirmación. No acepta roles, privilegios de plataforma ni empresas existentes en el payload. Cuenta, empresa, membresía y evento de auditoría se guardan juntos o se revierten juntos. El correo se valida por formato; este flujo no incluye verificación por enlace.
+El registro público crea una cuenta normal, una empresa nueva y una membresía `owner`. No permite elegir privilegios ni incorporarse a una empresa existente. Cuenta, empresa, membresía y evento de auditoría se guardan juntos. Los errores se devuelven por campo y el correo se valida por formato; todavía no hay un paso de verificación por enlace.
 
-## Integridad y seguridad
-
-- La empresa se obtiene de la URL y la membresía validada. Las consultas y relaciones de clientes, productos y documentos se limitan a esa empresa.
-- Las operaciones comerciales y sus eventos de auditoría se guardan en la misma transacción. Un fallo en la auditoría revierte la escritura.
-- Los importes usan `Decimal`. El subtotal de cada línea se redondea a centavos con `ROUND_HALF_UP`; el impuesto se calcula sobre ese subtotal. La API devuelve importes como cadenas. El frontend presenta valores y no calcula totales contables.
-- La emisión bloquea la empresa, comprueba las líneas y asigna un número único. Los snapshots conservan los datos y precios del momento de creación del borrador. Cambiar un cliente o producto no reescribe documentos anteriores.
-- Las API no ofrecen edición ni eliminación de facturas emitidas o pagos. Una reversión genera un registro separado y restituye el saldo. Otras integraciones deben utilizar los servicios comerciales: los controles de modelos y API no sustituyen controles sobre SQL directo.
-- Los pagos se validan bajo bloqueo y no pueden superar el saldo. Una referencia externa no se reutiliza dentro de una empresa y un método, incluso después de una reversión.
-- Cookies HttpOnly; en producción, Secure, HTTPS y HSTS. El token CSRF enmascarado se entrega por JSON y se renueva antes de las escrituras. Las respuestas de API utilizan `Cache-Control: private, no-store`.
-- Logout y una sesión inválida en rutas privadas descartan el documento del navegador para eliminar páginas ocultas y datos de la sesión anterior retenidos por el router.
-- JSON limitado a 2,5 MiB y 100 niveles, con rechazo de enteros excesivos, números no finitos, NUL y Unicode inválido. Login y recuperación acotan la longitud de credenciales antes del hashing. El registro conserva sus mensajes de validación por campo.
-- Login y recuperación tienen límites de intentos. La recuperación devuelve una respuesta genérica para evitar revelar cuentas. El enlace vence en una hora y deja de servir después del cambio de contraseña.
-- El registro admite diez intentos por IP en quince minutos, aplica los [validadores de contraseña de Django](https://docs.djangoproject.com/en/5.2/topics/auth/passwords/#password-validation) y rechaza correos duplicados normalizados, incluso ante registros concurrentes. Devuelve errores por campo; una cuenta existente puede iniciar sesión o recuperar su acceso.
-- La auditoría omite el contenido libre de notas y descripciones. Conserva otros datos estructurados, por lo que su acceso también está restringido.
-
-La validación de documentos, teléfonos y direcciones verifica formato y coherencia. No confirma identidad, existencia del domicilio ni titularidad de un teléfono. Se conserva compatibilidad con códigos postales argentinos históricos de cuatro dígitos y con PATCH que no modifica campos heredados.
+La administración de plataforma se realiza por separado en Django Admin. Ser propietario de una empresa no habilita ese panel. Del mismo modo, un superusuario de plataforma necesita una membresía activa para utilizar las API de esa empresa.
 
 ## Desarrollo local
 
-Requisitos: Python 3.14, Node.js 22 con npm y PostgreSQL. Si ya existen archivos de entorno, conservarlos y ajustar solo las variables necesarias.
+Los comandos siguientes usan una shell de Linux/macOS. Se necesita Python 3.14, Node.js 22 con npm y PostgreSQL en ejecución. Redis y SMTP externo se requieren para la configuración de producción; en desarrollo se puede utilizar caché local y correo de consola.
 
-### Backend
+```bash
+git clone https://github.com/nelsonvis3/fracxion-facturador.git
+cd fracxion-facturador
+```
 
-```sh
+### 1. Preparar PostgreSQL
+
+Si ya hay una base de desarrollo, se pueden usar sus datos de conexión en `backend/.env`. Para crear una nueva, ejecutar lo siguiente desde una cuenta de PostgreSQL con permiso para crear roles y bases:
+
+```bash
+createuser --pwprompt facturador
+createdb --owner=facturador facturador
+```
+
+La contraseña que solicita `createuser` debe coincidir con `DB_PASSWORD` en la configuración del backend. Estos comandos crean el usuario y la base; las tablas se crean con las migraciones de Django.
+
+### 2. Instalar y configurar el backend
+
+Desde la raíz del repositorio:
+
+```bash
 cd backend
 python3.14 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
-cp -n .env.example .env
+test -f .env || cp .env.example .env
 ```
 
-Configurar `DB_*` en `backend/.env` para una base local y un usuario con permisos sobre ella. Reemplazar la contraseña de muestra. Una vez creada la base:
+Editar `backend/.env` con la conexión local y una clave propia. El archivo de ejemplo contiene valores de desarrollo. Si el entorno ya existe, conservarlo y ajustar únicamente las variables necesarias.
 
-```sh
+| Variables | Uso |
+| --- | --- |
+| `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_SSLMODE` | Conexión a PostgreSQL. El ejemplo usa `facturador`, `127.0.0.1` y puerto `5432`. |
+| `DJANGO_ENV`, `DJANGO_DEBUG`, `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS` | Entorno, depuración, clave de Django y hosts aceptados. |
+| `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS` | Orígenes explícitos desde los que accede el frontend. |
+| `FRONTEND_PASSWORD_RESET_URL` | Dirección del formulario de recuperación; en desarrollo, `http://localhost:3000/reset-password`. |
+| `DJANGO_EMAIL_BACKEND`, `DEFAULT_FROM_EMAIL` | Backend de correo y remitente. El ejemplo imprime los enlaces en la consola. |
+| `REDIS_URL` | Caché compartida para los límites de intentos; opcional en desarrollo y obligatoria en producción. |
+
+Aplicar migraciones e iniciar Django desde `backend/`:
+
+```bash
 .venv/bin/python manage.py migrate
 .venv/bin/python manage.py runserver localhost:8000
 ```
 
-Una vez iniciado el frontend, utilizar **Crear cuenta** desde el login para registrar al propietario y su empresa. Como alternativa de alta administrativa, `manage.py create_workspace --email propietario@example.com --name "Mi empresa" --slug mi-empresa` solicita la contraseña de forma privada y puede vincular una cuenta existente activa. Ninguno de estos flujos crea un superusuario. Para administrar usuarios y asignar membresías, utilizar `manage.py createsuperuser` y `/admin/`.
+### 3. Instalar e iniciar el frontend
 
-### Frontend
+En otra terminal, desde la raíz:
 
-En otra terminal:
-
-```sh
+```bash
 cd frontend
-cp -n .env.example .env.local
+test -f .env.local || cp .env.example .env.local
 npm ci
 npm run dev
 ```
 
-Abrir `http://localhost:3000`. Usar el mismo hostname en frontend y backend; no mezclar `localhost` con `127.0.0.1`, porque las cookies pertenecen al host. En desarrollo, los enlaces de recuperación aparecen en la terminal del backend.
+Abrir `http://localhost:3000`. El ejemplo de `frontend/.env.local` apunta la API a `http://localhost:8000` mediante `NEXT_PUBLIC_API_BASE_URL`.
 
-Para ejecutar el build local:
+Usar el mismo hostname en ambos servicios. Mezclar `localhost` y `127.0.0.1` puede dejar las cookies en un host distinto del que utiliza la aplicación.
 
-```sh
-npm run build
+### 4. Crear el primer espacio de trabajo
+
+Desde el login, elegir **Crear cuenta**, completar los datos de cuenta y empresa y confirmar la contraseña. El sistema crea el espacio, asigna la membresía propietaria y abre su resumen.
+
+Para un alta administrativa también está disponible este comando, ejecutado desde `backend/`:
+
+```bash
+.venv/bin/python manage.py create_workspace \
+  --email propietario@example.com \
+  --name "Mi empresa" \
+  --slug mi-empresa
+```
+
+Solicita la contraseña de forma privada al crear una cuenta y puede vincular una cuenta activa existente. No convierte al propietario en superusuario. Para administrar cuentas y membresías desde `http://localhost:8000/admin/`, crear por separado una cuenta de plataforma:
+
+```bash
+.venv/bin/python manage.py createsuperuser
+```
+
+### Build local
+
+Desde `frontend/`:
+
+```bash
+npm run build -- --webpack
 env PORT=3000 HOSTNAME=localhost npm run start
 ```
 
-`postbuild` copia los assets al directorio standalone. `NEXT_PUBLIC_API_BASE_URL` se incorpora durante la compilación; cambiarla exige reconstruir. Docker compila con valor vacío para utilizar la API del mismo dominio.
+Este es el modo de build utilizado en las últimas verificaciones locales. `npm run build` utiliza el motor predeterminado de Next.js; los Dockerfiles y CI conservan ese comando.
 
-## API
+`prebuild` prepara los recursos locales de Hyperframes y `postbuild` copia los recursos públicos y los chunks al directorio standalone. `NEXT_PUBLIC_API_BASE_URL` se incorpora al compilar: cambiar esa variable requiere reconstruir el frontend. El build Docker la deja vacía para consultar `/api/` bajo el mismo dominio.
 
-Todas las rutas llevan `/` final. Las listas comerciales se paginan en bloques de 25 y devuelven `count`, `next`, `previous` y `results`.
+### Si el entorno no arranca
 
-| Método | Ruta | Uso |
+| Síntoma | Qué revisar |
+| --- | --- |
+| Django no conecta a la base | PostgreSQL en ejecución, nombre de base, usuario, contraseña y puerto de `backend/.env`. |
+| La sesión no se conserva o aparece un error CSRF | Hostnames consistentes, cookies y orígenes permitidos. El cliente debe enviar credenciales y obtener un token CSRF antes de escribir. |
+| Los enlaces de recuperación no llegan a un buzón local | El backend de desarrollo imprime el mensaje en la terminal de Django. |
+| El frontend consulta una API anterior | Reconstruir después de cambiar `NEXT_PUBLIC_API_BASE_URL`. |
+| Producción no inicia por migraciones pendientes | Ejecutar las migraciones como paso de release antes de arrancar Gunicorn. |
+
+## Contrato de la API
+
+Las rutas llevan `/` final. Los recursos comerciales utilizan UUID y se encuentran bajo `/api/tenants/{tenant_id}/`. Las listas comerciales se paginan en bloques de 25 y devuelven `count`, `next`, `previous` y `results`.
+
+### Autenticación y referencia
+
+| Método | Ruta | Función |
 | --- | --- | --- |
-| GET | `/api/auth/csrf/` | Obtener `csrfToken` y su cookie. |
-| POST | `/api/auth/register/` | Crear cuenta y empresa con sesión; requiere CSRF. |
-| POST | `/api/auth/login/` | JSON con `email` y `password`; requiere CSRF. |
-| POST | `/api/auth/logout/` | Finalizar sesión; requiere CSRF. |
-| GET | `/api/auth/me/` | Cuenta actual. |
-| GET | `/api/auth/tenants/` | Empresas y roles de la cuenta. |
-| POST | `/api/auth/password-reset/` | Solicitar enlace con `email`. |
-| POST | `/api/auth/password-reset/confirm/` | Restablecer con `uid`, `token`, `password` y `password_confirm`. |
-| GET | `/api/reference/countries/` | Países ISO disponibles. |
-| GET | `/api/reference/countries/{code}/subdivisions/` | Provincias/estados del país. |
-| GET, POST | `/api/tenants/{tenant_id}/customers/` | Consultar o crear clientes. |
-| GET, PUT, PATCH | `/api/tenants/{tenant_id}/customers/{id}/` | Consultar o actualizar un cliente. |
-| POST | `/api/tenants/{tenant_id}/customers/{id}/deactivate/` | Desactivar sin borrar. |
-| GET, POST | `/api/tenants/{tenant_id}/products/` | Consultar o crear catálogo. |
-| GET, PUT, PATCH | `/api/tenants/{tenant_id}/products/{id}/` | Consultar o actualizar un producto. |
-| POST | `/api/tenants/{tenant_id}/products/{id}/deactivate/` | Desactivar sin borrar. |
-| GET, POST | `/api/tenants/{tenant_id}/invoices/` | Consultar o crear borradores. |
-| GET | `/api/tenants/{tenant_id}/invoices/{id}/` | Detalle con líneas, pagado y saldo. |
-| POST | `/api/tenants/{tenant_id}/invoices/{id}/issue/` | Emitir una vez. |
-| GET, POST | `/api/tenants/{tenant_id}/payments/` | Consultar o registrar un pago. |
-| GET | `/api/tenants/{tenant_id}/payments/{id}/` | Detalle de pago y reversión. |
-| POST | `/api/tenants/{tenant_id}/payments/{id}/reverse/` | Revertir con `reason`. |
-| GET | `/api/tenants/{tenant_id}/audit-events/` | Historial con filtros. |
+| GET | `/api/auth/csrf/` | Obtener `csrfToken` y la cookie correspondiente. |
+| POST | `/api/auth/register/` | Crear cuenta y empresa; requiere CSRF. |
+| POST | `/api/auth/login/` | Abrir sesión con `email` y `password`; requiere CSRF. |
+| POST | `/api/auth/logout/` | Cerrar la sesión; requiere CSRF. |
+| GET | `/api/auth/me/` | Consultar la cuenta autenticada. |
+| GET | `/api/auth/tenants/` | Consultar sus empresas y roles. |
+| POST | `/api/auth/password-reset/` | Solicitar recuperación con `email`. |
+| POST | `/api/auth/password-reset/confirm/` | Cambiar la contraseña con `uid`, `token`, `password` y `password_confirm`. |
+| GET | `/api/reference/countries/` | Consultar países; requiere sesión. |
+| GET | `/api/reference/countries/{code}/subdivisions/` | Consultar provincias/estados; requiere sesión. |
 
-La reactivación de clientes y productos usa PATCH con `{"is_active": true}`. Las referencias requieren sesión. Las peticiones que cambian estado envían `X-CSRFToken` y conservan las cookies. Una sesión ausente produce 401; un rol insuficiente, 403; un objeto ajeno dentro de una empresa autorizada, 404.
+El registro recibe `first_name`, `last_name` opcional, `company_name`, `email`, `password` y `password_confirm`. Responde `201` con `user`, `tenant` y un `csrfToken` renovado. Una cuenta autenticada debe cerrar su sesión antes de registrar otra.
 
-Ejemplo de registro:
+### Operaciones por empresa
 
-```json
-{
-  "first_name": "Nombre",
-  "last_name": "Apellido",
-  "company_name": "Mi empresa",
-  "email": "propietario@example.com",
-  "password": "TuContraseñaÚnicaYSegura",
-  "password_confirm": "TuContraseñaÚnicaYSegura"
-}
-```
+El prefijo de todas las rutas de esta tabla es `/api/tenants/{tenant_id}/`.
 
-Responde 201 con `user`, `tenant` y `csrfToken` renovado. No devuelve contraseñas. Un correo duplicado o datos inválidos producen 400, el límite de intentos produce 429 y una sesión ya abierta debe cerrarse antes de registrar otra cuenta. No requiere migraciones nuevas: utiliza los modelos existentes de cuenta, empresa y membresía.
+| Método | Recurso | Función |
+| --- | --- | --- |
+| GET, POST | `customers/` | Listar o crear clientes. |
+| GET, PUT, PATCH | `customers/{id}/` | Consultar o actualizar un cliente. |
+| POST | `customers/{id}/deactivate/` | Desactivar sin eliminar. |
+| GET, POST | `products/` | Listar o crear productos y servicios. |
+| GET, PUT, PATCH | `products/{id}/` | Consultar o actualizar un registro del catálogo. |
+| POST | `products/{id}/deactivate/` | Desactivar sin eliminar. |
+| GET, POST | `invoices/` | Listar documentos o crear un borrador. |
+| GET | `invoices/{id}/` | Consultar líneas, importes, cobros y saldo. |
+| POST | `invoices/{id}/issue/` | Emitir un borrador. |
+| GET, POST | `payments/` | Consultar o registrar pagos. |
+| GET | `payments/{id}/` | Consultar un pago y su reversión. |
+| POST | `payments/{id}/reverse/` | Revertir con un `reason`. |
+| GET | `audit-events/` | Consultar el historial autorizado. |
 
-Ejemplo del cuerpo para crear un borrador:
+Clientes y productos se reactivan mediante PATCH con `{"is_active": true}`. Búsqueda, filtros y ordenamiento están definidos en las vistas de cada módulo.
+
+Un borrador se crea con un cuerpo de esta forma; los identificadores se obtienen de los clientes y productos de la empresa autorizada:
 
 ```json
 {
-  "customer": "UUID-del-cliente",
+  "customer": "00000000-0000-4000-8000-000000000010",
   "currency": "ARS",
-  "lines": [{ "product": "UUID-del-producto", "quantity": "2.500" }],
+  "lines": [
+    {
+      "product": "00000000-0000-4000-8000-000000000020",
+      "quantity": "2.500"
+    }
+  ],
   "notes": "Condiciones comerciales"
 }
 ```
 
-No se envían precios ni totales: se obtienen del catálogo autorizado. Todos los productos deben compartir la moneda del documento. OpenAPI de los recursos DRF está en `/api/docs/` y `/api/schema/`, con sesión. Las vistas Django de autenticación se describen en esta tabla.
+No se envían precios ni totales. Todos los productos deben compartir la moneda del documento. Para un cobro sobre una factura emitida, el cuerpo es:
 
-## Pruebas y calidad
+```json
+{
+  "invoice": "00000000-0000-4000-8000-000000000030",
+  "method": "bank_transfer",
+  "amount": "40.00",
+  "external_reference": "TRANSFERENCIA-DE-EJEMPLO"
+}
+```
 
-Resultados locales de la revisión del 10 de octubre de 2026:
+Los UUID de los ejemplos son ilustrativos y deben sustituirse por registros existentes. Los métodos disponibles son `cash`, `bank_transfer`, `debit_card`, `credit_card`, `digital_wallet`, `check` y `other`.
 
-| Comprobación | Resultado |
+Las escrituras deben conservar las cookies y enviar `X-CSRFToken`. Una sesión ausente produce `401`; un rol insuficiente, `403`; un objeto ajeno dentro de una empresa autorizada, `404`. Los errores de validación producen `400` y los límites de intentos, `429`.
+
+OpenAPI está disponible con sesión en `http://localhost:8000/api/docs/` y `/api/schema/`. Describe los recursos expuestos por DRF; las vistas Django de registro, login, logout y recuperación se documentan también en la tabla anterior.
+
+## Pruebas y estado de la verificación
+
+Las últimas verificaciones locales disponibles al **14 de octubre de 2026** son:
+
+| Comprobación | Evidencia |
 | --- | --- |
-| Backend sobre PostgreSQL aislado | 216 pruebas aprobadas |
-| Cobertura de sentencias del backend | 91%, excluyendo pruebas, migraciones y entrypoints |
-| Playwright | 15 escenarios aprobados: 11 de navegador y 4 de seguridad API, sin excepciones JavaScript ni 5xx en los flujos UI |
-| Dashboard en navegador | Escritorio, tablet y móvil (1440/768/390/320 px), contraste, contadores reales, teclado y permisos |
-| Ruff, ESLint y TypeScript/build | Aprobados |
-| Migraciones y OpenAPI | Sin cambios pendientes; esquema válido sin advertencias |
-| Imágenes Docker y stack HTTPS local | Construcción y arranque verificados |
+| Backend | 216 pruebas aprobadas sobre PostgreSQL temporal, incluidas regresiones de permisos, registro, importes y concurrencia. |
+| Cobertura backend | 91% de sentencias; umbral configurado de 85%. Excluye tests, migraciones, configuración E2E y entrypoints. |
+| E2E | 35 escenarios aprobados en una ejecución conjunta, sin reintentos ni omisiones. |
+| Frontend | ESLint, TypeScript, build Webpack y preparación de standalone aprobados. |
+| Navegador | Flujos comerciales, roles, aislamiento, recuperación, registro, historial después del logout, escritorio/móvil y estados de error/reintento. |
+| Introducción y sesión | Secuencia, recarga, omisión, movimiento reducido, fallos de recursos, bienvenida, despedida, carga lenta y entrega del dashboard. |
+| Viewport | Sin scrollbar ni franjas durante la introducción, incluso antes de ejecutar JavaScript; scroll operativo después, con barras nativas visibles. |
 
-Las pruebas concurrentes usan PostgreSQL real; SQLite no reproduce los bloqueos de filas. E2E utiliza `test_facturador_e2e` y cuentas sintéticas, con una protección explícita en el script de preparación. Ver [guía de pruebas](docs/TESTING.md), [auditoría](docs/AUDIT.md) y [log de errores, correcciones y verificaciones](docs/AUDIT_LOG.md).
+Son resultados de ejecuciones locales anteriores a esta actualización del README. La última corrección visual repitió la suite E2E y los checks frontend; los tests backend corresponden a la revisión de las transiciones. PostgreSQL 18.6 se utilizó en esas pruebas locales; Compose y CI configuran la versión 17.
 
-GitHub Actions incluye backend, build y E2E. El workflow se entrega configurado; su ejecución en GitHub se verifica después de publicar el repositorio.
+La evidencia y los procedimientos están en [TESTING.md](docs/TESTING.md), [LOGIN_INTRO.md](docs/LOGIN_INTRO.md) y [AUDIT_LOG.md](docs/AUDIT_LOG.md). Las pruebas de navegador trabajan sobre `test_facturador_e2e` y cuentas sintéticas. El script de preparación exige configuración de pruebas y un nombre de base con prefijo `test_`.
 
-### Dependencias
+### Ejecutar los checks
 
-En la revisión local, `pip-audit` no informó vulnerabilidades conocidas y `npm audit --omit=dev` informó cero. La auditoría completa de npm informa cinco paquetes de desarrollo afectados por una misma cadena de ESLint/Next, originada en `braces`. La corrección sugerida por npm implica bajar `eslint-config-next` a Next 14. Se conserva el aviso documentado y la configuración compatible con Next 16. Revisar futuras actualizaciones; no ejecutar `npm audit fix --force` sin comprobar el cambio de versión. Detalle en [AUDIT.md](docs/AUDIT.md).
+Los checks del backend se ejecutan desde `backend/`. Para los tests, configurar
+la conexión a PostgreSQL aislado según [TESTING.md](docs/TESTING.md): Django crea
+y elimina su base de pruebas, por lo que el usuario utilizado necesita permiso
+para crearla. La cuenta de desarrollo del ejemplo anterior no recibe ese permiso
+automáticamente.
+
+```bash
+.venv/bin/ruff check .
+.venv/bin/ruff format --check .
+.venv/bin/python manage.py check
+.venv/bin/python manage.py makemigrations --check --dry-run
+.venv/bin/python manage.py spectacular --validate --fail-on-warn --file /tmp/fracxion-schema.yaml
+.venv/bin/coverage run manage.py test --settings=config.test_settings --noinput
+.venv/bin/coverage report --fail-under=85
+```
+
+Desde `frontend/`:
+
+```bash
+npm run lint
+npm run typecheck
+npm run build -- --webpack
+```
+
+E2E necesita la API de pruebas en `127.0.0.1:8001` y el frontend compilado con esa URL en `127.0.0.1:3010`. Con ambos preparados según [la guía de pruebas](docs/TESTING.md):
+
+```bash
+npm run test:e2e
+```
+
+Una base separada y PostgreSQL real son parte de esta verificación: SQLite no reproduce los bloqueos de filas utilizados por el dominio. La configuración de tests simplifica el hashing de contraseñas, el correo y el caché exclusivamente para las pruebas.
+
+### CI y dependencias
+
+[GitHub Actions](.github/workflows/ci.yml) configura dos jobs: backend y frontend/E2E. Incluye PostgreSQL 17, Ruff, validación de migraciones y OpenAPI, cobertura, build, auditorías de dependencias y Playwright. El workflow está incluido; una ejecución local aprobada no informa por sí sola el estado de CI remoto.
+
+Las auditorías más recientes registradas reportaron cero vulnerabilidades conocidas en `npm audit --omit=dev` y cinco avisos altos en dependencias de desarrollo de la cadena ESLint/`braces`. El detalle y la decisión de conservar versiones compatibles están en [AUDIT.md](docs/AUDIT.md). Las auditorías deben repetirse al actualizar dependencias; los resultados están sujetos a la fecha y a las bases consultadas.
 
 ## Despliegue y operación
 
-La configuración de producción está en `compose.yaml`, los Dockerfiles y `deploy/Caddyfile`. Consultar [OPERATIONS.md](docs/OPERATIONS.md) para configurar dominio, secretos, SMTP, migraciones, propietario inicial, backups y actualizaciones.
+La referencia de instalación está en [compose.yaml](compose.yaml), los Dockerfiles y [deploy/Caddyfile](deploy/Caddyfile). Incluye PostgreSQL, Redis, Django/Gunicorn, Next.js standalone y Caddy. Solo el proxy publica puertos.
 
-El servidor rechaza DEBUG en producción, claves de muestra, hosts sin configurar, cookies inseguras, HTTPS desactivado, redes de proxy ausentes/inválidas cuando confía en HTTPS del proxy, ausencia de Redis o recuperación sin HTTPS/SMTP. `/health/` comprueba el proceso; `/ready/` verifica PostgreSQL y caché. El arranque rechaza migraciones pendientes.
+La configuración de Compose usa el `.env` de la raíz, a partir de [.env.example](.env.example). Es un archivo distinto de `backend/.env` y `frontend/.env.local`. Debe completarse con el dominio, claves propias, contraseña de PostgreSQL y credenciales SMTP del entorno de destino.
 
-La validación local no acredita certificados públicos, entrega real de correo, backups externos ni capacidad bajo carga. Esos puntos se comprueban en la infraestructura elegida. El repositorio no incluye credenciales reales ni una URL de producción.
+Con esa configuración lista, la secuencia de una instalación nueva es:
 
-## Organización
-
-```text
-backend/
-  accounts/        Sesiones, usuarios y recuperación
-  tenancy/         Empresas, membresías, permisos y contexto
-  customers/       Clientes y validaciones
-  catalog/         Productos y servicios
-  billing/         Documentos, pagos y servicios transaccionales
-  auditlog/        Historial de operaciones
-  config/          Entornos, rutas, referencia, salud y middleware
-frontend/
-  src/app/         Rutas y módulos
-  src/components/  Formularios y navegación compartidos
-  src/lib/         Cliente HTTP, tipos y API
-  e2e/             Escenarios Playwright
-deploy/            Proxy HTTPS
-docs/              Auditoría, pruebas y operación
-.github/workflows/ Comprobaciones automatizadas
+```bash
+docker compose build
+docker compose up -d database cache
+docker compose run --rm backend python manage.py migrate --noinput
+docker compose run --rm backend python manage.py check --deploy --fail-level WARNING
+docker compose up -d
 ```
 
-Las reglas comerciales residen en el backend. Una funcionalidad nueva debe conservar el aislamiento por empresa, roles, precisión decimal y auditoría transaccional. Notas de crédito/débito, conciliación automática, inventario, integración fiscal, invitaciones de miembros y planes de suscripción necesitan sus propios flujos y criterios de aceptación antes de incorporarse.
-# fracxion-facturador
+Las migraciones se aplican como paso explícito. `backend/start.sh` comprueba que no haya migraciones pendientes, recolecta estáticos y arranca Gunicorn. La aplicación rechaza configuraciones de producción con DEBUG, claves de ejemplo, hosts ausentes, cookies inseguras o sin la configuración requerida de Redis, SMTP y proxy.
+
+| Endpoint | Qué comprueba |
+| --- | --- |
+| `/health/` | Que el proceso Django responda. |
+| `/ready/` | Conectividad con PostgreSQL y escritura/lectura de caché. Devuelve `503` si una dependencia falla. |
+
+La [guía de operación](docs/OPERATIONS.md) desarrolla HTTPS, proxies de confianza, recuperación por correo, backups con `pg_dump`, restauración en una base separada y actualizaciones. También conviene revisar la [lista de despliegue de Django 5.2](https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/) para la infraestructura elegida.
+
+El volumen de PostgreSQL mantiene los datos entre reinicios, pero las copias externas y la comprobación de restauración siguen siendo parte de la operación. La entrega de correo, el dominio público, los certificados y el comportamiento bajo carga se validan en el entorno final. Este README documenta una configuración de despliegue; no acredita una instalación pública ni un SLA.
+
+## Alcance actual y siguientes pasos
+
+La versión actual cubre gestión comercial por empresa: clientes, productos y servicios, documentos internos, cobros y trazabilidad. Esa es la funcionalidad que se describe y se prueba en este repositorio.
+
+Hay áreas que requieren desarrollo propio antes de formar parte del producto:
+
+- Facturación fiscal con ARCA y gestión de CAE.
+- Notas de crédito y débito con sus reglas y referencias documentales. El modelo contempla los tipos, pero el servicio de emisión acepta facturas internas.
+- Inventario, compras, proveedores y movimientos de stock.
+- Conciliación bancaria, procesamiento de pagos y generación de PDF en el servidor; hoy se registran cobros y se utiliza impresión del navegador.
+- Invitaciones de miembros, administración de equipos desde la interfaz y verificación de correo por enlace.
+- Planes, suscripciones y cobro por el uso de la plataforma.
+
+La base de aplicación permite trabajar con varias empresas, pero esos módulos necesitan contratos, permisos, migraciones y pruebas propios. Para extender el proyecto, las escrituras comerciales deben pasar por los servicios del backend y conservar el contexto de empresa, la precisión decimal y la auditoría transaccional.
+
+La preparación de producción también requiere completar pruebas de carga, SMTP real, backups externos y aceptación con usuarios del negocio. Los resultados locales sirven como evidencia técnica del comportamiento probado.
+
+## Documentación del repositorio
+
+| Documento | Contenido |
+| --- | --- |
+| [TESTING.md](docs/TESTING.md) | PostgreSQL aislado, configuración de tests, preparación E2E y comandos reproducibles. |
+| [OPERATIONS.md](docs/OPERATIONS.md) | Instalación de producción, HTTPS, SMTP, backups, restauración y mantenimiento. |
+| [LOGIN_INTRO.md](docs/LOGIN_INTRO.md) | Introducción, transiciones, comportamiento del scroll, accesibilidad, capturas y verificación. |
+| [AUDIT.md](docs/AUDIT.md) | Revisión técnica y alcance de las comprobaciones de esa etapa. |
+| [AUDIT_LOG.md](docs/AUDIT_LOG.md) | Hallazgos, correcciones y resultados de revisiones sucesivas. |
+
+Los documentos de auditoría conservan los resultados de cada revisión; sus cantidades de pruebas pueden diferir de la suite actual. Para reproducir los flujos recientes, usar la guía de pruebas y los escenarios presentes en el código.
