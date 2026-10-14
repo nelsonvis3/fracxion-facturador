@@ -8,10 +8,12 @@ const password = "SyntheticE2EPassword2026!";
 
 async function login(page: Page, role = "owner") {
   await page.goto("/");
+  await expect(page.locator(".login-intro")).toBeHidden({ timeout: 10000 });
   await page.getByLabel("Correo electrónico", { exact: true }).fill(`${role}@e2e.example`);
   await page.getByLabel("Contraseña", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Iniciar sesión", exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByRole("link", { name: "Abrir el espacio de trabajo de Empresa E2E", exact: true })).toBeVisible();
 }
 
 test("clientes, catálogo, emisión, pago y reversión con persistencia", async ({ page }) => {
@@ -100,7 +102,9 @@ test("viewer consulta sin acciones de escritura y no accede a otra empresa", asy
 test("sesión vencida devuelve al login", async ({ page, context }) => {
   await login(page);
   await context.clearCookies();
-  await page.goto(`${base}/payments`);
+  // The application's deliberate location.replace can cancel a navigation
+  // waiting for "load"; observe the committed page, then assert the redirect.
+  await page.goto(`${base}/payments`, { waitUntil: "commit" });
   await expect(page).toHaveURL("http://127.0.0.1:3010/");
 });
 

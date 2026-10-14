@@ -5,14 +5,14 @@ Versión dinámica horizontal de 19 segundos, 1920 × 1080 y 60 fotogramas por s
 ## Archivos
 
 - `fracxion-comercial-3d-dinamico.mp4`: nueva entrega H.264 / AAC estéreo, preparada para reproducción progresiva.
-- `fracxion-comercial-3d.mp4`: primera versión conservada.
+- La primera versión se eliminó durante la limpieza; se conserva la entrega dinámica.
 - `portada.jpg`: imagen del video exportado.
 - `revision-fotogramas.jpg`: hoja de ocho momentos del MP4 para revisar el encuadre.
 - `revision-tecnica.json`: resultados de la comprobación del archivo final.
 - `revision-reproduccion.json`: reproducción completa a velocidad normal y búsquedas dentro del MP4 en Chromium.
 - `render-diagnostics.json`: tiempo, cámara, scroll, estado WebGL y encuadre de cada fotograma.
 - `SHA256SUMS.txt`: integridad del MP4.
-- `source/`: escena, composición, render, audio y revisión reproducibles.
+- `source/`: escena, composición, render, audio y revisión reproducibles. Los PNG intermedios de `review/` pueden regenerarse.
 
 Las pantallas utilizan nuevas capturas reales de la aplicación en `source/demo-captures/`. Se preparó una empresa ficticia, tres clientes y tres productos en PostgreSQL efímero; desde la interfaz se creó y emitió un comprobante de ARS 1.210,00 y se registró un pago parcial de ARS 400,00. El saldo de ARS 810,00 persistió tras recargar. La evidencia de captura está en `source/demo-captures/capture-evidence.json`. La vista del comprobante conserva la indicación de gestión interna sin autorización fiscal.
 
@@ -59,3 +59,7 @@ La comprobación decodifica los 1140 fotogramas del MP4 y verifica duración, fo
 La validación se refiere a este video y a su reproducción en Chromium local. Se comprobó el flujo comercial mostrado en PostgreSQL real aislado; no se repitió la suite completa del producto. El reproductor de pruebas usa decodificación por software; sus pausas y fotogramas omitidos, si los hay, quedan registrados en `revision-reproduccion.json`.
 
 Resultado de esta versión: 19,00 segundos, 1140 fotogramas decodificados, ambos dispositivos completos dentro del encuadre y reproducción a 1× sin errores, pausas de carga ni fotogramas omitidos en la prueba local. Los servidores de captura y PostgreSQL efímero quedaron cerrados; las capturas incluidas permiten regenerar el video sin ellos.
+
+## Limpieza de sobrantes · 2026-10-13
+
+Se conserva fracxion-comercial-3d-dinamico.mp4, portada, fuente editable, capturas originales y evidencia técnica. Se eliminaron el MP4 anterior y los PNG de review; review.py puede volver a extraerlos.

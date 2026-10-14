@@ -11,15 +11,18 @@ import {
   LoaderCircle,
   LockKeyhole,
   Mail,
-  ReceiptText,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
 
-import { ApiError, authApi, } from "@/lib/api";
+import { ApiError, authApi, tenantApi } from "@/lib/api";
+import { BrandMark } from "@/components/brand-mark";
+import { LoginIntro } from "@/components/login-intro";
+import { useSessionTransition } from "@/components/session-transition";
 
 export default function LoginPage() {
   const router = useRouter();
+  const present = useSessionTransition();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,8 +58,16 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await authApi.login(email.trim(), password);
-
+      const response = await authApi.login(email.trim(), password);
+      // Clear credentials before showing the successful-access presentation.
+      setPassword("");
+      setEmail("");
+      let name = [response.user.first_name, response.user.last_name].map(value => value.trim()).filter(Boolean).join(" ");
+      if (!name) {
+        try { name = (await tenantApi.getMine()).results[0]?.name || "tu espacio de trabajo"; }
+        catch { name = "tu espacio de trabajo"; }
+      }
+      await present("welcome", name);
       router.replace("/dashboard");
       router.refresh();
     } catch (err) {
@@ -81,6 +92,7 @@ export default function LoginPage() {
   }
 
   return (
+    <LoginIntro>
     <main className="login-shell min-h-screen">
       <div className="login-layout">
         <section className="login-visual">
@@ -94,8 +106,8 @@ export default function LoginPage() {
               className="brand-lockup w-fit"
               aria-label="Fracxion, inicio"
             >
-              <span className="brand-icon">
-                <ReceiptText size={23} strokeWidth={2.2} />
+              <span className="brand-icon" data-login-brand>
+                <BrandMark />
               </span>
               <span>Fracxion</span>
             </Link>
@@ -145,8 +157,8 @@ export default function LoginPage() {
         <section className="login-form-panel">
           <div className="login-form-wrap auth-enter">
             <div className="login-mobile-brand">
-              <span className="brand-icon">
-                <ReceiptText size={21} />
+              <span className="brand-icon" data-login-brand>
+                <BrandMark />
               </span>
               <span>Fracxion</span>
             </div>
@@ -277,5 +289,6 @@ export default function LoginPage() {
         </section>
       </div>
     </main>
+    </LoginIntro>
   );
 }

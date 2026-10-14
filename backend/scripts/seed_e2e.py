@@ -38,6 +38,16 @@ for role in ["owner", "viewer", "accountant"]:
     Membership.objects.update_or_create(
         user=user, tenant=tenant, defaults={"role": role, "is_active": True}
     )
+nameless_user, _ = get_user_model().objects.get_or_create(email="nameless@e2e.example")
+nameless_user.first_name = ""
+nameless_user.last_name = ""
+nameless_user.set_password("SyntheticE2EPassword2026!")
+nameless_user.save()
+Membership.objects.update_or_create(
+    user=nameless_user,
+    tenant=tenant,
+    defaults={"role": "viewer", "is_active": True},
+)
 reset_user, _ = get_user_model().objects.get_or_create(email="reset@e2e.example")
 reset_user.set_password("SyntheticE2EPassword2026!")
 reset_user.save()

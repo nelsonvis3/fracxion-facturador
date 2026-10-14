@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local copies of the pinned, unmodified third-party browser runtimes.
+    "public/hyperframes/vendor/**",
   ]),
 ]);
 

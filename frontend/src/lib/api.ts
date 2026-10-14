@@ -190,7 +190,7 @@ export const authApi = {
     );
   },
 
-  async logout(): Promise<DetailResponse> {
+  async logout(afterLogout?: () => Promise<void>): Promise<DetailResponse> {
     const response = await apiRequest<DetailResponse>(
       "/api/auth/logout/",
       {
@@ -198,7 +198,13 @@ export const authApi = {
         body: JSON.stringify({}),
       },
     );
-    redirectToLogin();
+    // The session is already revoked. Always discard the old document, even if
+    // a presentation callback fails; animations must not determine security.
+    try {
+      await afterLogout?.();
+    } finally {
+      redirectToLogin();
+    }
     return response;
   },
 

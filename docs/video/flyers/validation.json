@@ -1,0 +1,185 @@
+[
+  {
+    "project": "fracxion",
+    "destination": "/home/nelson/Proyectos/facturador-saas-api/docs/video/flyers/01-fracxion-business-management.png",
+    "staged": "/tmp/portfolio-final-flyers/01-fracxion-business-management.png",
+    "editable": {
+      "staged": "/tmp/portfolio-final-flyers/01-fracxion-business-management-editable.html",
+      "destination": "/home/nelson/Proyectos/facturador-saas-api/docs/video/flyers/source/01-fracxion-business-management.html"
+    },
+    "sha256": "c0fb6aae498ba3ce8b3b6920db2a0320476913d1df12abd4b1e4ea840d1d7b44",
+    "verification": {
+      "width": 1280,
+      "height": 769,
+      "words": 8,
+      "fontsLoaded": true,
+      "text": [
+        {
+          "text": "FRACXION",
+          "left": 40,
+          "right": 122.921875,
+          "top": 30,
+          "bottom": 46.890625,
+          "overflow": false,
+          "fontSize": "13px"
+        },
+        {
+          "text": "Business\nManagement",
+          "left": 40,
+          "right": 292,
+          "top": 174,
+          "bottom": 266.6875,
+          "overflow": false,
+          "fontSize": "45px"
+        },
+        {
+          "text": "Clients \u00b7 Products \u00b7 Payments",
+          "left": 40,
+          "right": 232.3125,
+          "top": 636,
+          "bottom": 656.390625,
+          "overflow": false,
+          "fontSize": "12px"
+        }
+      ],
+      "images": [
+        {
+          "source": "file:///home/nelson/Proyectos/facturador-saas-api/docs/video/source/demo-captures/dashboard-desktop.png",
+          "native": [
+            1440,
+            900
+          ],
+          "rendered": [
+            913.59375,
+            570.984375
+          ],
+          "crop": "",
+          "visibleBounds": [
+            324,
+            157,
+            1240,
+            728
+          ],
+          "loaded": true
+        }
+      ]
+    },
+    "sources": [
+      {
+        "path": "/home/nelson/Proyectos/facturador-saas-api/docs/video/source/demo-captures/dashboard-desktop.png",
+        "sha256": "7f986a70706d78dc48a50a328d036badeac57cb902a692a4118ec5a4cdedf5ef",
+        "crop": null
+      }
+    ],
+    "visually_reviewed": true,
+    "editable_resources_verified": [
+      "../../source/demo-captures/dashboard-desktop.png",
+      "../../source/vendor/AdwaitaSans.ttf",
+      "../../source/vendor/AdwaitaSans.ttf"
+    ]
+  },
+  {
+    "project": "fracxion",
+    "destination": "/home/nelson/Proyectos/facturador-saas-api/docs/video/flyers/02-fracxion-internal-invoicing.png",
+    "staged": "/tmp/portfolio-final-flyers/02-fracxion-internal-invoicing.png",
+    "editable": {
+      "staged": "/tmp/portfolio-final-flyers/02-fracxion-internal-invoicing-editable.html",
+      "destination": "/home/nelson/Proyectos/facturador-saas-api/docs/video/flyers/source/02-fracxion-internal-invoicing.html"
+    },
+    "sha256": "b381488c3792966aa3176aa1f8e352e32fbc3a0a0f538cc5a37db548b215f87c",
+    "verification": {
+      "width": 1280,
+      "height": 769,
+      "words": 9,
+      "fontsLoaded": true,
+      "text": [
+        {
+          "text": "FRACXION",
+          "left": 40,
+          "right": 122.921875,
+          "top": 30,
+          "bottom": 46.890625,
+          "overflow": false,
+          "fontSize": "13px"
+        },
+        {
+          "text": "Internal Invoicing Workflow",
+          "left": 40,
+          "right": 1240,
+          "top": 64,
+          "bottom": 117.546875,
+          "overflow": false,
+          "fontSize": "52px"
+        },
+        {
+          "text": "Create \u00b7 Issue \u00b7 Record",
+          "left": 40,
+          "right": 188.734375,
+          "top": 735,
+          "bottom": 755.390625,
+          "overflow": false,
+          "fontSize": "12px"
+        }
+      ],
+      "images": [
+        {
+          "source": "file:///home/nelson/Proyectos/facturador-saas-api/docs/video/source/demo-captures/invoice-issued.png",
+          "native": [
+            1440,
+            900
+          ],
+          "rendered": [
+            883.1875,
+            551.984375
+          ],
+          "crop": "",
+          "visibleBounds": [
+            40,
+            175,
+            956,
+            727
+          ],
+          "loaded": true
+        },
+        {
+          "source": "file:///home/nelson/Proyectos/facturador-saas-api/docs/video/source/demo-captures/payment-mobile-submit.png",
+          "native": [
+            390,
+            844
+          ],
+          "rendered": [
+            244,
+            528.03125
+          ],
+          "crop": "",
+          "visibleBounds": [
+            996,
+            175,
+            1240,
+            727
+          ],
+          "loaded": true
+        }
+      ]
+    },
+    "sources": [
+      {
+        "path": "/home/nelson/Proyectos/facturador-saas-api/docs/video/source/demo-captures/invoice-issued.png",
+        "sha256": "7fe607b3cb248a7afeb7597bd34458f261585f8723cc57a8153a31753a75f9ba",
+        "crop": null
+      },
+      {
+        "path": "/home/nelson/Proyectos/facturador-saas-api/docs/video/source/demo-captures/payment-mobile-submit.png",
+        "sha256": "7c3b84bcae9e4672062af0aee738f9bef55f9f7d758cd84bf11ebb07a347f74a",
+        "crop": null
+      }
+    ],
+    "visually_reviewed": true,
+    "editable_resources_verified": [
+      "../../source/demo-captures/invoice-issued.png",
+      "../../source/demo-captures/payment-mobile-submit.png",
+      "../../source/vendor/AdwaitaSans.ttf",
+      "../../source/vendor/AdwaitaSans.ttf"
+    ]
+  }
+]

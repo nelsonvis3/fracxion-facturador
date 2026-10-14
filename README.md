@@ -24,6 +24,16 @@ Otras vistas verificadas: [dashboard móvil](docs/screenshots/dashboard-mobile.p
 
 La interfaz adapta la navegación a escritorio y móvil. Incluye estados de carga, errores, formularios, diálogos nativos y acciones ajustadas al rol. El backend vuelve a comprobar todos los permisos, independientemente de la interfaz.
 
+El login incorpora una introducción interactiva con Hyperframes: la F despliega el
+nombre Fracxion, recupera las letras y se desplaza al logo antes de revelar el
+formulario. Se repite al refrescar el login; la navegación interna no la repite en
+el mismo documento. El acceso y cierre confirmados muestran una bienvenida o
+despedida con el nombre del usuario o empresa. La F gira mientras carga el dashboard,
+que se revela con un fundido al terminar las consultas. Después de la despedida se
+reproduce la introducción completa antes del login. Los saludos se pueden omitir
+y respetan movimiento reducido. Implementación, capturas
+y verificación local en [LOGIN_INTRO.md](docs/LOGIN_INTRO.md).
+
 Para registrar un pago, primero guardar y emitir el documento desde **Facturas internas**: abrir el borrador y pulsar **Emitir factura interna** con rol propietario o administrador. Después, en **Pagos → Registrar pago**, el campo **Factura emitida** ofrece los documentos emitidos de esa empresa con número, cliente y saldo. Los borradores no aparecen. Si no hay emitidas, el formulario lo explica y ofrece acceso a Facturas; una búsqueda sin coincidencias muestra un mensaje diferente. Propietarios, administradores y contadores pueden registrar el cobro, sin superar el saldo pendiente.
 
 ## Arquitectura

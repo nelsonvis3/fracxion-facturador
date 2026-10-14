@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SessionTransitionProvider } from "@/components/session-transition";
 
 export const metadata: Metadata = {
   title: { default: "Fracxion · Gestión empresarial", template: "%s · Fracxion" },
@@ -13,7 +14,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es-AR"
       className="h-full antialiased"
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col"><SessionTransitionProvider>{children}</SessionTransitionProvider></body>
     </html>
   );
 }

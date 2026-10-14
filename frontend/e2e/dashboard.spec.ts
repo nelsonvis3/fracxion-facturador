@@ -8,10 +8,12 @@ const api = "http://127.0.0.1:8001";
 
 async function login(page: Page, role = "owner") {
   await page.goto("/");
+  await expect(page.locator(".login-intro")).toBeHidden({ timeout: 10000 });
   await page.getByLabel("Correo electrónico", { exact: true }).fill(`${role}@e2e.example`);
   await page.getByLabel("Contraseña", { exact: true }).fill("SyntheticE2EPassword2026!");
   await page.getByRole("button", { name: "Iniciar sesión", exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByRole("link", { name: "Abrir el espacio de trabajo de Empresa E2E", exact: true })).toBeVisible();
 }
 
 async function checkReadability(page: Page) {

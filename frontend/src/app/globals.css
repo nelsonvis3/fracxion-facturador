@@ -246,6 +246,114 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid
    Paleta propia: índigo profundo, violeta y lima suave.
    --------------------------------------------------------- */
 
+/* Applies to the server-rendered pending state, before JavaScript runs. The
+   normal login can be taller than the viewport, but must not reserve a scrollbar
+   while Hyperframes fits its composition to the full window. */
+html:has(.login-experience:not([data-intro-state="complete"])) {
+  overflow: hidden;
+  scrollbar-gutter: auto;
+  background: #211b45;
+}
+body:has(.login-experience:not([data-intro-state="complete"])) { overflow: hidden; }
+
+.login-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  overflow: hidden;
+}
+
+.login-intro[hidden] { display: none; }
+.session-content { min-height: 100dvh; }
+.session-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 32px 24px 100px;
+  overflow: auto;
+  background: radial-gradient(ellipse at 50% 45%, #47367c 0%, #32255f 40%, #211b45 80%);
+  color: #f4f1fc;
+}
+.session-transition-card { width: min(100%, 720px); text-align: center; }
+.session-transition-mark {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 30px;
+  place-items: center;
+  border-radius: 23.44px;
+  background: #c9f27a;
+  color: #211b45;
+}
+.session-transition-spin { display: grid; width: 100%; height: 100%; place-items: center; }
+.session-transition-mark svg { width: 58.14%; height: 58.14%; }
+.session-transition[data-session-transition="welcome"][data-phase="loading"] .session-transition-spin,
+.session-transition[data-session-transition="welcome"][data-phase="revealing"] .session-transition-spin { animation: session-f-spin 1.1s linear infinite; }
+.session-transition-status { position: absolute; top: calc(50% + min(56px, 10vw) + 24px); left: 24px; right: 24px; text-align: center; font-size: .85rem; color: #ded9f0; }
+.session-transition .login-intro-skip:disabled { visibility: hidden; }
+@keyframes session-f-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .session-transition .session-transition-spin { animation: none !important; }
+}
+.session-transition-heading { font-size: clamp(1.8rem, 5vw, 3.4rem); font-weight: 700; letter-spacing: -.045em; line-height: 1.18; }
+.session-transition-heading span { display: block; margin-top: 8px; color: #c9f27a; overflow-wrap: anywhere; }
+.session-transition-note { margin-top: 24px; color: #ded9f0; font-size: .92rem; line-height: 1.6; }
+.session-transition-mark, .session-transition-heading, .session-transition-note { opacity: 0; }
+.session-transition[data-motion="static"] .session-transition-mark,
+.session-transition[data-motion="static"] .session-transition-heading,
+.session-transition[data-motion="static"] .session-transition-note { opacity: 1; }
+/* Hyperframes owns this entrance. Keep the destination still while measuring it,
+   including the mobile brand inside the form wrapper. */
+.login-experience .auth-enter { animation: none; }
+.login-intro-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at 50% 45%, #47367c 0%, #32255f 40%, #211b45 80%);
+}
+.login-intro-mark {
+  display: grid;
+  width: min(112px, 20vw);
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: min(36.46px, 6.51vw);
+  background: #c9f27a;
+  color: #211b45;
+}
+.login-intro-mark svg { width: 58.14%; height: 58.14%; }
+.login-intro-player, .login-intro-player hyperframes-player { position: absolute; inset: 0; width: 100%; height: 100%; }
+.login-experience[data-intro-state="playing"] .login-intro-fallback { display: none; }
+.login-intro-skip {
+  position: absolute;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #ffffff30;
+  border-radius: 999px;
+  background: #211b45;
+  color: #f4f1fc;
+  font-size: .75rem;
+  cursor: pointer;
+  transition: border-color 180ms, background-color 180ms;
+}
+.login-intro-skip:hover { border-color: #c9f27a; background: #32255f; }
+.login-intro-skip span { color: #c9f27a; font-size: 1rem; }
+.login-intro-skip:focus-visible { outline: 3px solid #c9f27a; outline-offset: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .login-intro { display: none; }
+  html:has(.login-experience:not([data-intro-state="complete"])) { overflow: auto; }
+  body:has(.login-experience:not([data-intro-state="complete"])) { overflow: visible; }
+}
+
 .login-shell {
   --login-ink: #211b45;
   --login-muted: #77738b;

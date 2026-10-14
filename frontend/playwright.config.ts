@@ -7,5 +7,10 @@ export default defineConfig({
   retries: 0,
   reporter: "list",
   use: { baseURL: "http://127.0.0.1:3010", trace: "retain-on-failure" },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [{ name: "chromium", use: {
+    ...devices["Desktop Chrome"],
+    launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+      ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH }
+      : undefined,
+  } }],
 });

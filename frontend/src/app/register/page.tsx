@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, LoaderCircle, ReceiptText } from "lucide-react";
 import { ApiError, authApi, type RegistrationPayload } from "@/lib/api";
 import { Alert, errorMessage } from "@/components/business-ui";
+import { useSessionTransition } from "@/components/session-transition";
 
 type FieldName = keyof RegistrationPayload;
 type FieldErrors = Partial<Record<FieldName, string>>;
@@ -20,6 +21,7 @@ const fields: { name: FieldName; label: string; autoComplete: string; type?: str
 
 export default function RegisterPage() {
   const router = useRouter();
+  const present = useSessionTransition();
   const formRef = useRef<HTMLFormElement>(null);
   const [form, setForm] = useState<RegistrationPayload>({ first_name: "", last_name: "", company_name: "", email: "", password: "", password_confirm: "" });
   const [busy, setBusy] = useState(false);
@@ -52,6 +54,7 @@ export default function RegisterPage() {
     try {
       const response = await authApi.register(form);
       setForm({ first_name: "", last_name: "", company_name: "", email: "", password: "", password_confirm: "" });
+      await present("welcome", response.user.first_name || response.tenant.name);
       router.replace(`/dashboard/${response.tenant.id}`);
       router.refresh();
     } catch (err) {

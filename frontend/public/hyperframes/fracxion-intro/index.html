@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fracxion · Introducción</title>
+    <script src="/hyperframes/vendor/gsap.min.js"></script>
+    <style>
+      * { box-sizing: border-box; margin: 0; }
+      html, body { width: 100%; height: 100%; overflow: hidden; background: transparent; }
+      body { font-family: "Segoe UI", Arial, sans-serif; }
+      #stage { position: relative; overflow: hidden; }
+      .clip { position: absolute; inset: 0; visibility: hidden; }
+      #backdrop {
+        background: radial-gradient(ellipse at 50% 45%, #47367c 0%, #32255f 40%, #211b45 80%);
+      }
+      #grid {
+        position: absolute; inset: 0; opacity: .18;
+        background-image: linear-gradient(#ffffff0a 1px, transparent 1px), linear-gradient(90deg, #ffffff0a 1px, transparent 1px);
+        background-size: 72px 72px;
+        mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+      }
+      #halo {
+        position: absolute; left: 50%; top: 50%; width: min(75vw, 560px); aspect-ratio: 1;
+        transform: translate(-50%, -50%); border-radius: 50%;
+        background: radial-gradient(circle, #c9f27a0a, transparent 67%);
+      }
+      #lockup { position: absolute; transform-origin: top left; }
+      #mark {
+        position: relative; display: grid; width: 112px; height: 112px;
+        place-items: center; border-radius: 36.46px; background: #c9f27a; color: #211b45;
+        z-index: 2;
+      }
+      #mark svg { display: block; width: 58.14%; height: 58.14%; }
+      #word-window { position: absolute; top: 0; overflow: hidden; }
+      #word { display: flex; align-items: center; width: max-content; height: 100%; white-space: nowrap; color: #f4f1fc; font-weight: 750; letter-spacing: -.06em; line-height: 1; }
+      #word span { display: block; flex: 0 0 auto; }
+    </style>
+  </head>
+  <body>
+    <main id="stage" data-composition-id="fracxion-intro" data-width="1440" data-height="900" data-duration="4.8">
+      <div id="backdrop" class="clip" data-start="0" data-duration="4.8" data-track-index="0">
+        <div id="grid"></div>
+        <div id="halo"></div>
+      </div>
+      <div id="brand-scene" class="clip" data-start="0" data-duration="4.8" data-track-index="1">
+        <div id="lockup">
+          <div id="mark">
+            <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path d="M11 7h29v9H21v8h16v9H21v12H11V7Z" fill="currentColor" />
+            </svg>
+          </div>
+          <div id="word-window">
+            <div id="word" aria-label="racxion"><span>r</span><span>a</span><span>c</span><span>x</span><span>i</span><span>o</span><span>n</span></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      // Hyperframes owns playback; every visual change belongs to this seekable
+      // timeline. The host provides the viewport and the real brand destination.
+      const stage = document.getElementById("stage");
+      const width = Number(stage.dataset.width);
+      const height = Number(stage.dataset.height);
+      const size = Math.min(112, width * .20);
+      const gap = size * .2;
+      const centerX = (width - size) / 2;
+      const centerY = (height - size) / 2;
+      const targetX = Number(stage.dataset.targetX ?? 32);
+      const targetY = Number(stage.dataset.targetY ?? 32);
+      const targetSize = Number(stage.dataset.targetSize ?? 43);
+      const mark = document.getElementById("mark");
+      const word = document.getElementById("word");
+      const wordWindow = document.getElementById("word-window");
+
+      gsap.set(stage, { width, height });
+      gsap.set(mark, { width: size, height: size, borderRadius: size * 14 / 43 });
+      gsap.set(word, { fontSize: size * .98 });
+      const wordWidth = word.getBoundingClientRect().width;
+      gsap.set(wordWindow, { left: size + gap, width: wordWidth + 2, height: size, clipPath: "inset(0 100% 0 0)" });
+      gsap.set("#lockup", { x: centerX, y: centerY });
+      // Match the F already painted by the host: no disappear/reappear at ready.
+      gsap.set(mark, { opacity: 1, scale: 1 });
+
+      const timeline = gsap.timeline({ paused: true });
+      timeline.to("#lockup", { x: (width - size - gap - wordWidth) / 2, duration: .8, ease: "power3.inOut" }, .65);
+      // One mask reveals the prefix first. Letters stay fixed relative to each
+      // other at every frame, including reverse playback and arbitrary seeks.
+      timeline.to(wordWindow, { clipPath: "inset(0 0% 0 0)", duration: .8, ease: "power3.inOut" }, .65);
+      timeline.to(wordWindow, { clipPath: "inset(0 100% 0 0)", duration: .7, ease: "power3.inOut" }, 2.05);
+      timeline.to("#lockup", { x: centerX, duration: .7, ease: "power3.inOut" }, 2.05);
+      timeline.to("#lockup", { x: targetX, y: targetY, scale: targetSize / size, duration: 1.05, ease: "power3.inOut" }, 2.85);
+      timeline.to("#backdrop", { opacity: 0, clipPath: "inset(0 100% 0 0)", duration: 1.05, ease: "power3.inOut" }, 3.45);
+      // The animated mark meets its identical counterpart in the login.
+      timeline.to(mark, { opacity: 0, duration: .25, ease: "power1.out" }, 4.5);
+      timeline.to({}, { duration: .05 }, 4.75);
+      window.__timelines = { "fracxion-intro": timeline };
+    </script>
+    <script src="/hyperframes/vendor/hyperframes-runtime.js"></script>
+  </body>
+</html>

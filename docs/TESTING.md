@@ -65,7 +65,7 @@ npm run test:e2e
 
 Si el navegador se instala en un directorio temporal, utilizar el mismo `PLAYWRIGHT_BROWSERS_PATH` en instalación y ejecución; la revisión local usó `/tmp/facturador-playwright`. Por ejemplo: `PLAYWRIGHT_BROWSERS_PATH=/tmp/facturador-playwright npx playwright install chromium` y `PLAYWRIGHT_BROWSERS_PATH=/tmp/facturador-playwright npm run test:e2e`.
 
-Los quince escenarios comprenden once flujos de navegador y cuatro de seguridad API. Verifican el ciclo comercial con persistencia, viewer y aislamiento, sesión vencida, recuperación con reutilización inválida del token, navegación móvil y registro público. El registro prueba contraseña débil, confirmación incorrecta, alta con empresa y permisos de propietario, escritura con el CSRF renovado, correo duplicado, logout/login e inaccesibilidad de otra empresa. La regresión de logout comprueba que no queden datos privados en páginas ocultas, tanto al salir desde una empresa como desde el selector, ni al volver con el historial.
+Los quince escenarios originales comprenden once flujos de navegador y cuatro de seguridad API. Verifican el ciclo comercial con persistencia, viewer y aislamiento, sesión vencida, recuperación con reutilización inválida del token, navegación móvil y registro público. El registro prueba contraseña débil, confirmación incorrecta, alta con empresa y permisos de propietario, escritura con el CSRF renovado, correo duplicado, logout/login e inaccesibilidad de otra empresa. La regresión de logout comprueba que no queden datos privados en páginas ocultas, tanto al salir desde una empresa como desde el selector, ni al volver con el historial. La suite actual añade ocho escenarios de la introducción del login, siete de bienvenida y despedida y cinco del viewport, descritos más abajo.
 
 `e2e/dashboard.spec.ts` comprueba selector y resumen de empresa a 1440/768/390/320 px, sin desbordamiento horizontal, con contraste legible en preferencia oscura/clara y movimiento reducido. Navega desde la tarjeta de empresa con teclado hasta un módulo y compara los cuatro contadores con la API real. Comprueba accesos de viewer y los estados de carga, error/reintento y lista vacía mediante respuestas controladas de navegador; el reintento vuelve a consultar la API real.
 
@@ -78,6 +78,31 @@ El script genera `frontend/e2e/reset-fixture.json`, ignorado por Git y excluido 
 Los fallos guardan trazas en `frontend/test-results/`. Los flujos aprobados generan `docs/screenshots/invoice.png`, `payment-selector.png` y las capturas `dashboard-{desktop,mobile}.png` y `company-dashboard-{desktop,mobile}.png`; son evidencia de prueba, no capturas de producción. Un build E2E incorpora la URL del puerto 8001: volver a compilar con el entorno definitivo antes de desplegar. Docker realiza su propio build.
 
 Las regresiones del 10 de octubre están en `accounts/test_security.py` y `config/test_security.py`. Cubren entradas excesivas, Unicode/NUL, tamaño/profundidad JSON, búsqueda, límites de credenciales y rechazo de configuración insegura de producción. El diagnóstico, corrección y resultados se conservan en [AUDIT_LOG.md](AUDIT_LOG.md).
+
+## Introducción del login
+
+La suite contiene 35 escenarios: los 15 flujos anteriores, ocho pruebas de la
+introducción Hyperframes, siete de las transiciones de sesión y cinco del viewport.
+Las primeras comprueban secuencia y llegada de la F al logo, omisión
+por teclado, movimiento reducido, fallos de carga, cambios de viewport,
+reproducción automática, recargas y almacenamiento restringido. Las pruebas
+de bienvenida y despedida comprueban identidad real, fallback de
+empresa, retirada del DOM privado tras logout, errores de acceso/cierre, movimiento
+reducido, giro real de la F durante una consulta retenida, fundido posterior y
+entrega del estado de error con reintento. El logout debe reproducir la introducción
+completa. Detalles y resultados en
+[LOGIN_INTRO.md](LOGIN_INTRO.md). Los helpers de acceso esperan a que la introducción
+entregue el formulario antes de escribir en sus campos.
+
+`e2e/login-viewport.spec.ts` habilita los scrollbars nativos que Playwright oculta
+por defecto. Comprueba bloqueo desde el HTML inicial con JavaScript pendiente,
+cobertura exacta del iframe a 1440×600 y 390×600, scroll real al completar/omitir,
+error de carga, movimiento reducido y fallback sin JavaScript. Esto detecta las
+franjas causadas por medir la composición con un gutter presente.
+
+Para utilizar un Chromium ya instalado, definir
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/ruta/al/navegador`. Sin esa variable se utiliza
+el Chromium instalado por Playwright, como en CI.
 
 ## CI y alcance
 

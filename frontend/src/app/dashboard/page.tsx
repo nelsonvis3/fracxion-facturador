@@ -23,6 +23,7 @@ import {
   redirectToLogin,
   type Tenant,
 } from "@/lib/api";
+import { useSessionTransition, useSessionTransitionReady } from "@/components/session-transition";
 
 type AuthUser = Awaited<
   ReturnType<typeof authApi.currentUser>
@@ -66,6 +67,7 @@ const roleLabels: Record<Tenant["role"], string> = {
 
 export default function DashboardPage() {
   const router = useRouter();
+  const present = useSessionTransition();
 
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -76,6 +78,7 @@ export default function DashboardPage() {
   const [tenantsLoading, setTenantsLoading] = useState(true);
   const [tenantsError, setTenantsError] = useState("");
   const [tenantRequest, setTenantRequest] = useState(0);
+  useSessionTransitionReady(!loading && (!user || !tenantsLoading));
 
   // Verificar la sesión.
   useEffect(() => {
@@ -157,7 +160,7 @@ export default function DashboardPage() {
     setError("");
 
     try {
-      await authApi.logout();
+      await authApi.logout(() => present("farewell", user?.first_name?.trim() || tenants[0]?.name || "tu espacio de trabajo"));
     } catch {
       setError("No se pudo cerrar la sesión. Intentá nuevamente.");
       setLoggingOut(false);

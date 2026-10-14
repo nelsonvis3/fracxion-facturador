@@ -109,21 +109,27 @@ test("entradas malformadas reciben 400 en la API en ejecución", async ({ reques
 });
 
 test("logout descarta datos privados ocultos y evita recuperarlos desde el historial", async ({ page }) => {
+  test.setTimeout(60000); // Two login/logout cycles plus a fresh intro after back navigation.
   const customerName = `AA Cliente privacidad ${Date.now()}`;
   async function signIn() {
     await page.goto("/");
+    await expect(page.locator(".login-intro")).toBeHidden({ timeout: 10000 });
     await page.locator(".login-form").getByLabel("Correo electrónico", { exact: true }).fill("owner@e2e.example");
     await page.locator(".login-form").getByLabel("Contraseña", { exact: true }).fill(password);
     await page.getByRole("button", { name: "Iniciar sesión", exact: true }).click();
     await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(page.getByRole("link", { name: "Abrir el espacio de trabajo de Empresa E2E", exact: true })).toBeVisible();
   }
   async function assertCleared() {
     await expect(page).toHaveURL("http://127.0.0.1:3010/");
-    await expect(page.getByRole("button", { name: "Iniciar sesión", exact: true })).toBeVisible();
     const body = await page.locator("body").textContent();
     expect(body).not.toContain(customerName);
     expect(body).not.toContain("Empresa E2E");
     expect((await page.request.get(`${api}/api/auth/me/`)).status()).toBe(401);
+    // Returning through history can create a fresh login document and replay
+    // the intro. Privacy is checked above immediately, before waiting for it.
+    await expect(page.locator(".login-intro")).toBeHidden({ timeout: 10000 });
+    await expect(page.getByRole("button", { name: "Iniciar sesión", exact: true })).toBeVisible();
   }
   await signIn();
   expect((await post(page.request, `${root}/customers/`, { name: customerName })).status()).toBe(201);

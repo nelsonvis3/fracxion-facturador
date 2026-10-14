@@ -7,6 +7,7 @@ import { Building2, ClipboardList, CreditCard, LogOut, ReceiptText, ShieldCheck,
 import { authApi, tenantApi, type Tenant } from "@/lib/api";
 import { canManage } from "@/lib/business-api";
 import { Alert, Loading, useAsync } from "./business-ui";
+import { useSessionTransition, useSessionTransitionReady } from "./session-transition";
 
 const TenantContext = createContext<Tenant | null>(null);
 export function useTenant() {
@@ -28,6 +29,7 @@ export function TenantWorkspace({ children }: { children: ReactNode }) {
 }
 function WorkspaceContent({ tenantId, children }: { tenantId: string; children: ReactNode }) {
   const pathname = usePathname();
+  const present = useSessionTransition();
   const [loggingOut, setLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState("");
   const loader = useCallback(async () => {
@@ -36,6 +38,7 @@ function WorkspaceContent({ tenantId, children }: { tenantId: string; children: 
     return response.results.find(tenant => tenant.id === tenantId) ?? null;
   }, [tenantId]);
   const state = useAsync(loader);
+  useSessionTransitionReady(!state.loading);
   if (state.loading) return <Loading />;
   if (state.error || !state.data) return <section className="module-content"><Alert>{state.error || "Esta empresa no está disponible para tu cuenta."}</Alert><Link className="button secondary" href="/dashboard">Mis empresas</Link></section>;
   const tenant = state.data;
@@ -52,7 +55,7 @@ function WorkspaceContent({ tenantId, children }: { tenantId: string; children: 
         <div className="business-topbar"><span>{tenant.name}</span><button className="button secondary" disabled={loggingOut} onClick={async () => {
           setLoggingOut(true);
           setLogoutError("");
-          try { await authApi.logout(); }
+          try { await authApi.logout(() => present("farewell", tenant.name)); }
           catch { setLogoutError("No pudimos cerrar la sesión. Volvé a intentarlo."); setLoggingOut(false); }
         }}><LogOut size={16} />{loggingOut ? "Cerrando sesión…" : "Cerrar sesión"}</button></div>
         {logoutError && <Alert>{logoutError}</Alert>}
