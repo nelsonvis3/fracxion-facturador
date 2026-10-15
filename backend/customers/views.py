@@ -181,6 +181,9 @@ class CustomerViewSet(
 
         with transaction.atomic():
             try:
+                from tenancy.services import lock_company
+
+                lock_company(tenant.pk, actor=request.user)
                 customer = Customer.objects.select_for_update().get(
                     pk=customer.pk,
                     tenant=tenant,

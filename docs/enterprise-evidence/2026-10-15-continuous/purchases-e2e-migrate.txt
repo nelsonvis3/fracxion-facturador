@@ -1,0 +1,4 @@
+Operations to perform:
+  Apply all migrations: accounts, admin, auditlog, auth, automation, billing, catalog, contenttypes, customers, operations, sessions, tenancy
+Running migrations:
+  Applying operations.0003_purchaseorder_purchaseline_expense_purchase_order_and_more... OK

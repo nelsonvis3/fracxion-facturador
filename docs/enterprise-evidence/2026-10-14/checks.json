@@ -1,0 +1,460 @@
+[
+  {
+    "name": "backend-lint",
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 0.09,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/backend-lint.log",
+    "evidence_output": "backend-lint.txt"
+  },
+  {
+    "name": "backend-format",
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 0.02,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/backend-format.log",
+    "evidence_output": "backend-format.txt"
+  },
+  {
+    "name": "django-check",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "check"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 2.24,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/django-check.log",
+    "evidence_output": "django-check.txt"
+  },
+  {
+    "name": "migrations-check",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "makemigrations",
+      "--check",
+      "--dry-run"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 1.46,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/migrations-check.log",
+    "evidence_output": "migrations-check.txt"
+  },
+  {
+    "name": "openapi",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "spectacular",
+      "--validate",
+      "--fail-on-warn",
+      "--file",
+      "/tmp/fracxion-enterprise-audit-20261014/evidence/openapi.yaml"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 2.71,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/openapi.log",
+    "evidence_output": "openapi.txt"
+  },
+  {
+    "name": "backend-suite",
+    "command": [
+      ".venv/bin/coverage",
+      "run",
+      "manage.py",
+      "test",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 15.37,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/backend-suite.log",
+    "evidence_output": "backend-suite.txt"
+  },
+  {
+    "name": "coverage",
+    "command": [
+      ".venv/bin/coverage",
+      "report",
+      "--fail-under=85"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 0.69,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/coverage.log",
+    "evidence_output": "coverage.txt"
+  },
+  {
+    "name": "frontend-lint",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 0,
+    "seconds": 8.77,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/frontend-lint.log",
+    "evidence_output": "frontend-lint.txt"
+  },
+  {
+    "name": "frontend-types",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 2,
+    "seconds": 5.49,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/frontend-types.log",
+    "evidence_output": "frontend-types.txt"
+  },
+  {
+    "name": "frontend-types-after-build",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 0,
+    "seconds": 5.76,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/frontend-types-after-build.log",
+    "evidence_output": "frontend-types-after-build.txt"
+  },
+  {
+    "name": "production-build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 1,
+    "seconds": 1.81,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/production-build.log",
+    "evidence_output": "production-build.txt"
+  },
+  {
+    "name": "production-build-physical",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 1,
+    "seconds": 20.35,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/production-build-physical.log",
+    "evidence_output": "production-build-physical.txt"
+  },
+  {
+    "name": "production-build-live",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 1,
+    "seconds": 2.18,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/production-build-live.log",
+    "evidence_output": "production-build-live.txt"
+  },
+  {
+    "name": "production-build-webpack",
+    "command": [
+      "npm",
+      "run",
+      "build",
+      "--",
+      "--webpack"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 0,
+    "seconds": 39.31,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/production-build-webpack.log",
+    "evidence_output": "production-build-webpack.txt"
+  },
+  {
+    "name": "npm-audit-production",
+    "command": [
+      "npm",
+      "audit",
+      "--omit=dev",
+      "--json"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 1,
+    "seconds": 1.23,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/npm-audit-production.log",
+    "evidence_output": "npm-audit-production.txt"
+  },
+  {
+    "name": "npm-audit-all",
+    "command": [
+      "npm",
+      "audit",
+      "--json"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 1,
+    "seconds": 0.85,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/npm-audit-all.log",
+    "evidence_output": "npm-audit-all.txt"
+  },
+  {
+    "name": "npm-audit-production-live",
+    "command": [
+      "npm",
+      "audit",
+      "--omit=dev",
+      "--json"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 0,
+    "seconds": 0.96,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/npm-audit-production-live.log",
+    "evidence_output": "npm-audit-production-live.txt"
+  },
+  {
+    "name": "npm-audit-all-live",
+    "command": [
+      "npm",
+      "audit",
+      "--json"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 1,
+    "seconds": 1.65,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/npm-audit-all-live.log",
+    "evidence_output": "npm-audit-all-live.txt"
+  },
+  {
+    "name": "pip-audit",
+    "command": [
+      ".venv/bin/pip-audit",
+      "-r",
+      "requirements.txt",
+      "--format",
+      "json",
+      "--progress-spinner",
+      "off",
+      "--timeout",
+      "10"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 1,
+    "seconds": 21.03,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/pip-audit.log",
+    "evidence_output": "pip-audit.txt"
+  },
+  {
+    "name": "pip-audit-live",
+    "command": [
+      ".venv/bin/pip-audit",
+      "-r",
+      "requirements.txt",
+      "--format",
+      "json",
+      "--progress-spinner",
+      "off",
+      "--timeout",
+      "20"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 17.74,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/pip-audit-live.log",
+    "evidence_output": "pip-audit-live.txt"
+  },
+  {
+    "name": "playwright-e2e",
+    "command": [
+      "npm",
+      "run",
+      "test:e2e"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 1,
+    "seconds": 298.9,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/playwright-e2e.log",
+    "evidence_output": "playwright-e2e.txt"
+  },
+  {
+    "name": "playwright-e2e-clean",
+    "command": [
+      "npm",
+      "run",
+      "test:e2e"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 0,
+    "seconds": 260.06,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/playwright-e2e-clean.log",
+    "evidence_output": "playwright-e2e-clean.txt"
+  },
+  {
+    "name": "e2e-seed",
+    "command": [
+      "env",
+      "DJANGO_SETTINGS_MODULE=config.e2e_settings",
+      ".venv/bin/python",
+      "scripts/seed_e2e.py"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 3.5,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/e2e-seed.log",
+    "evidence_output": "e2e-seed.txt"
+  },
+  {
+    "name": "e2e-reseed",
+    "command": [
+      "env",
+      "DJANGO_SETTINGS_MODULE=config.e2e_settings",
+      ".venv/bin/python",
+      "scripts/seed_e2e.py"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 1.56,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/e2e-reseed.log",
+    "evidence_output": "e2e-reseed.txt"
+  },
+  {
+    "name": "enterprise-probes",
+    "command": [
+      "env",
+      "DJANGO_SETTINGS_MODULE=config.e2e_settings",
+      ".venv/bin/python",
+      "enterprise_probes.py"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 3.08,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/enterprise-probes.log",
+    "evidence_output": "enterprise-probes.txt"
+  },
+  {
+    "name": "role-matrix",
+    "command": [
+      "env",
+      "DJANGO_SETTINGS_MODULE=config.e2e_settings",
+      ".venv/bin/python",
+      "enterprise_roles.py"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 1,
+    "seconds": 1.87,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/role-matrix.log",
+    "evidence_output": "role-matrix.txt"
+  },
+  {
+    "name": "role-matrix-corrected",
+    "command": [
+      "env",
+      "DJANGO_SETTINGS_MODULE=config.e2e_settings",
+      ".venv/bin/python",
+      "enterprise_roles.py"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 3.21,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/role-matrix-corrected.log",
+    "evidence_output": "role-matrix-corrected.txt"
+  },
+  {
+    "name": "browser-supplement",
+    "command": [
+      "node",
+      "enterprise-browser.mjs"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 0,
+    "seconds": 31.22,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/browser-supplement.log",
+    "evidence_output": "browser-supplement.txt"
+  },
+  {
+    "name": "focus-review",
+    "command": [
+      "node",
+      "enterprise-focus.mjs"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/frontend",
+    "exit_code": 0,
+    "seconds": 4.26,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/focus-review.log",
+    "evidence_output": "focus-review.txt"
+  },
+  {
+    "name": "deploy-settings-check",
+    "command": [
+      "env",
+      "DJANGO_ENV=production",
+      "DJANGO_SECRET_KEY=<synthetic-production-fixture>",
+      "DJANGO_ALLOWED_HOSTS=audit.example",
+      "REDIS_URL=redis://127.0.0.1:6399/1",
+      "FRONTEND_PASSWORD_RESET_URL=https://audit.example/reset-password",
+      "DJANGO_EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend",
+      "EMAIL_HOST=smtp.example",
+      ".venv/bin/python",
+      "manage.py",
+      "check",
+      "--deploy",
+      "--fail-level",
+      "WARNING"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 2.08,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/deploy-settings-check.log",
+    "evidence_output": "deploy-settings-check.txt"
+  },
+  {
+    "name": "synthetic-restore",
+    "command": [
+      ".venv/bin/python",
+      "/tmp/fracxion-enterprise-audit-20261014/restore_probe.py"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 0.96,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/synthetic-restore.log",
+    "evidence_output": "synthetic-restore.txt"
+  },
+  {
+    "name": "applied-migrations",
+    "command": [
+      "env",
+      "DJANGO_SETTINGS_MODULE=config.e2e_settings",
+      ".venv/bin/python",
+      "manage.py",
+      "migrate",
+      "--check"
+    ],
+    "cwd": "/tmp/fracxion-enterprise-audit-20261014/repo/backend",
+    "exit_code": 0,
+    "seconds": 1.23,
+    "log": "/tmp/fracxion-enterprise-audit-20261014/evidence/applied-migrations.log",
+    "evidence_output": "applied-migrations.txt"
+  }
+]

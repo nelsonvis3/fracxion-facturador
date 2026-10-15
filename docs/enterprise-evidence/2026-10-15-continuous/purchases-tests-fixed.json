@@ -1,0 +1,15 @@
+{
+  "name": "purchases-tests-fixed",
+  "command": [
+    ".venv/bin/python",
+    "manage.py",
+    "test",
+    "operations.test_purchases",
+    "operations.test_expenses",
+    "config.test_observability",
+    "--noinput"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 16.03
+}

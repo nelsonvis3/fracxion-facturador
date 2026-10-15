@@ -1,0 +1,11 @@
+{
+  "name": "current-coverage",
+  "command": [
+    ".venv/bin/coverage",
+    "report",
+    "--fail-under=85"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 1.25
+}

@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useState, type FormEvent } from "react";
+import { useCallback, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { invoiceApi, money, paymentApi, type Invoice, type PaymentMethod } from "@/lib/business-api";
 import { useTenant } from "./tenant-workspace";
@@ -10,6 +10,7 @@ const methods: Record<PaymentMethod, string> = { cash: "Efectivo", bank_transfer
 
 export function PaymentForm({ invoice: initial, onClose, onSaved }: { invoice?: Invoice; onClose: () => void; onSaved: () => void }) {
   const tenant = useTenant();
+  const requestKey = useRef<string | null>(null);
   const [invoice, setInvoice] = useState<Invoice | null>(initial ?? null);
   const [method, setMethod] = useState<PaymentMethod>("cash");
   const [amount, setAmount] = useState("");
@@ -22,8 +23,9 @@ export function PaymentForm({ invoice: initial, onClose, onSaved }: { invoice?: 
   async function save(event: FormEvent) {
     event.preventDefault(); if (busy || !invoice) return;
     setBusy(true); setError("");
+    requestKey.current ??= crypto.randomUUID();
     try {
-      await paymentApi.create(tenant.id, { invoice: invoice.id, method, amount, external_reference: reference.trim(), notes, ...(receivedAt ? { received_at: new Date(receivedAt).toISOString() } : {}) });
+      await paymentApi.create(tenant.id, { invoice: invoice.id, method, amount, external_reference: reference.trim(), notes, ...(receivedAt ? { received_at: new Date(receivedAt).toISOString() } : {}) }, requestKey.current);
       onSaved(); onClose();
     } catch (err) { setError(errorMessage(err)); }
     finally { setBusy(false); }

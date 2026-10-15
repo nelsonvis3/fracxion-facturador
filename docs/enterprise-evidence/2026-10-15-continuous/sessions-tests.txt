@@ -1,0 +1,18 @@
+Creating test database for alias 'default'...
+....F...
+======================================================================
+FAIL: test_inventory_is_private_and_never_serializes_session_credentials (accounts.test_sessions.SessionControlTests.test_inventory_is_private_and_never_serializes_session_credentials)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/nelson/Proyectos/facturador-saas-api/backend/accounts/test_sessions.py", line 46, in test_inventory_is_private_and_never_serializes_session_credentials
+    self.assertEqual(self.client.get("/api/auth/sessions/").json()["count"], 1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.328s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...
+Found 8 test(s).
+System check identified no issues (0 silenced).

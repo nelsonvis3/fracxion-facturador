@@ -38,11 +38,10 @@ Desde la raíz, crear la base E2E una vez:
 docker exec facturador-tests createdb -U postgres test_facturador_e2e
 ```
 
-Desde `backend/`, preparar las cuentas y arrancar la API:
+Desde `backend/`, preparar las cuentas sintéticas (el runner inicia su propia API):
 
 ```sh
 env DJANGO_SETTINGS_MODULE=config.e2e_settings DB_NAME=test_facturador_e2e DB_USER=postgres DB_PASSWORD=synthetic-test-only DB_HOST=127.0.0.1 DB_PORT=55433 .venv/bin/python scripts/seed_e2e.py
-env DB_NAME=test_facturador_e2e DB_USER=postgres DB_PASSWORD=synthetic-test-only DB_HOST=127.0.0.1 DB_PORT=55433 .venv/bin/python manage.py runserver 127.0.0.1:8001 --settings=config.e2e_settings --noreload
 ```
 
 Desde `frontend/`, en otra terminal:
@@ -57,11 +56,13 @@ env NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8001 npm run build
 env PORT=3010 HOSTNAME=127.0.0.1 npm run start
 ```
 
-Con ambos servidores disponibles, ejecutar desde una tercera terminal en `frontend/`:
+Con el frontend disponible en 3010 y el puerto 8001 libre, ejecutar desde otra terminal en `frontend/`, usando las mismas variables de conexión a la base sintética:
 
 ```sh
-npm run test:e2e
+env DB_NAME=test_facturador_e2e DB_USER=postgres DB_PASSWORD=synthetic-test-only DB_HOST=127.0.0.1 DB_PORT=55433 npm run test:e2e
 ```
+
+El runner crea y cierra una API exclusiva por archivo para mantener los límites de autenticación reales. Rechaza un puerto 8001 ocupado; nunca detiene servidores ajenos. Cada ejecución conserva logs/capturas en un directorio temporal `fracxion-e2e-*`. No modifica capturas versionadas de documentación. Reset e invitación usan tokens de un solo uso: volver a ejecutar el seed antes de repetir sus pruebas. `e2e/reports.spec.ts` ejecuta un worker real en proceso separado contra la base E2E.
 
 Si el navegador se instala en un directorio temporal, utilizar el mismo `PLAYWRIGHT_BROWSERS_PATH` en instalación y ejecución; la revisión local usó `/tmp/facturador-playwright`. Por ejemplo: `PLAYWRIGHT_BROWSERS_PATH=/tmp/facturador-playwright npx playwright install chromium` y `PLAYWRIGHT_BROWSERS_PATH=/tmp/facturador-playwright npm run test:e2e`.
 
@@ -109,3 +110,7 @@ el Chromium instalado por Playwright, como en CI.
 `.github/workflows/ci.yml` ejecuta dos jobs con PostgreSQL: backend y frontend/E2E. El umbral de cobertura es 85%. La auditoría de npm de producción es obligatoria; los avisos de desarrollo se documentan en `AUDIT.md`.
 
 Estas comprobaciones no sustituyen pruebas de carga, SMTP real, backups externos ni aceptación por usuarios de negocio. Al finalizar, detener los servidores temporales. El contenedor `facturador-tests` puede detenerse con `docker stop facturador-tests`; conservar o eliminar sus datos según se necesiten nuevas ejecuciones.
+
+## Ampliación empresarial continua
+
+Los recorridos actuales suman 52 escenarios en 17 archivos e incluyen compras/recepciones, gastos, analítica, exportaciones/workers, equipo/configuración, ataques locales y seguridad de cuenta/correo. Los resultados realmente ejecutados, interrupciones y repeticiones se registran en `ENTERPRISE_TESTING.md`; este número es inventario de escenarios y no afirma aprobación de una ejecución por sí solo. Si el entorno limita la duración de un proceso, pasar archivos concretos al arnés (`npm run test:e2e -- e2e/security.spec.ts`) y conservar la evidencia de todos. No bajar límites de seguridad ni cobertura para completar la ejecución.

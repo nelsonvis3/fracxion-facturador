@@ -1,0 +1,12 @@
+{
+  "name": "reset-fragment-format",
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "accounts/password_reset.py",
+    "accounts/tests.py"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 0.01
+}

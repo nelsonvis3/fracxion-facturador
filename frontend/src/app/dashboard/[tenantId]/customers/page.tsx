@@ -412,7 +412,7 @@ const documentNumber = form.document_number.trim();
               <div className="relative min-w-0 flex-1">
                 <Search
                   size={18}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500"
                 />
 
                 <input
@@ -551,7 +551,7 @@ const documentNumber = form.document_number.trim();
                             </p>
                           )}
 
-                          <p className="mt-1 text-xs text-slate-400">
+                          <p className="mt-1 text-xs text-slate-500">
                             {customer.customer_type === "company"
                               ? "Empresa"
                               : "Persona física"}
@@ -567,7 +567,7 @@ const documentNumber = form.document_number.trim();
                               {customer.document_number}
                             </>
                           ) : (
-                            <span className="text-slate-400">
+                            <span className="text-slate-500">
                               Sin documento
                             </span>
                           )}
@@ -689,7 +689,7 @@ const documentNumber = form.document_number.trim();
           )}
         </section>
 
-        <p className="mt-4 text-xs text-slate-400">
+        <p className="mt-4 text-xs text-slate-500">
           Los clientes pertenecen a esta empresa. Su historial se conserva
           cuando se desactivan.
         </p>

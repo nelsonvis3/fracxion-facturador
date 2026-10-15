@@ -38,6 +38,10 @@ class InvoiceDraftCreateSerializer(serializers.Serializer):
     """
 
     customer = serializers.UUIDField()
+    due_date = serializers.DateField(required=False, allow_null=True)
+    payment_terms_days = serializers.IntegerField(
+        required=False, allow_null=True, min_value=0, max_value=3650
+    )
 
     currency = serializers.CharField(
         max_length=3,
@@ -46,6 +50,7 @@ class InvoiceDraftCreateSerializer(serializers.Serializer):
     notes = serializers.CharField(
         required=False,
         allow_blank=True,
+        max_length=10000,
     )
 
     lines = InvoiceLineInputSerializer(
@@ -165,6 +170,27 @@ class InvoiceReadSerializer(serializers.ModelSerializer):
     )
     balance = serializers.SerializerMethodField()
     paid_total = serializers.SerializerMethodField()
+    receivable_status = serializers.SerializerMethodField()
+    days_overdue = serializers.SerializerMethodField()
+
+    def get_receivable_status(self, instance) -> str:
+        from .receivables import receivable_status
+
+        return receivable_status(
+            instance, Decimal(self.get_balance(instance)), self.context.get("business_today")
+        )
+
+    def get_days_overdue(self, instance) -> int | None:
+        from .receivables import business_today
+
+        if instance.status != "issued" or instance.due_date is None:
+            return None
+        today = self.context.get("business_today") or business_today(instance.tenant_id)
+        return (
+            max((today - instance.due_date).days, 0)
+            if Decimal(self.get_balance(instance)) > 0
+            else 0
+        )
 
     def get_balance(self, instance) -> str:
         if not hasattr(instance, "_balance"):
@@ -207,6 +233,12 @@ class InvoiceReadSerializer(serializers.ModelSerializer):
             "paid_total",
             "balance",
             "notes",
+            "due_date",
+            "payment_terms_days",
+            "issuer_snapshot",
+            "footer_snapshot",
+            "receivable_status",
+            "days_overdue",
             "issued_at",
             "created_at",
             "updated_at",
@@ -245,6 +277,7 @@ class PaymentCreateSerializer(serializers.Serializer):
     notes = serializers.CharField(
         required=False,
         allow_blank=True,
+        max_length=10000,
     )
 
     def validate_invoice(self, value):

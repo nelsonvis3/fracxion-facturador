@@ -15,3 +15,4 @@ export const test = base.extend<{ browserErrors: void }>({
 });
 
 export { expect } from "@playwright/test";
+export { artifactPath } from "./artifacts";

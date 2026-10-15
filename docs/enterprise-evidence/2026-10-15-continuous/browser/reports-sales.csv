@@ -1,0 +1,12 @@
+﻿Informe,Resumen de ventas internas
+Empresa,Empresa 82b10266-f515-48dd-8c07-24dc6fa1a615
+ID empresa,4bce9a63-4c16-4c73-b40e-576dd6373352
+Desde,2026-09-15
+Hasta,2026-10-15
+Moneda,ARS
+Zona horaria,America/Argentina/Cordoba
+Generado,2026-10-15T14:56:26.074391-03:00
+Criterio,Datos actuales; saldos de facturas emitidas en el período. Comprobantes internos sin autorización fiscal de ARCA.
+
+Número interno,Cliente histórico,Fecha emisión,Vencimiento,Subtotal,Impuestos,Total,Cobrado efectivo,Saldo actual
+1,Cliente de informes,2026-10-15T14:56:24.547005-03:00,,100.00,0.00,100.00,0.00,100.00

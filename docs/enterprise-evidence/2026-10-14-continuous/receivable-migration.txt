@@ -1,0 +1,6 @@
+Migrations for 'billing':
+  billing/migrations/0004_invoice_due_date_invoice_footer_snapshot_and_more.py
+    + Add field due_date to invoice
+    + Add field footer_snapshot to invoice
+    + Add field issuer_snapshot to invoice
+    + Add field payment_terms_days to invoice

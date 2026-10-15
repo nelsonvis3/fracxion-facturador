@@ -1,0 +1,11 @@
+{
+  "name": "final-typecheck",
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+  "exit_code": 0,
+  "seconds": 7.28
+}

@@ -151,7 +151,7 @@ export async function apiRequest<T>(
   }
 
   if (!response.ok) {
-    if (response.status === 401 && typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard")) {
+    if (response.status === 401 && typeof window !== "undefined" && (window.location.pathname.startsWith("/dashboard") || window.location.pathname.startsWith("/account/"))) {
       redirectToLogin();
     }
     throw new ApiError(
@@ -165,7 +165,25 @@ export async function apiRequest<T>(
     throw new ApiError("El servidor devolvió una respuesta inesperada.", 502, null);
   }
 
+  if (!safeMethods.includes(method) && path.startsWith("/api/tenants/") && typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("fracxion:business-change", { detail: { tenantId: path.split("/")[3] } }));
+  }
   return body as T;
+}
+
+export async function downloadFile(path: string, filename: string) {
+  const response = await fetch(`${API_BASE_URL}${path}`, { credentials: "include", cache: "no-store" });
+  if (!response.ok) {
+    const body: unknown = await response.json().catch(() => null);
+    if (response.status === 401) redirectToLogin();
+    throw new ApiError(readErrorMessage(body), response.status, body);
+  }
+  const file = await response.blob();
+  const url = URL.createObjectURL(file);
+  const link = document.createElement("a"); link.href = url; link.download = filename;
+  document.body.append(link); link.click(); link.remove();
+  // Keep the URL alive until the browser has consumed the download.
+  window.setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 
 export const authApi = {

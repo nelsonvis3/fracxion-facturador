@@ -1,0 +1,14 @@
+{
+  "name": "filter-privacy-reproduction",
+  "command": [
+    ".venv/bin/python",
+    "manage.py",
+    "test",
+    "config.test_filter_privacy",
+    "--settings=config.test_settings",
+    "--noinput"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 1,
+  "seconds": 5.43
+}

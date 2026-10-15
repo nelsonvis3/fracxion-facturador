@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { artifactPath, expect, test } from "./fixtures";
 import type { HyperframesPlayer } from "@hyperframes/player";
 import type { Page } from "@playwright/test";
 
@@ -33,7 +33,7 @@ test("el primer render ya ocupa todo el viewport mientras JavaScript sigue pendi
   await expect(page.locator(".login-experience")).toHaveAttribute("data-intro-state", "pending");
   await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).overflow)).toBe("hidden");
   expect(await page.evaluate(() => document.documentElement.clientWidth)).toBe(1440);
-  await page.screenshot({ path: "/tmp/fracxion-intro-viewport/pending-before-hydration.png" });
+  await page.screenshot({ path: artifactPath("fracxion-intro-viewport/pending-before-hydration.png") });
   release();
   await expect(page.locator(".login-experience")).toHaveAttribute("data-intro-state", "playing");
   await page.getByRole("button", { name: "Omitir introducción" }).click();
@@ -52,7 +52,7 @@ for (const viewport of [{ width: 1440, height: 600 }, { width: 390, height: 600 
     expect(await page.evaluate(() => document.documentElement.clientWidth)).toBe(viewport.width);
     await page.mouse.wheel(0, 200);
     expect(await page.evaluate(() => scrollY)).toBe(0);
-    await page.screenshot({ path: `/tmp/fracxion-intro-viewport/loading-${viewport.width}.png` });
+    await page.screenshot({ path: artifactPath(`fracxion-intro-viewport/loading-${viewport.width}.png`) });
     release();
     await expect(page.locator(".login-experience")).toHaveAttribute("data-intro-state", "playing");
     const player = page.locator("hyperframes-player");
@@ -68,10 +68,10 @@ for (const viewport of [{ width: 1440, height: 600 }, { width: 390, height: 600 
     expect(bounds.height).toBeCloseTo(viewport.height, 1);
     expect(bounds.clientWidth).toBe(viewport.width);
     expect(bounds.border).toBe("0px");
-    await page.screenshot({ path: `/tmp/fracxion-intro-viewport/playing-${viewport.width}.png` });
+    await page.screenshot({ path: artifactPath(`fracxion-intro-viewport/playing-${viewport.width}.png`) });
     await player.evaluate(element => (element as HyperframesPlayer).play());
     await expectScrollReleased(page);
-    await page.screenshot({ path: `/tmp/fracxion-intro-viewport/login-scroll-${viewport.width}.png` });
+    await page.screenshot({ path: artifactPath(`fracxion-intro-viewport/login-scroll-${viewport.width}.png`) });
   });
 }
 

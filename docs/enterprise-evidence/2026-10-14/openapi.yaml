@@ -1,0 +1,2099 @@
+openapi: 3.0.3
+info:
+  title: Facturador SaaS API
+  version: 0.1.0
+  description: API multi-tenant de facturación, gestión empresarial y auditoría.
+paths:
+  /api/auth/tenants/:
+    get:
+      operationId: auth_tenants_retrieve
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantList'
+          description: ''
+  /api/reference/countries/:
+    get:
+      operationId: reference_countries_retrieve
+      description: Devuelve los países reconocidos por el catálogo ISO.
+      tags:
+      - reference
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferenceList'
+          description: ''
+  /api/reference/countries/{country_code}/subdivisions/:
+    get:
+      operationId: reference_countries_subdivisions_retrieve
+      description: Devuelve las subdivisiones registradas para un país ISO.
+      parameters:
+      - in: path
+        name: country_code
+        schema:
+          type: string
+        required: true
+      tags:
+      - reference
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferenceList'
+          description: ''
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/tenants/{tenant_id}/audit-events/:
+    get:
+      operationId: tenants_audit_events_list
+      description: |-
+        API de consulta del historial de auditoría.
+
+        Solo permite listar y consultar eventos de la empresa
+        autorizada. No ofrece creación, modificación ni eliminación.
+      parameters:
+      - in: query
+        name: action
+        schema:
+          type: string
+          enum:
+          - create
+          - deactivate
+          - delete
+          - export
+          - issue
+          - login
+          - logout
+          - payment
+          - permission_denied
+          - system
+          - update
+        description: |-
+          * `create` - Creación
+          * `update` - Modificación
+          * `deactivate` - Desactivación
+          * `delete` - Eliminación
+          * `login` - Inicio de sesión
+          * `logout` - Cierre de sesión
+          * `permission_denied` - Acceso denegado
+          * `export` - Exportación
+          * `issue` - Emisión
+          * `payment` - Pago
+          * `system` - Sistema
+      - in: query
+        name: entity_id
+        schema:
+          type: string
+      - in: query
+        name: entity_type
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuditEventList'
+          description: ''
+  /api/tenants/{tenant_id}/audit-events/{id}/:
+    get:
+      operationId: tenants_audit_events_retrieve
+      description: |-
+        API de consulta del historial de auditoría.
+
+        Solo permite listar y consultar eventos de la empresa
+        autorizada. No ofrece creación, modificación ni eliminación.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este evento de auditoría.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditEvent'
+          description: ''
+  /api/tenants/{tenant_id}/customers/:
+    get:
+      operationId: tenants_customers_list
+      description: API de clientes protegida por empresa y membresía.
+      parameters:
+      - in: query
+        name: customer_type
+        schema:
+          type: string
+          enum:
+          - company
+          - individual
+        description: |-
+          * `individual` - Persona física
+          * `company` - Empresa
+      - in: query
+        name: document_type
+        schema:
+          type: string
+          enum:
+          - cuil
+          - cuit
+          - dni
+          - other
+        description: |-
+          * `cuit` - CUIT
+          * `cuil` - CUIL
+          * `dni` - DNI
+          * `other` - Otro
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - in: query
+        name: province
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCustomerList'
+          description: ''
+    post:
+      operationId: tenants_customers_create
+      description: API de clientes protegida por empresa y membresía.
+      parameters:
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: ''
+  /api/tenants/{tenant_id}/customers/{id}/:
+    get:
+      operationId: tenants_customers_retrieve
+      description: API de clientes protegida por empresa y membresía.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este cliente.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: ''
+    put:
+      operationId: tenants_customers_update
+      description: API de clientes protegida por empresa y membresía.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este cliente.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: ''
+    patch:
+      operationId: tenants_customers_partial_update
+      description: API de clientes protegida por empresa y membresía.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este cliente.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomer'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: ''
+  /api/tenants/{tenant_id}/customers/{id}/deactivate/:
+    post:
+      operationId: tenants_customers_deactivate_create
+      description: Desactiva un cliente conservando su historial.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este cliente.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: ''
+  /api/tenants/{tenant_id}/invoices/:
+    get:
+      operationId: tenants_invoices_list
+      description: |-
+        API de facturación interna.
+
+        Permite listar, crear borradores, consultar y emitir
+        facturas dentro de la empresa autorizada.
+
+        No permite modificar ni eliminar documentos mediante
+        los endpoints genéricos.
+      parameters:
+      - in: query
+        name: currency
+        schema:
+          type: string
+      - in: query
+        name: document_kind
+        schema:
+          type: string
+          enum:
+          - credit_note
+          - debit_note
+          - invoice
+        description: |-
+          * `invoice` - Factura interna
+          * `credit_note` - Nota de crédito
+          * `debit_note` - Nota de débito
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - draft
+          - issued
+        description: |-
+          * `draft` - Borrador
+          * `issued` - Emitido
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInvoiceReadList'
+          description: ''
+    post:
+      operationId: tenants_invoices_create
+      description: |-
+        Valida la entrada y delega la creación al servicio
+        transaccional. Los importes se calculan en el backend.
+      parameters:
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceDraftCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceRead'
+          description: ''
+  /api/tenants/{tenant_id}/invoices/{id}/:
+    get:
+      operationId: tenants_invoices_retrieve
+      description: |-
+        API de facturación interna.
+
+        Permite listar, crear borradores, consultar y emitir
+        facturas dentro de la empresa autorizada.
+
+        No permite modificar ni eliminar documentos mediante
+        los endpoints genéricos.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este documento de facturación.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceRead'
+          description: ''
+  /api/tenants/{tenant_id}/invoices/{id}/issue/:
+    post:
+      operationId: tenants_invoices_issue_create
+      description: |-
+        Emite una factura interna mediante el servicio
+        que comprueba permisos, consistencia y numeración.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este documento de facturación.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceRead'
+          description: ''
+  /api/tenants/{tenant_id}/payments/:
+    get:
+      operationId: tenants_payments_list
+      description: |-
+        API para consultar pagos, registrar cobros y revertirlos.
+
+        Todos los registros se limitan a la empresa autorizada.
+      parameters:
+      - in: query
+        name: invoice
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: method
+        schema:
+          type: string
+          enum:
+          - bank_transfer
+          - cash
+          - check
+          - credit_card
+          - debit_card
+          - digital_wallet
+          - other
+        description: |-
+          * `cash` - Efectivo
+          * `bank_transfer` - Transferencia bancaria
+          * `debit_card` - Tarjeta de débito
+          * `credit_card` - Tarjeta de crédito
+          * `digital_wallet` - Billetera virtual
+          * `check` - Cheque
+          * `other` - Otro
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPaymentReadList'
+          description: ''
+    post:
+      operationId: tenants_payments_create
+      description: Registra un pago mediante el servicio transaccional.
+      parameters:
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentRead'
+          description: ''
+  /api/tenants/{tenant_id}/payments/{id}/:
+    get:
+      operationId: tenants_payments_retrieve
+      description: |-
+        API para consultar pagos, registrar cobros y revertirlos.
+
+        Todos los registros se limitan a la empresa autorizada.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este pago.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentRead'
+          description: ''
+  /api/tenants/{tenant_id}/payments/{id}/reverse/:
+    post:
+      operationId: tenants_payments_reverse_create
+      description: Revierte un pago sin eliminar el registro original.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este pago.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentReversalCreate'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReversalRead'
+          description: ''
+  /api/tenants/{tenant_id}/products/:
+    get:
+      operationId: tenants_products_list
+      description: |-
+        API de productos y servicios con aislamiento multi-tenant
+        y auditoría transaccional.
+      parameters:
+      - in: query
+        name: currency
+        schema:
+          type: string
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - in: query
+        name: product_type
+        schema:
+          type: string
+          enum:
+          - product
+          - service
+        description: |-
+          * `product` - Producto
+          * `service` - Servicio
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: query
+        name: unit
+        schema:
+          type: string
+          enum:
+          - hour
+          - kg
+          - liter
+          - meter
+          - pack
+          - unit
+        description: |-
+          * `unit` - Unidad
+          * `hour` - Hora
+          * `kg` - Kilogramo
+          * `liter` - Litro
+          * `meter` - Metro
+          * `pack` - Paquete
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProductList'
+          description: ''
+    post:
+      operationId: tenants_products_create
+      description: |-
+        API de productos y servicios con aislamiento multi-tenant
+        y auditoría transaccional.
+      parameters:
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+  /api/tenants/{tenant_id}/products/{id}/:
+    get:
+      operationId: tenants_products_retrieve
+      description: |-
+        API de productos y servicios con aislamiento multi-tenant
+        y auditoría transaccional.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este producto.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+    put:
+      operationId: tenants_products_update
+      description: |-
+        API de productos y servicios con aislamiento multi-tenant
+        y auditoría transaccional.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este producto.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+    patch:
+      operationId: tenants_products_partial_update
+      description: |-
+        API de productos y servicios con aislamiento multi-tenant
+        y auditoría transaccional.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este producto.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProduct'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+  /api/tenants/{tenant_id}/products/{id}/deactivate/:
+    post:
+      operationId: tenants_products_deactivate_create
+      description: Desactiva un producto sin eliminar su historial.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este producto.
+        required: true
+      - in: path
+        name: tenant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - tenants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+components:
+  schemas:
+    ActionEnum:
+      enum:
+      - create
+      - update
+      - deactivate
+      - delete
+      - login
+      - logout
+      - permission_denied
+      - export
+      - issue
+      - payment
+      - system
+      type: string
+      description: |-
+        * `create` - Creación
+        * `update` - Modificación
+        * `deactivate` - Desactivación
+        * `delete` - Eliminación
+        * `login` - Inicio de sesión
+        * `logout` - Cierre de sesión
+        * `permission_denied` - Acceso denegado
+        * `export` - Exportación
+        * `issue` - Emisión
+        * `payment` - Pago
+        * `system` - Sistema
+    AuditEvent:
+      type: object
+      description: Representación de solo lectura de un evento de auditoría.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        tenant:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        actor:
+          type: string
+          readOnly: true
+          nullable: true
+        action:
+          allOf:
+          - $ref: '#/components/schemas/ActionEnum'
+          readOnly: true
+        action_label:
+          type: string
+          readOnly: true
+        entity_type:
+          type: string
+          readOnly: true
+        entity_id:
+          type: string
+          readOnly: true
+        changes:
+          readOnly: true
+        metadata:
+          readOnly: true
+        request_id:
+          type: string
+          readOnly: true
+        occurred_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - action
+      - action_label
+      - actor
+      - changes
+      - entity_id
+      - entity_type
+      - id
+      - metadata
+      - occurred_at
+      - request_id
+      - tenant
+    BlankEnum:
+      enum:
+      - ''
+    Customer:
+      type: object
+      description: |-
+        Serializa clientes y valida sus datos.
+
+        La empresa y el creador son de solo lectura:
+        el servidor determina sus valores.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        tenant:
+          type: string
+          format: uuid
+          readOnly: true
+        customer_type:
+          $ref: '#/components/schemas/CustomerTypeEnum'
+        name:
+          type: string
+          maxLength: 150
+        legal_name:
+          type: string
+          maxLength: 200
+        document_type:
+          default: ''
+          oneOf:
+          - $ref: '#/components/schemas/DocumentTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        document_number:
+          type: string
+          nullable: true
+          maxLength: 30
+        email:
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        phone:
+          type: string
+          maxLength: 32
+        address:
+          type: string
+          maxLength: 255
+        city:
+          type: string
+          maxLength: 120
+        province:
+          type: string
+          maxLength: 120
+        postal_code:
+          type: string
+          maxLength: 20
+        country_code:
+          type: string
+          maxLength: 2
+        notes:
+          type: string
+        is_active:
+          type: boolean
+        created_by:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - created_by
+      - id
+      - name
+      - tenant
+      - updated_at
+    CustomerTypeEnum:
+      enum:
+      - individual
+      - company
+      type: string
+      description: |-
+        * `individual` - Persona física
+        * `company` - Empresa
+    DocumentKindEnum:
+      enum:
+      - invoice
+      - credit_note
+      - debit_note
+      type: string
+      description: |-
+        * `invoice` - Factura interna
+        * `credit_note` - Nota de crédito
+        * `debit_note` - Nota de débito
+    DocumentTypeEnum:
+      enum:
+      - cuit
+      - cuil
+      - dni
+      - other
+      type: string
+      description: |-
+        * `cuit` - CUIT
+        * `cuil` - CUIL
+        * `dni` - DNI
+        * `other` - Otro
+    InvoiceDraftCreate:
+      type: object
+      description: |-
+        Valida los datos para crear un borrador de factura interna.
+
+        El cliente y los productos deben pertenecer al tenant
+        autorizado. Los precios e impuestos nunca los decide el cliente.
+      properties:
+        customer:
+          type: string
+          format: uuid
+        currency:
+          type: string
+          maxLength: 3
+        notes:
+          type: string
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceLineInput'
+      required:
+      - currency
+      - customer
+      - lines
+    InvoiceLineInput:
+      type: object
+      description: Datos permitidos para cada línea al crear un borrador.
+      properties:
+        product:
+          type: string
+          format: uuid
+        quantity:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,9}(?:\.\d{0,3})?$
+      required:
+      - product
+      - quantity
+    InvoiceLineRead:
+      type: object
+      description: Representación de solo lectura de una línea histórica.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        position:
+          type: integer
+          readOnly: true
+        product:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        description_snapshot:
+          type: string
+          readOnly: true
+        sku_snapshot:
+          type: string
+          readOnly: true
+        unit_snapshot:
+          type: string
+          readOnly: true
+        quantity:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,9}(?:\.\d{0,3})?$
+          readOnly: true
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,4})?$
+          readOnly: true
+        tax_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          readOnly: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,2})?$
+          readOnly: true
+        tax_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,2})?$
+          readOnly: true
+        total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,2})?$
+          readOnly: true
+      required:
+      - description_snapshot
+      - id
+      - position
+      - product
+      - quantity
+      - sku_snapshot
+      - subtotal
+      - tax_amount
+      - tax_rate
+      - total
+      - unit_price
+      - unit_snapshot
+    InvoiceRead:
+      type: object
+      description: Representación de solo lectura de un documento.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        tenant:
+          type: string
+          format: uuid
+          readOnly: true
+        customer:
+          type: string
+          format: uuid
+          readOnly: true
+        created_by:
+          type: string
+          readOnly: true
+        issued_by:
+          type: string
+          readOnly: true
+        document_kind:
+          allOf:
+          - $ref: '#/components/schemas/DocumentKindEnum'
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          readOnly: true
+        internal_number:
+          type: integer
+          readOnly: true
+          nullable: true
+        currency:
+          type: string
+          readOnly: true
+        customer_name_snapshot:
+          type: string
+          readOnly: true
+        customer_legal_name_snapshot:
+          type: string
+          readOnly: true
+        customer_document_type_snapshot:
+          type: string
+          readOnly: true
+        customer_document_number_snapshot:
+          type: string
+          readOnly: true
+        customer_address_snapshot:
+          type: string
+          readOnly: true
+        customer_city_snapshot:
+          type: string
+          readOnly: true
+        customer_province_snapshot:
+          type: string
+          readOnly: true
+        customer_email_snapshot:
+          type: string
+          format: email
+          readOnly: true
+        customer_country_code_snapshot:
+          type: string
+          readOnly: true
+        customer_postal_code_snapshot:
+          type: string
+          readOnly: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,2})?$
+          readOnly: true
+        tax_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,2})?$
+          readOnly: true
+        total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,2})?$
+          readOnly: true
+        paid_total:
+          type: string
+          readOnly: true
+        balance:
+          type: string
+          readOnly: true
+        notes:
+          type: string
+          readOnly: true
+        issued_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceLineRead'
+          readOnly: true
+      required:
+      - balance
+      - created_at
+      - created_by
+      - currency
+      - customer
+      - customer_address_snapshot
+      - customer_city_snapshot
+      - customer_country_code_snapshot
+      - customer_document_number_snapshot
+      - customer_document_type_snapshot
+      - customer_email_snapshot
+      - customer_legal_name_snapshot
+      - customer_name_snapshot
+      - customer_postal_code_snapshot
+      - customer_province_snapshot
+      - document_kind
+      - id
+      - internal_number
+      - issued_at
+      - issued_by
+      - lines
+      - notes
+      - paid_total
+      - status
+      - subtotal
+      - tax_total
+      - tenant
+      - total
+      - updated_at
+    MethodEnum:
+      enum:
+      - cash
+      - bank_transfer
+      - debit_card
+      - credit_card
+      - digital_wallet
+      - check
+      - other
+      type: string
+      description: |-
+        * `cash` - Efectivo
+        * `bank_transfer` - Transferencia bancaria
+        * `debit_card` - Tarjeta de débito
+        * `credit_card` - Tarjeta de crédito
+        * `digital_wallet` - Billetera virtual
+        * `check` - Cheque
+        * `other` - Otro
+    PaginatedAuditEventList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditEvent'
+    PaginatedCustomerList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+    PaginatedInvoiceReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceRead'
+    PaginatedPaymentReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentRead'
+    PaginatedProductList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+    PatchedCustomer:
+      type: object
+      description: |-
+        Serializa clientes y valida sus datos.
+
+        La empresa y el creador son de solo lectura:
+        el servidor determina sus valores.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        tenant:
+          type: string
+          format: uuid
+          readOnly: true
+        customer_type:
+          $ref: '#/components/schemas/CustomerTypeEnum'
+        name:
+          type: string
+          maxLength: 150
+        legal_name:
+          type: string
+          maxLength: 200
+        document_type:
+          default: ''
+          oneOf:
+          - $ref: '#/components/schemas/DocumentTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        document_number:
+          type: string
+          nullable: true
+          maxLength: 30
+        email:
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        phone:
+          type: string
+          maxLength: 32
+        address:
+          type: string
+          maxLength: 255
+        city:
+          type: string
+          maxLength: 120
+        province:
+          type: string
+          maxLength: 120
+        postal_code:
+          type: string
+          maxLength: 20
+        country_code:
+          type: string
+          maxLength: 2
+        notes:
+          type: string
+        is_active:
+          type: boolean
+        created_by:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedProduct:
+      type: object
+      description: Valida y serializa productos y servicios.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        tenant:
+          type: string
+          format: uuid
+          readOnly: true
+        sku:
+          type: string
+          nullable: true
+          maxLength: 64
+        name:
+          type: string
+          maxLength: 180
+        description:
+          type: string
+        product_type:
+          $ref: '#/components/schemas/ProductTypeEnum'
+        unit:
+          $ref: '#/components/schemas/UnitEnum'
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        currency:
+          type: string
+          maxLength: 3
+        tax_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PaymentCreate:
+      type: object
+      description: Datos permitidos para registrar un pago.
+      properties:
+        invoice:
+          type: string
+          format: uuid
+        method:
+          $ref: '#/components/schemas/MethodEnum'
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,2})?$
+        external_reference:
+          type: string
+          nullable: true
+          maxLength: 120
+        received_at:
+          type: string
+          format: date-time
+        notes:
+          type: string
+      required:
+      - amount
+      - invoice
+      - method
+    PaymentRead:
+      type: object
+      description: Representación de solo lectura de un pago.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        tenant:
+          type: string
+          format: uuid
+          readOnly: true
+        invoice:
+          type: string
+          format: uuid
+          readOnly: true
+        recorded_by:
+          type: string
+          readOnly: true
+          nullable: true
+        method:
+          allOf:
+          - $ref: '#/components/schemas/MethodEnum'
+          readOnly: true
+        method_label:
+          type: string
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        invoice_number:
+          type: integer
+          readOnly: true
+        customer_name:
+          type: string
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,2})?$
+          readOnly: true
+        external_reference:
+          type: string
+          readOnly: true
+          nullable: true
+        received_at:
+          type: string
+          format: date-time
+          readOnly: true
+        notes:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        reversal:
+          allOf:
+          - $ref: '#/components/schemas/PaymentReversalRead'
+          nullable: true
+          readOnly: true
+      required:
+      - amount
+      - created_at
+      - currency
+      - customer_name
+      - external_reference
+      - id
+      - invoice
+      - invoice_number
+      - method
+      - method_label
+      - notes
+      - received_at
+      - recorded_by
+      - reversal
+      - tenant
+    PaymentReversalCreate:
+      type: object
+      description: Datos permitidos para solicitar una reversión.
+      properties:
+        reason:
+          type: string
+          maxLength: 2000
+      required:
+      - reason
+    PaymentReversalRead:
+      type: object
+      description: Representación de solo lectura de una reversión.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        tenant:
+          type: string
+          format: uuid
+          readOnly: true
+        payment:
+          type: string
+          format: uuid
+          readOnly: true
+        reversed_by:
+          type: string
+          readOnly: true
+          nullable: true
+        reason:
+          type: string
+          readOnly: true
+        occurred_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - occurred_at
+      - payment
+      - reason
+      - reversed_by
+      - tenant
+    Product:
+      type: object
+      description: Valida y serializa productos y servicios.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        tenant:
+          type: string
+          format: uuid
+          readOnly: true
+        sku:
+          type: string
+          nullable: true
+          maxLength: 64
+        name:
+          type: string
+          maxLength: 180
+        description:
+          type: string
+        product_type:
+          $ref: '#/components/schemas/ProductTypeEnum'
+        unit:
+          $ref: '#/components/schemas/UnitEnum'
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        currency:
+          type: string
+          maxLength: 3
+        tax_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - tax_rate
+      - tenant
+      - unit_price
+      - updated_at
+    ProductTypeEnum:
+      enum:
+      - product
+      - service
+      type: string
+      description: |-
+        * `product` - Producto
+        * `service` - Servicio
+    ReferenceList:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReferenceOption'
+      required:
+      - results
+    ReferenceOption:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+      required:
+      - code
+      - name
+    RoleEnum:
+      enum:
+      - owner
+      - admin
+      - accountant
+      - sales
+      - viewer
+      type: string
+      description: |-
+        * `owner` - owner
+        * `admin` - admin
+        * `accountant` - accountant
+        * `sales` - sales
+        * `viewer` - viewer
+    StatusEnum:
+      enum:
+      - draft
+      - issued
+      type: string
+      description: |-
+        * `draft` - Borrador
+        * `issued` - Emitido
+    TenantList:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TenantOption'
+      required:
+      - results
+    TenantOption:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - id
+      - name
+      - role
+      - slug
+    UnitEnum:
+      enum:
+      - unit
+      - hour
+      - kg
+      - liter
+      - meter
+      - pack
+      type: string
+      description: |-
+        * `unit` - Unidad
+        * `hour` - Hora
+        * `kg` - Kilogramo
+        * `liter` - Litro
+        * `meter` - Metro
+        * `pack` - Paquete
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

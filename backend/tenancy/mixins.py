@@ -100,6 +100,9 @@ class TenantMutationMixin(TenantQuerySetMixin):
     def create(self, request, *args, **kwargs):
         try:
             with transaction.atomic():
+                from .services import lock_company
+
+                lock_company(self.get_authorized_tenant().pk, actor=request.user)
                 return super().create(request, *args, **kwargs)
         except IntegrityError as exc:
             self._handle_integrity_error(exc)
@@ -108,6 +111,9 @@ class TenantMutationMixin(TenantQuerySetMixin):
         # Leer y validar después de obtener el lock evita sobrescribir un PATCH concurrente.
         try:
             with transaction.atomic():
+                from .services import lock_company
+
+                lock_company(self.get_authorized_tenant().pk, actor=request.user)
                 self._lock_for_update = True
                 return super().update(request, *args, **kwargs)
         except IntegrityError as exc:

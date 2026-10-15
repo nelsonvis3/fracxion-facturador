@@ -1,0 +1,11 @@
+{
+  "name": "dependencies-node-all",
+  "command": [
+    "npm",
+    "audit",
+    "--json"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+  "exit_code": 1,
+  "seconds": 12.72
+}

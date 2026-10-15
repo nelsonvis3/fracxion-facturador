@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.db import transaction
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.cache import never_cache
@@ -16,6 +17,7 @@ from tenancy.models import Membership
 
 from .rate_limits import is_rate_limited, rate_limit_response
 from .registration import REGISTRATION_LIMIT, register_account
+from .security import security_event
 
 
 def serialize_user(user):
@@ -108,7 +110,9 @@ def login_view(request):
             status=400,
         )
 
-    if is_rate_limited(request, action="login", limit=20):
+    if is_rate_limited(request, action="login", limit=20) or is_rate_limited(
+        request, action="login-account", limit=20, identity=email.strip().lower()
+    ):
         return rate_limit_response()
 
     user = authenticate(
@@ -118,12 +122,15 @@ def login_view(request):
     )
 
     if user is None:
+        security_event(request, event="login", outcome="rejected")
         return JsonResponse(
             {"detail": "Correo electrónico o contraseña incorrectos."},
             status=401,
         )
 
-    login(request, user)
+    with transaction.atomic():
+        security_event(request, event="login", outcome="success", actor=user)
+        login(request, user)
 
     return JsonResponse(
         {
@@ -139,7 +146,12 @@ def login_view(request):
 def logout_view(request):
     """Cierra la sesión actual."""
 
-    logout(request)
+    actor = request.user if request.user.is_authenticated else None
+    try:
+        if actor:
+            security_event(request, event="logout", outcome="success", actor=actor)
+    finally:
+        logout(request)
 
     return JsonResponse(
         {

@@ -1,0 +1,253 @@
+{
+  "viewports": [
+    {
+      "width": 1440,
+      "route": "overview",
+      "document": 1440,
+      "viewport": 1440,
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "route": "/customers",
+      "document": 1440,
+      "viewport": 1440,
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "route": "/products",
+      "document": 1440,
+      "viewport": 1440,
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "route": "/invoices",
+      "document": 1440,
+      "viewport": 1440,
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "route": "/invoices/new",
+      "document": 1440,
+      "viewport": 1440,
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "route": "/payments",
+      "document": 1440,
+      "viewport": 1440,
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "route": "/audit",
+      "document": 1440,
+      "viewport": 1440,
+      "ok": true
+    },
+    {
+      "width": 768,
+      "route": "overview",
+      "document": 768,
+      "viewport": 768,
+      "ok": true
+    },
+    {
+      "width": 768,
+      "route": "/customers",
+      "document": 768,
+      "viewport": 768,
+      "ok": true
+    },
+    {
+      "width": 768,
+      "route": "/products",
+      "document": 768,
+      "viewport": 768,
+      "ok": true
+    },
+    {
+      "width": 768,
+      "route": "/invoices",
+      "document": 768,
+      "viewport": 768,
+      "ok": true
+    },
+    {
+      "width": 768,
+      "route": "/invoices/new",
+      "document": 768,
+      "viewport": 768,
+      "ok": true
+    },
+    {
+      "width": 768,
+      "route": "/payments",
+      "document": 768,
+      "viewport": 768,
+      "ok": true
+    },
+    {
+      "width": 768,
+      "route": "/audit",
+      "document": 768,
+      "viewport": 768,
+      "ok": true
+    },
+    {
+      "width": 390,
+      "route": "overview",
+      "document": 390,
+      "viewport": 390,
+      "ok": true
+    },
+    {
+      "width": 390,
+      "route": "/customers",
+      "document": 390,
+      "viewport": 390,
+      "ok": true
+    },
+    {
+      "width": 390,
+      "route": "/products",
+      "document": 390,
+      "viewport": 390,
+      "ok": true
+    },
+    {
+      "width": 390,
+      "route": "/invoices",
+      "document": 390,
+      "viewport": 390,
+      "ok": true
+    },
+    {
+      "width": 390,
+      "route": "/invoices/new",
+      "document": 390,
+      "viewport": 390,
+      "ok": true
+    },
+    {
+      "width": 390,
+      "route": "/payments",
+      "document": 390,
+      "viewport": 390,
+      "ok": true
+    },
+    {
+      "width": 390,
+      "route": "/audit",
+      "document": 390,
+      "viewport": 390,
+      "ok": true
+    }
+  ],
+  "keyboard": {
+    "modalOpensWithEnter": true,
+    "focusInitiallyInside": true,
+    "tabFocusContained": false,
+    "escapeCloses": true,
+    "focusReturnsToTrigger": false
+  },
+  "pageErrors": [],
+  "responses5xx": [],
+  "accessibility": [
+    {
+      "route": "overview",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "route": "/customers",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI",
+          "nodes": [
+            {
+              "target": [
+                ".hover\\:bg-slate-50\\/80:nth-child(1) > td:nth-child(1) > .mt-1.text-slate-400.text-xs"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.63 (foreground color: #90a1b9, background color: #ffffff, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                ".hover\\:bg-slate-50\\/80:nth-child(1) > .text-slate-600 > .text-slate-400"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.63 (foreground color: #90a1b9, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                ".hover\\:bg-slate-50\\/80:nth-child(2) > td:nth-child(1) > .mt-1.text-slate-400.text-xs"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.63 (foreground color: #90a1b9, background color: #ffffff, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                ".hover\\:bg-slate-50\\/80:nth-child(2) > .text-slate-600 > .text-slate-400"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.63 (foreground color: #90a1b9, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                ".hover\\:bg-slate-50\\/80:nth-child(3) > td:nth-child(1) > .mt-1.text-slate-400.text-xs"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.63 (foreground color: #90a1b9, background color: #ffffff, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                ".hover\\:bg-slate-50\\/80:nth-child(3) > .text-slate-600 > .text-slate-400"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.63 (foreground color: #90a1b9, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                ".mt-4"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #90a1b9, background color: #f8fafc, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ]
+        }
+      ],
+      "incomplete": []
+    },
+    {
+      "route": "/products",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "route": "/invoices",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "route": "/invoices/new",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "route": "/payments",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "route": "/audit",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "route": "products/modal-mobile",
+      "violations": [],
+      "incomplete": []
+    }
+  ]
+}

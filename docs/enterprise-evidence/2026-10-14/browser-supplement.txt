@@ -1,0 +1,49 @@
+{
+  "viewportChecks": 21,
+  "overflow": [],
+  "keyboard": {
+    "modalOpensWithEnter": true,
+    "focusInitiallyInside": true,
+    "tabFocusContained": false,
+    "escapeCloses": true,
+    "focusReturnsToTrigger": false
+  },
+  "pageErrors": [],
+  "responses5xx": [],
+  "violations": [
+    {
+      "route": "overview",
+      "violations": []
+    },
+    {
+      "route": "/customers",
+      "violations": [
+        "color-contrast"
+      ]
+    },
+    {
+      "route": "/products",
+      "violations": []
+    },
+    {
+      "route": "/invoices",
+      "violations": []
+    },
+    {
+      "route": "/invoices/new",
+      "violations": []
+    },
+    {
+      "route": "/payments",
+      "violations": []
+    },
+    {
+      "route": "/audit",
+      "violations": []
+    },
+    {
+      "route": "products/modal-mobile",
+      "violations": []
+    }
+  ]
+}

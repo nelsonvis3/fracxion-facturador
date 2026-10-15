@@ -1,0 +1,12 @@
+{
+  "name": "purchases-migrations",
+  "command": [
+    ".venv/bin/python",
+    "manage.py",
+    "makemigrations",
+    "operations"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 1.3
+}

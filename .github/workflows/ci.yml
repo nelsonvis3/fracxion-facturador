@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   backend:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     services:
       postgres:
         image: postgres:17
@@ -43,6 +44,7 @@ jobs:
 
   frontend-and-e2e:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     services:
       postgres:
         image: postgres:17
@@ -77,6 +79,8 @@ jobs:
         working-directory: frontend
       - run: npm run lint
         working-directory: frontend
+      - run: npm run typecheck
+        working-directory: frontend
       - run: npm run build
         working-directory: frontend
       - run: npm audit --omit=dev
@@ -84,14 +88,12 @@ jobs:
       - run: python backend/scripts/seed_e2e.py
       - run: npx playwright install --with-deps chromium
         working-directory: frontend
-      - name: Arrancar API y frontend de pruebas
+      - name: Arrancar frontend de pruebas
         run: |
-          cd backend
-          python manage.py runserver 127.0.0.1:8001 --settings=config.e2e_settings --noreload > /tmp/backend-e2e.log 2>&1 &
-          cd ../frontend
+          cd frontend
           PORT=3010 HOSTNAME=127.0.0.1 npm run start > /tmp/frontend-e2e.log 2>&1 &
           for attempt in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:8001/health/ && curl --fail --silent http://127.0.0.1:3010/ > /dev/null; then exit 0; fi
+            if curl --fail --silent http://127.0.0.1:3010/ > /dev/null; then exit 0; fi
             sleep 1
           done
           exit 1
@@ -99,4 +101,10 @@ jobs:
         working-directory: frontend
       - uses: actions/upload-artifact@v4
         if: failure()
-        with: {name: playwright-failures, path: frontend/test-results, retention-days: 7}
+        with:
+          name: playwright-failures
+          retention-days: 7
+          path: |
+            frontend/test-results/
+            /tmp/frontend-e2e.log
+            /tmp/fracxion-e2e-*/e2e_*.txt

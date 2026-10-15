@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.db.models import DecimalField, F, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -13,6 +13,7 @@ from tenancy.mixins import TenantQuerySetMixin
 from tenancy.models import Membership
 from tenancy.permissions import TenantAccessPermission
 
+from .filters import PaymentFilter
 from .models import Invoice, Payment
 from .serializers import (
     InvoiceDraftCreateSerializer,
@@ -107,6 +108,26 @@ class InvoiceViewSet(
         "-created_at",
     ]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if getattr(self, "swagger_fake_view", False):
+            return queryset
+        from .receivables import business_today, filter_receivables
+
+        if not hasattr(self, "_business_today"):
+            self._business_today = business_today(self.request.tenant.pk)
+        return filter_receivables(queryset, self.request.query_params, self._business_today)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        if not getattr(self, "swagger_fake_view", False) and hasattr(self.request, "tenant"):
+            from .receivables import business_today
+
+            if not hasattr(self, "_business_today"):
+                self._business_today = business_today(self.request.tenant.pk)
+            context["business_today"] = self._business_today
+        return context
+
     def get_serializer_class(self):
         if self.action == "create":
             return InvoiceDraftCreateSerializer
@@ -135,6 +156,7 @@ class InvoiceViewSet(
             actor=request.user,
             notes=data.get("notes", ""),
             request=request,
+            **{k: data[k] for k in ("due_date", "payment_terms_days") if k in data},
         )
 
         output = InvoiceReadSerializer(
@@ -239,10 +261,7 @@ class PaymentViewSet(
         OrderingFilter,
     ]
 
-    filterset_fields = [
-        "invoice",
-        "method",
-    ]
+    filterset_class = PaymentFilter
 
     ordering_fields = [
         "received_at",
@@ -261,7 +280,26 @@ class PaymentViewSet(
 
         return PaymentReadSerializer
 
-    @extend_schema(request=PaymentCreateSerializer, responses={201: PaymentReadSerializer})
+    @extend_schema(
+        request=PaymentCreateSerializer,
+        responses={201: PaymentReadSerializer},
+        parameters=[
+            OpenApiParameter(
+                name="Idempotency-Key",
+                location=OpenApiParameter.HEADER,
+                type=str,
+                required=False,
+                description="8 a 128 caracteres alfanuméricos, guion o guion bajo. Reutilizar solo para el mismo contenido dentro de la empresa. Otro contenido responde 409.",
+            ),
+            OpenApiParameter(
+                name="Idempotent-Replayed",
+                location=OpenApiParameter.HEADER,
+                type=bool,
+                response=[201],
+                description="Indica que se recuperó el cobro original sin registrar otro efecto.",
+            ),
+        ],
+    )
     def create(self, request, *args, **kwargs):
         """Registra un pago mediante el servicio transaccional."""
 
@@ -281,6 +319,7 @@ class PaymentViewSet(
             received_at=data.get("received_at"),
             notes=data.get("notes", ""),
             request=request,
+            idempotency_key=request.headers.get("Idempotency-Key"),
         )
 
         output = PaymentReadSerializer(
@@ -291,6 +330,11 @@ class PaymentViewSet(
         return Response(
             output.data,
             status=status.HTTP_201_CREATED,
+            headers={
+                "Idempotent-Replayed": "true"
+                if getattr(payment, "_idempotent_replay", False)
+                else "false"
+            },
         )
 
     @extend_schema(

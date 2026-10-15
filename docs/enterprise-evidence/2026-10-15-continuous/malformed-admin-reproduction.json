@@ -1,0 +1,14 @@
+{
+  "name": "malformed-admin-reproduction",
+  "command": [
+    ".venv/bin/python",
+    "manage.py",
+    "test",
+    "accounts.test_admin_security.AdminSecurityTests.test_malformed_password_target_returns_404_instead_of_500",
+    "--settings=config.test_settings",
+    "--noinput"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 1,
+  "seconds": 10.51
+}

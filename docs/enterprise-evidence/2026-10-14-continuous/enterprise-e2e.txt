@@ -1,0 +1,101 @@
+
+> frontend@0.1.0 test:e2e
+> node scripts/run-e2e-isolated.mjs e2e/enterprise.spec.ts
+
+
+API de pruebas aislada · e2e/enterprise.spec.ts
+
+Running 4 tests using 1 worker
+
+(node:11136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › e2e/enterprise.spec.ts:16:5 › configuración, logo, vencimiento y datos históricos persisten desde la interfaz (1.0m)
+(node:13024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 [chromium] › e2e/enterprise.spec.ts:59:5 › equipo permite invitar, reenviar y revocar y protege al último propietario (2.3s)
+  ✘  3 [chromium] › e2e/enterprise.spec.ts:78:5 › invitación real permite crear cuenta sin empresa extra y no admite reutilización (1.9s)
+(node:13180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  4 [chromium] › e2e/enterprise.spec.ts:95:5 › modal conserva navegación de teclado y devuelve el foco en sus tres cierres (1.8s)
+
+
+  1) [chromium] › e2e/enterprise.spec.ts:16:5 › configuración, logo, vencimiento y datos históricos persisten desde la interfaz 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for getByLabel('Fecha de vencimiento', { exact: true })
+
+
+      34 |   await page.getByLabel("Cliente", { exact: true }).selectOption({ label: "Cliente de vencimientos" });
+      35 |   await page.getByLabel("Producto", { exact: true }).selectOption({ label: "Servicio de vencimientos · ARS 100,00" });
+    > 36 |   await page.getByLabel("Fecha de vencimiento", { exact: true }).fill("2020-01-01");
+         |                                                                  ^
+      37 |   await page.getByRole("button", { name: "Guardar borrador", exact: true }).click();
+      38 |   await expect(page.getByRole("heading", { name: "Borrador", exact: true })).toBeVisible();
+      39 |   page.once("dialog", dialog => dialog.accept());
+        at /home/nelson/Proyectos/facturador-saas-api/frontend/e2e/enterprise.spec.ts:36:66
+
+    Error Context: test-results/enterprise-configuración-l-86094-persisten-desde-la-interfaz-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/enterprise-configuración-l-86094-persisten-desde-la-interfaz-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/enterprise-configuración-l-86094-persisten-desde-la-interfaz-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e/enterprise.spec.ts:78:5 › invitación real permite crear cuenta sin empresa extra y no admite reutilización 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('alert')
+    Expected substring: "no es válida"
+    Error: strict mode violation: getByRole('alert') resolved to 2 elements:
+        1) <div role="alert" class="notice-error">La invitación no es válida, fue revocada o ha ven…</div> aka getByText('La invitación no es válida,')
+        2) <div role="alert" aria-live="assertive" id="__next-route-announcer__"></div> aka locator('[id="__next-route-announcer__"]')
+
+    Call log:
+      - Expect "toContainText" getByRole('alert') with timeout 5000ms
+      - waiting for getByRole('alert')
+        - locator resolved to <div role="alert" aria-live="assertive" id="__next-route-announcer__"></div>
+        - unexpected value ""
+
+
+      90 |   expect(companies.results).toHaveLength(1);
+      91 |   await page.goto(`/accept-invitation#token=${encodeURIComponent(fixture.token)}`);
+    > 92 |   await expect(page.getByRole("alert")).toContainText("no es válida");
+         |                                         ^
+      93 | });
+      94 |
+      95 | test("modal conserva navegación de teclado y devuelve el foco en sus tres cierres", async ({ page }) => {
+        at /home/nelson/Proyectos/facturador-saas-api/frontend/e2e/enterprise.spec.ts:92:41
+
+    Error Context: test-results/enterprise-invitación-real-0aaa9-a-y-no-admite-reutilización-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/enterprise-invitación-real-0aaa9-a-y-no-admite-reutilización-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/enterprise-invitación-real-0aaa9-a-y-no-admite-reutilización-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › e2e/enterprise.spec.ts:16:5 › configuración, logo, vencimiento y datos históricos persisten desde la interfaz 
+    [chromium] › e2e/enterprise.spec.ts:78:5 › invitación real permite crear cuenta sin empresa extra y no admite reutilización 
+  2 passed (1.2m)
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 14, 2026 - 19:35:26
+Django version 5.2.18, using settings 'config.e2e_settings'
+Starting development server at http://127.0.0.1:8001/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+
+Registros de API de pruebas: /tmp/fracxion-e2e-5oZcmK

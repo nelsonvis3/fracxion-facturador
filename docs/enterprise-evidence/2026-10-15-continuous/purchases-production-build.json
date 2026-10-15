@@ -1,0 +1,13 @@
+{
+  "name": "purchases-production-build",
+  "command": [
+    "npm",
+    "run",
+    "build",
+    "--",
+    "--webpack"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+  "exit_code": 0,
+  "seconds": 66.46
+}

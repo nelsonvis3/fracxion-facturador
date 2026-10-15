@@ -1,0 +1,29 @@
+{
+  "summary": {
+    "checks": 80,
+    "passed": 80
+  },
+  "failed": [],
+  "rls": [
+    [
+      "billing_invoice",
+      false
+    ],
+    [
+      "billing_payment",
+      false
+    ],
+    [
+      "catalog_product",
+      false
+    ],
+    [
+      "customers_customer",
+      false
+    ],
+    [
+      "tenancy_tenant",
+      false
+    ]
+  ]
+}

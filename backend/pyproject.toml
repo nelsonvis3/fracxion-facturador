@@ -10,5 +10,5 @@ select = ["E4", "E7", "E9", "F", "I"]
 "scripts/seed_e2e.py" = ["E402"] # Django debe inicializarse antes de importar los modelos.
 
 [tool.coverage.run]
-source = ["accounts", "tenancy", "customers", "catalog", "billing", "auditlog", "config"]
+source = ["accounts", "tenancy", "customers", "catalog", "billing", "auditlog", "config", "analytics", "reports", "automation", "operations"]
 omit = ["*/migrations/*", "*/test*.py", "*/e2e_settings.py", "*/asgi.py", "*/wsgi.py"]

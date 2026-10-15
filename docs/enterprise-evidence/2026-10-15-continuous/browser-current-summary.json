@@ -1,0 +1,382 @@
+{
+  "unique_passed_scenarios": 52,
+  "spec_files": 17,
+  "single_uninterrupted_full_run": false,
+  "note": "Interrupted run retained; remaining scenarios completed with successful bounded commands. Latest UI changes retested in final-browser-regressions. No interrupted command is reported as a successful completion.",
+  "tests": [
+    {
+      "file": "e2e/account-security.spec.ts",
+      "title": "dos navegadores: revocar sesiones, cambiar contraseña y conservar el acceso actual",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/adversarial.spec.ts",
+      "title": "ataques controlados a configuración, miembros, invitaciones y análisis no filtran empresas",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/analytics.spec.ts",
+      "title": "indicadores reales, filtros de moneda y reversiones cambian los resultados",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/analytics.spec.ts",
+      "title": "módulos empresariales son accesibles y no desbordan en escritorio y móvil",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/auth-abuse.spec.ts",
+      "title": "fuerza bruta local queda bloqueada sin abrir sesión ni aceptar headers falsificados",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/business.spec.ts",
+      "title": "clientes, catálogo, emisión, pago y reversión con persistencia",
+      "evidence": [
+        "current-full-browser-interrupted.txt",
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/business.spec.ts",
+      "title": "navegación móvil sin desbordamiento horizontal",
+      "evidence": [
+        "current-full-browser-interrupted.txt",
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/business.spec.ts",
+      "title": "recuperación genérica y restablecimiento real con token de un solo uso",
+      "evidence": [
+        "current-full-browser-interrupted.txt",
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/business.spec.ts",
+      "title": "registro público crea empresa, valida errores y permite volver a iniciar sesión",
+      "evidence": [
+        "current-full-browser-interrupted.txt",
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/business.spec.ts",
+      "title": "sesión vencida devuelve al login",
+      "evidence": [
+        "current-full-browser-interrupted.txt",
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/business.spec.ts",
+      "title": "viewer consulta sin acciones de escritura y no accede a otra empresa",
+      "evidence": [
+        "current-full-browser-interrupted.txt",
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/dashboard.spec.ts",
+      "title": "dashboard legible en escritorio, tablet y móvil; navegación y contadores reales",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/dashboard.spec.ts",
+      "title": "resumen viewer conserva permisos al mostrar accesos y acciones",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/dashboard.spec.ts",
+      "title": "selector muestra carga, error con reintento y estado sin empresas",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/email-verification.spec.ts",
+      "title": "verificación real de correo: solicitud, enlace firmado de QA, confirmación, estado y rechazo de repetición",
+      "evidence": [
+        "current-full-browser-interrupted.txt",
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/enterprise.spec.ts",
+      "title": "configuración, logo, vencimiento y datos históricos persisten desde la interfaz",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/enterprise.spec.ts",
+      "title": "equipo permite invitar, reenviar y revocar y protege al último propietario",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/enterprise.spec.ts",
+      "title": "invitación real permite crear cuenta sin empresa extra y no admite reutilización",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/enterprise.spec.ts",
+      "title": "modal conserva navegación de teclado y devuelve el foco en sus tres cierres",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/expenses.spec.ts",
+      "title": "gasto real: categorías, adjunto privado, registro, pagos y reversión con saldos correctos",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-intro.spec.ts",
+      "title": "Escape y un cambio de viewport dejan disponible el formulario",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-intro.spec.ts",
+      "title": "F, Fracxion, retracción y llegada al logo real a 1440px",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-intro.spec.ts",
+      "title": "F, Fracxion, retracción y llegada al logo real a 390px",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-intro.spec.ts",
+      "title": "el almacenamiento restringido no impide reproducir ni omitir",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-intro.spec.ts",
+      "title": "la introducción se reproduce y termina automáticamente a velocidad normal",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-intro.spec.ts",
+      "title": "movimiento reducido permite entrar directamente",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-intro.spec.ts",
+      "title": "se puede omitir con teclado y el foco pasa al correo",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-intro.spec.ts",
+      "title": "un fallo de la composición no bloquea el login",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-viewport.spec.ts",
+      "title": "el primer render ya ocupa todo el viewport mientras JavaScript sigue pendiente",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-viewport.spec.ts",
+      "title": "omisión, error y movimiento reducido liberan el scroll",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-viewport.spec.ts",
+      "title": "sin JavaScript el login no queda bloqueado por el estado pendiente",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-viewport.spec.ts",
+      "title": "sin scrollbar ni franjas durante carga/reproducción; scroll al terminar a 1440px",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/login-viewport.spec.ts",
+      "title": "sin scrollbar ni franjas durante carga/reproducción; scroll al terminar a 390px",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/operations.spec.ts",
+      "title": "inventario real bloquea stock negativo y revierte mediante un movimiento adicional",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/operations.spec.ts",
+      "title": "proveedores persisten cambios y se desactivan sin eliminar su historia",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/payments.spec.ts",
+      "title": "Pagos explica el selector vacío y permite elegir una factura emitida y registrar el cobro",
+      "evidence": [
+        "current-full-browser-interrupted.txt"
+      ]
+    },
+    {
+      "file": "e2e/purchases.spec.ts",
+      "title": "compras reales: borrador, confirmación, recepciones, reversión atómica, gasto asociado y cierre",
+      "evidence": [
+        "current-full-browser-interrupted.txt",
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/purchases.spec.ts",
+      "title": "un pedido cancelado no cambia stock y el catálogo ajeno se rechaza desde la API real",
+      "evidence": [
+        "current-full-browser-interrupted.txt",
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/reports.spec.ts",
+      "title": "configuración de automatizaciones persiste y respeta movimiento reducido y móvil",
+      "evidence": [
+        "current-browser-remaining.txt"
+      ]
+    },
+    {
+      "file": "e2e/reports.spec.ts",
+      "title": "informes CSV, Excel y PDF reales; worker separado y avisos privados",
+      "evidence": [
+        "current-full-browser-interrupted.txt",
+        "current-browser-remaining.txt"
+      ]
+    },
+    {
+      "file": "e2e/security.spec.ts",
+      "title": "API exige CSRF, rechaza origen ajeno y evita caché de identidad",
+      "evidence": [
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/security.spec.ts",
+      "title": "datos de otra empresa no se leen ni se usan como relaciones",
+      "evidence": [
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/security.spec.ts",
+      "title": "entradas malformadas reciben 400 en la API en ejecución",
+      "evidence": [
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/security.spec.ts",
+      "title": "logout descarta datos privados ocultos y evita recuperarlos desde el historial",
+      "evidence": [
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/security.spec.ts",
+      "title": "viewer no puede escribir enviando privilegios falsificados",
+      "evidence": [
+        "final-browser-regressions.txt"
+      ]
+    },
+    {
+      "file": "e2e/session-transition.spec.ts",
+      "title": "bienvenida con identidad real, sin credenciales, y despedida segura desde el selector",
+      "evidence": [
+        "current-browser-remaining.txt"
+      ]
+    },
+    {
+      "file": "e2e/session-transition.spec.ts",
+      "title": "credenciales inválidas no muestran bienvenida y un logout rechazado no muestra despedida",
+      "evidence": [
+        "current-browser-remaining.txt"
+      ]
+    },
+    {
+      "file": "e2e/session-transition.spec.ts",
+      "title": "despedida de empresa en móvil retira el contenido privado antes de volver al login",
+      "evidence": [
+        "current-browser-remaining.txt"
+      ]
+    },
+    {
+      "file": "e2e/session-transition.spec.ts",
+      "title": "el usuario sin nombre recibe una bienvenida con su empresa autorizada",
+      "evidence": [
+        "current-browser-remaining.txt"
+      ]
+    },
+    {
+      "file": "e2e/session-transition.spec.ts",
+      "title": "la F gira durante una carga lenta y el dashboard solo se revela con sus datos listos",
+      "evidence": [
+        "current-browser-remaining.txt"
+      ]
+    },
+    {
+      "file": "e2e/session-transition.spec.ts",
+      "title": "movimiento reducido conserva login y logout reales sin esperas de animación",
+      "evidence": [
+        "current-browser-remaining.txt"
+      ]
+    },
+    {
+      "file": "e2e/session-transition.spec.ts",
+      "title": "un error de carga del destino se revela con su opción de reintentar",
+      "evidence": [
+        "current-browser-remaining.txt"
+      ]
+    }
+  ]
+}

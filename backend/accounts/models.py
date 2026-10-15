@@ -1,6 +1,10 @@
+import uuid
+
+from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.crypto import salted_hmac
 
 
 class UserManager(BaseUserManager):
@@ -53,6 +57,25 @@ class User(AbstractUser):
         "correo electrónico",
         unique=True,
     )
+    session_version = models.PositiveBigIntegerField(default=0, editable=False)
+    verified_email = models.EmailField(blank=True, editable=False)
+    email_verified_at = models.DateTimeField(null=True, blank=True, editable=False)
+    email_verification_nonce = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    @property
+    def is_email_verified(self):
+        return bool(self.email_verified_at and self.verified_email == self.email)
+
+    def _get_session_auth_hash(self, secret=None):
+        # Version zero preserves existing Django sessions during this additive rollout.
+        if self.session_version == 0:
+            return super()._get_session_auth_hash(secret=secret)
+        return salted_hmac(
+            "accounts.User.session_version",
+            f"{self.password}:{self.session_version}",
+            secret=secret,
+            algorithm="sha256",
+        ).hexdigest()
 
     objects = UserManager()
 
@@ -72,3 +95,19 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class AccountSession(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    session = models.OneToOneField(
+        "sessions.Session", on_delete=models.CASCADE, related_name="account_record"
+    )
+    first_seen = models.DateTimeField(auto_now_add=True)
+    last_seen = models.DateTimeField()
+    device = models.CharField(max_length=100)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-last_seen", "-pk"]
+        indexes = [models.Index(fields=["user", "-last_seen"], name="account_session_user_idx")]

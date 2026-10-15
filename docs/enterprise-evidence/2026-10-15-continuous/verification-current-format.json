@@ -1,0 +1,12 @@
+{
+  "name": "verification-current-format",
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "accounts/email_verification.py",
+    "scripts/email_verification_e2e.py"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 0.02
+}

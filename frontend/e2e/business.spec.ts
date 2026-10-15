@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
-import { expect, test } from "./fixtures";
-import { readFileSync, mkdirSync } from "node:fs";
+import { artifactPath, expect, test } from "./fixtures";
+import { readFileSync } from "node:fs";
 
 const tenant = "00000000-0000-4000-8000-000000000001";
 const base = `/dashboard/${tenant}`;
@@ -77,8 +77,7 @@ test("clientes, catálogo, emisión, pago y reversión con persistencia", async 
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.getByText("Pagado: ARS 0,00 · Saldo: ARS 121,00", { exact: true })).toBeVisible();
   await expect(page.getByText("Revertido", { exact: true })).toBeVisible();
-  mkdirSync("../docs/screenshots", { recursive: true });
-  await page.screenshot({ path: "../docs/screenshots/invoice.png", fullPage: true });
+  await page.screenshot({ path: artifactPath("invoice.png"), fullPage: true });
   await page.goto(`${base}/audit`);
   await page.getByLabel("Acción de auditoría").selectOption("payment");
   await expect(page.getByRole("cell", { name: "billing.payment_reversal", exact: false }).first()).toBeVisible();
@@ -114,7 +113,11 @@ test("recuperación genérica y restablecimiento real con token de un solo uso",
   await page.getByRole("button", { name: "Enviar instrucciones" }).click();
   await expect(page.getByRole("status")).toContainText("Si existe una cuenta activa");
   const { uid, token } = JSON.parse(readFileSync("e2e/reset-fixture.json", "utf8")) as { uid: string; token: string };
-  await page.goto(`/reset-password?uid=${encodeURIComponent(uid)}&token=${encodeURIComponent(token)}`);
+  const [navigation] = await Promise.all([
+    page.waitForRequest(request => request.isNavigationRequest() && new URL(request.url()).pathname === "/reset-password"),
+    page.goto(`/reset-password#uid=${encodeURIComponent(uid)}&token=${encodeURIComponent(token)}`),
+  ]);
+  expect(navigation.url()).not.toContain("token=");
   await page.getByLabel("Nueva contraseña", { exact: true }).fill("NewSyntheticPassword2026!");
   await page.getByLabel("Confirmá la contraseña", { exact: true }).fill("NewSyntheticPassword2026!");
   await page.getByRole("button", { name: "Restablecer contraseña", exact: true }).click();
@@ -146,7 +149,7 @@ test("registro público crea empresa, valida errores y permite volver a iniciar 
   await expect(page).toHaveURL(/\/register$/);
   await expect(page.getByRole("heading", { name: "Creá tu cuenta" })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  await page.screenshot({ path: "/tmp/facturador-registration-mobile.png", fullPage: true });
+  await page.screenshot({ path: artifactPath("facturador-registration-mobile.png"), fullPage: true });
   await registrationForm.getByLabel("Nombre", { exact: true }).fill("Ada");
   await registrationForm.getByLabel("Apellido (opcional)", { exact: true }).fill("Lovelace");
   await registrationForm.getByLabel("Nombre de tu empresa", { exact: true }).fill(company);

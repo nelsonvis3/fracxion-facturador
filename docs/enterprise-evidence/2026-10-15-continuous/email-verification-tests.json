@@ -1,0 +1,16 @@
+{
+  "name": "email-verification-tests",
+  "command": [
+    ".venv/bin/python",
+    "manage.py",
+    "test",
+    "accounts.test_email_verification",
+    "accounts.test_sessions",
+    "accounts.test_admin_security",
+    "--settings=config.test_settings",
+    "--noinput"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 8.28
+}

@@ -1,0 +1,16 @@
+{
+  "name": "current-schema",
+  "command": [
+    ".venv/bin/python",
+    "manage.py",
+    "spectacular",
+    "--settings=config.test_settings",
+    "--validate",
+    "--fail-on-warn",
+    "--file",
+    "/home/nelson/.local/state/fracxion-enterprise-qa/evidence/schema.yaml"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 4.03
+}

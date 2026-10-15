@@ -28,6 +28,11 @@ urlpatterns = [
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="api-docs"),
     path("admin/", admin.site.urls),
+    path("api/tenants/<uuid:tenant_id>/", include("tenancy.urls")),
+    path("api/tenants/<uuid:tenant_id>/", include("analytics.urls")),
+    path("api/tenants/<uuid:tenant_id>/", include("reports.urls")),
+    path("api/tenants/<uuid:tenant_id>/", include("automation.urls")),
+    path("api/tenants/<uuid:tenant_id>/", include("operations.urls")),
     path(
         "api/tenants/<uuid:tenant_id>/",
         include("customers.urls"),

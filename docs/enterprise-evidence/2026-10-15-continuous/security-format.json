@@ -1,0 +1,11 @@
+{
+  "name": "security-format",
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "accounts/session_inventory.py"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 0.01
+}

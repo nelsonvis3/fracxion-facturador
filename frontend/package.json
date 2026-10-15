@@ -10,8 +10,8 @@
     "postbuild": "node scripts/prepare-standalone.mjs",
     "start": "node .next/standalone/server.js",
     "lint": "eslint --max-warnings=0",
-    "typecheck": "tsc --noEmit",
-    "test:e2e": "playwright test"
+    "typecheck": "next typegen && tsc --noEmit",
+    "test:e2e": "node scripts/run-e2e-isolated.mjs"
   },
   "dependencies": {
     "@hyperframes/core": "0.8.155",
@@ -28,6 +28,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-core": "4.14.0",
     "eslint": "^9",
     "eslint-config-next": "^16.4.0",
     "postcss": "^8.5.29",

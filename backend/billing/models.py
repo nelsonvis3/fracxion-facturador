@@ -143,6 +143,11 @@ class Invoice(models.Model):
         blank=True,
     )
 
+    due_date = models.DateField(null=True, blank=True)
+    payment_terms_days = models.PositiveSmallIntegerField(null=True, blank=True)
+    issuer_snapshot = models.JSONField(default=dict, blank=True)
+    footer_snapshot = models.CharField(max_length=1000, blank=True)
+
     issued_at = models.DateTimeField(
         null=True,
         blank=True,
@@ -454,6 +459,8 @@ class Payment(models.Model):
     )
 
     received_at = models.DateTimeField()
+    idempotency_key = models.CharField(max_length=128, null=True, blank=True, editable=False)
+    request_digest = models.CharField(max_length=64, blank=True, editable=False)
 
     notes = models.TextField(
         blank=True,
@@ -469,6 +476,11 @@ class Payment(models.Model):
         ordering = ["-received_at", "-created_at"]
 
         constraints = [
+            models.UniqueConstraint(
+                fields=["tenant", "idempotency_key"],
+                condition=Q(idempotency_key__isnull=False),
+                name="uniq_payment_idempotency_key",
+            ),
             models.CheckConstraint(
                 condition=Q(amount__gt=Decimal("0.00")),
                 name="payment_amount_positive",

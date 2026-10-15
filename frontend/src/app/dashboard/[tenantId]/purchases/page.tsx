@@ -1,0 +1,17 @@
+"use client";
+import { useCallback, useState } from "react";
+import Link from "next/link";
+import { Alert, Empty, Loading, PageHeading, Pagination, useAsync } from "@/components/business-ui";
+import { PurchaseForm } from "@/components/purchase-form";
+import { useTenant } from "@/components/tenant-workspace";
+import { canAnalyze } from "@/lib/analytics-api";
+import { canManage, money } from "@/lib/business-api";
+import { enterpriseApi } from "@/lib/enterprise-api";
+import { purchaseApi, purchaseStatus } from "@/lib/purchase-api";
+
+export default function PurchasesPage(){
+  const tenant=useTenant();const [page,setPage]=useState(1);const [status,setStatus]=useState("");const [search,setSearch]=useState("");const [filter,setFilter]=useState("");const [adding,setAdding]=useState(false);
+  const state=useAsync(useCallback(()=>canAnalyze(tenant.role)?purchaseApi.list(tenant.id,{page,status,search:filter}):Promise.resolve(null),[tenant.id,tenant.role,page,status,filter]));
+  const settings=useAsync(useCallback(()=>enterpriseApi.settings(tenant.id),[tenant.id]));
+  return <main className="module-content"><PageHeading title="Compras" description="Pedidos a proveedores, recepciones parciales y cierre con historial verificable.">{canManage(tenant.role)&&settings.data&&<button className="button" onClick={()=>setAdding(true)}>Nuevo pedido de compra</button>}</PageHeading>{!canAnalyze(tenant.role)?<Alert>No tenés permisos para consultar compras.</Alert>:<section className="panel p-6 mb-6"><p className="notice-info">El pedido representa un compromiso. Las recepciones registran la entrega y el stock físico. Los gastos y sus pagos se registran por separado.</p><form className="filters" onSubmit={event=>{event.preventDefault();setFilter(search);setPage(1);}}><label className="field">Buscar pedido<input className="input" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Referencia o proveedor"/></label><label className="field">Estado del pedido<select className="input" value={status} onChange={event=>{setStatus(event.target.value);setPage(1);}}><option value="">Todos</option>{Object.entries(purchaseStatus).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><button className="button secondary">Buscar</button></form>{state.loading?<Loading/>:state.error?<Alert>{state.error}<button className="button secondary" onClick={state.refresh}>Reintentar</button></Alert>:state.data&&<>{state.data.results.length?<div className="table-scroll" role="region" aria-label="Pedidos de compra" tabIndex={0}><table className="data-table"><thead><tr><th>Pedido y proveedor</th><th>Estado</th><th>Recepción prevista</th><th>Total acordado</th></tr></thead><tbody>{state.data.results.map(order=><tr key={order.id}><td><Link href={`/dashboard/${tenant.id}/purchases/${order.id}`}>{order.reference||`Pedido ${order.id.slice(0,8)}`}</Link><small>{order.supplier_name_snapshot||order.supplier_name}</small></td><td>{purchaseStatus[order.status]}</td><td>{order.expected_on??"Sin fecha prevista"}</td><td>{money(order.total,order.currency)}</td></tr>)}</tbody></table></div>:<Empty>Todavía no hay pedidos para estos filtros.</Empty>}<Pagination data={state.data} page={page} setPage={setPage}/></>}</section>}{adding&&settings.data&&<PurchaseForm currency={settings.data.default_currency} onClose={()=>setAdding(false)} onSaved={()=>{setAdding(false);state.refresh();}}/>}</main>;
+}

@@ -1,0 +1,10 @@
+{
+  "name": "recovery-current",
+  "command": [
+    ".venv/bin/python",
+    "/home/nelson/.local/state/fracxion-enterprise-qa/recovery_current.py"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 15.75
+}

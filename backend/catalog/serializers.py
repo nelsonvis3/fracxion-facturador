@@ -112,4 +112,40 @@ class ProductSerializer(serializers.ModelSerializer):
         if tenant is None:
             raise serializers.ValidationError("No se pudo determinar la empresa autorizada.")
 
+        if self.instance:
+            from operations.models import InventoryMovement, InventoryPolicy, PurchaseLine
+
+            committed = PurchaseLine.objects.filter(
+                order__tenant=tenant, product=self.instance, order__status="ordered"
+            ).exists()
+            if committed and (
+                attrs.get("unit", self.instance.unit) != self.instance.unit
+                or attrs.get("product_type", self.instance.product_type)
+                != self.instance.product_type
+            ):
+                raise serializers.ValidationError(
+                    "La unidad y el tipo se conservan mientras haya pedidos confirmados abiertos."
+                )
+
+            historical = InventoryMovement.objects.filter(
+                tenant=tenant, product=self.instance
+            ).exists()
+            tracked = InventoryPolicy.objects.filter(
+                tenant=tenant, product=self.instance, tracking=True
+            ).exists()
+            if attrs.get("product_type", self.instance.product_type) != "product" and (
+                historical or tracked
+            ):
+                raise serializers.ValidationError(
+                    {
+                        "product_type": "Un producto con seguimiento o historial de stock no se convierte en servicio."
+                    }
+                )
+            if historical and attrs.get("unit", self.instance.unit) != self.instance.unit:
+                raise serializers.ValidationError(
+                    {
+                        "unit": "La unidad de un producto con movimientos históricos no se modifica. Creá otro producto para otra unidad."
+                    }
+                )
+
         return attrs

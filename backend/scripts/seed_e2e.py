@@ -59,3 +59,28 @@ Path(__file__).resolve().parents[2].joinpath("frontend/e2e/reset-fixture.json").
     json.dumps(fixture)
 )
 print("Datos sintéticos E2E preparados.")
+
+# Invitation onboarding uses another controlled token, never returned by production APIs.
+from urllib.parse import parse_qs, urlsplit
+from uuid import uuid4
+
+from django.core import mail
+
+from tenancy.invitations import create_invitation
+
+invited_email = f"invited.{uuid4().hex[:10]}@e2e.example"
+create_invitation(
+    tenant_id=tenant.pk,
+    actor=get_user_model().objects.get(email="owner@e2e.example"),
+    email=invited_email,
+    role="viewer",
+)
+invitation_link = next(line for line in mail.outbox[-1].body.splitlines() if "#token=" in line)
+invitation_fixture = {
+    "token": parse_qs(urlsplit(invitation_link).fragment)["token"][0],
+    "email": invited_email,
+    "tenant": str(tenant.pk),
+}
+Path(__file__).resolve().parents[2].joinpath("frontend/e2e/invitation-fixture.json").write_text(
+    json.dumps(invitation_fixture)
+)

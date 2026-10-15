@@ -1,0 +1,79 @@
+F841 Local variable `amount` is assigned to but never used
+  --> operations/expenses.py:47:5
+   |
+46 | def expense_query(tenant):
+47 |     amount = DecimalField(max_digits=16, decimal_places=2)
+   |     ^^^^^^
+48 |     payments = (
+49 |         ExpensePayment.objects.filter(tenant=tenant, expense=OuterRef("pk"), reversal__isnull=True)
+   |
+help: Remove assignment to unused variable `amount`
+
+F841 Local variable `payments` is assigned to but never used
+  --> operations/expenses.py:48:5
+   |
+46 | def expense_query(tenant):
+47 |     amount = DecimalField(max_digits=16, decimal_places=2)
+48 |     payments = (
+   |     ^^^^^^^^
+49 |         ExpensePayment.objects.filter(tenant=tenant, expense=OuterRef("pk"), reversal__isnull=True)
+50 |         .order_by()
+   |
+help: Remove assignment to unused variable `payments`
+
+F821 Undefined name `tenant`
+  --> operations/expenses.py:63:39
+   |
+61 |             raise ValidationError({"purchase_order": "El pedido debe estar confirmado y corresponder a la misma empresa, proveedor y m…
+62 |     return (
+63 |         Expense.objects.filter(tenant=tenant)
+   |                                       ^^^^^^
+64 |         .defer("attachment")
+65 |         .select_related("supplier", "category")
+   |
+
+F821 Undefined name `payments`
+  --> operations/expenses.py:68:26
+   |
+66 |         .annotate(
+67 |             paid_amount=Coalesce(
+68 |                 Subquery(payments, output_field=amount), Value(Decimal("0.00")), output_field=amount
+   |                          ^^^^^^^^
+69 |             ),
+70 |             has_attachment=Case(
+   |
+
+F821 Undefined name `amount`
+  --> operations/expenses.py:68:49
+   |
+66 |         .annotate(
+67 |             paid_amount=Coalesce(
+68 |                 Subquery(payments, output_field=amount), Value(Decimal("0.00")), output_field=amount
+   |                                                 ^^^^^^
+69 |             ),
+70 |             has_attachment=Case(
+   |
+
+F821 Undefined name `amount`
+  --> operations/expenses.py:68:95
+   |
+66 |         .annotate(
+67 |             paid_amount=Coalesce(
+68 |                 Subquery(payments, output_field=amount), Value(Decimal("0.00")), output_field=amount
+   |                                                                                               ^^^^^^
+69 |             ),
+70 |             has_attachment=Case(
+   |
+
+F821 Undefined name `amount`
+  --> operations/expenses.py:76:89
+   |
+74 |             ),
+75 |         )
+76 |         .annotate(balance=ExpressionWrapper(F("total") - F("paid_amount"), output_field=amount))
+   |                                                                                         ^^^^^^
+77 |     )
+   |
+
+Found 8 errors (1 fixed, 7 remaining).
+No fixes available (2 hidden fixes can be enabled with the `--unsafe-fixes` option).

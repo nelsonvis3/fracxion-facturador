@@ -1,0 +1,105 @@
+Creating test database for alias 'default'...
+./home/nelson/Proyectos/facturador-saas-api/backend/.venv/lib/python3.14/site-packages/django/core/handlers/base.py:61: UserWarning: No directory at: /home/nelson/Proyectos/facturador-saas-api/backend/staticfiles/
+  mw_instance = middleware(adapted_handler)
+{"timestamp": "2026-10-15T16:50:16.053858+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "12687250-e080-49b4-9f30-7532c94088d9", "status_code": 401}
+{"timestamp": "2026-10-15T16:50:16.061430+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "cc93fdfb-9561-447b-b832-a35d63bf2cf0", "status_code": 401}
+{"timestamp": "2026-10-15T16:50:16.067443+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "b91ee875-01c9-4a19-bbfd-18ed556357fe", "status_code": 401}
+{"timestamp": "2026-10-15T16:50:16.075156+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "eae642bd-fe40-4209-93bd-e33b336e2e62", "status_code": 401}
+{"timestamp": "2026-10-15T16:50:16.079877+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "3b219a05-d63d-4de9-837b-431487196ce7", "status_code": 401}
+{"timestamp": "2026-10-15T16:50:16.086250+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "f4b7fe7f-4c47-496e-a496-08eaaeab32c7", "status_code": 401}
+{"timestamp": "2026-10-15T16:50:16.091450+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "4a2dc478-982a-4325-8435-82aa3a315700", "status_code": 401}
+{"timestamp": "2026-10-15T16:50:16.096547+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "e9812fd5-8a4e-4087-ae14-ac27d75c56a3", "status_code": 401}
+{"timestamp": "2026-10-15T16:50:16.100060+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "b0f75ee9-0253-4966-99ed-d71e90cab357", "status_code": 401}
+{"timestamp": "2026-10-15T16:50:16.106614+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "5c76edc4-86b7-45f2-8b0e-17b1b01efe65", "status_code": 401}
+{"timestamp": "2026-10-15T16:50:16.136473+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "cc65cd65-60dc-4d66-a29b-e26389b035f8", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.147462+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "b0be016f-4d7c-4fd8-a7db-a8b4d342fbe6", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.159217+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "df6b6240-c473-4141-b293-ba3d75554125", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.170793+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "aa61fae9-f48c-4d0f-a909-85fceebfff31", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.181575+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "370cf147-d6b1-468f-8dc2-3797fa36341c", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.192887+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "4e887c7b-de38-4e95-bf07-0013f90018db", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.205051+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "412c6526-8564-492b-997c-5368cc81abe3", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.216714+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "f01d780f-6671-4411-b967-d9d53551af81", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.228151+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "e85e4618-b50b-4c83-a78e-d79d25e5831f", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.238831+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "40b28068-89fe-4d27-840d-4ab6063e414c", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.249585+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "677aa4f6-ed89-42ee-93ba-f0a9aeca25e7", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.260652+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "de84a489-78e8-4b06-b01d-a8087d281131", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.271499+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "c62921e4-c3c7-4752-9a2c-7cb16b9e9b8a", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.279253+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "bd61c1ec-0ee6-424b-a8a3-5074558b2150", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.289410+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "4c546383-decc-4677-88a8-e95fa325a3d6", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.296372+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "1a1e456a-aa39-4a1f-bac4-090d19552e87", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.304005+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "dabc93d5-1dbd-4604-89dc-5ba5b52733b6", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.311045+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "817a5b07-3f7f-459b-bd7c-fa28cbca81a6", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.318816+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "808e638f-f809-4e5d-874d-c3137e92b0ea", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.328525+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "f8ca4fa4-884e-45c2-8d9d-d61d9164a73d", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.342123+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "df5a8b61-c4b8-4529-b28e-efc5c55f5a5f", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.350819+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "b32a8ab6-c078-4b93-9ddd-0375fbb15755", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.362214+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "5bbbcbfc-5ed9-409a-ad07-ebbe8f00e8f7", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.371344+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "3907c9af-a083-4427-b191-989babf44501", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.379515+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "2fa07d6b-c9d4-4f82-8568-f8bb36c9b882", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.390124+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "ad8cef16-f3a7-42ed-bcb0-e6447f6f1185", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.400028+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "cc6b1999-929e-408b-bb7b-5d0d8960cce4", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.411283+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "2e188d68-9511-4abb-a2b2-084a30380591", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.421741+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "a5d8fd43-2e49-4b70-b4a1-2d5af4a9ff41", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.431183+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "c9fa943d-bd2b-4b55-8685-36f660c71689", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.538448+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "9f6bd01b-6e70-4b48-a131-20aafc5b98ca", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.545855+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "601783cf-456e-462b-9c49-b1d198ac9c41", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.554053+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "8825a25a-4738-4a25-85bf-aad334de2ab4", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.561515+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "e7ee874f-b751-44f4-9711-279729a7a796", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.570044+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "867b2600-797f-4faa-8115-2246d721685e", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.579365+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "c9bca1d6-0776-4506-80d4-631acfb7cfe0", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.789462+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "1fdbac7a-e83a-4124-a6c4-96e5875db20c", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.799300+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "8f2cab63-6c63-49ac-be3a-b2f0813541b2", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.810019+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "7d410841-a522-4e70-8714-9330e55c417d", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.817188+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "9eabb93a-d486-4fc7-90ea-fa9287848fe6", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.826646+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "1e1323d4-4041-496b-901c-8189b8d12a83", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.832755+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "702a1737-dce7-47bc-b486-f7a3cda3f5a6", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.842307+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "ed7af29f-bc05-4004-a78f-a9ad163458b0", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.849419+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "47504d2f-ba85-4d64-b3d3-91fa138d7b8b", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.858123+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "f4b0125b-8fc7-4302-927c-c98c9f5cc7f0", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.866597+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "9605c132-32dd-47f5-a1c0-03c7732a8172", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.879849+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "0ca897d8-3e5d-4ee9-b299-d5d3ec393ddd", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.887920+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "106cbc5c-4f6d-47d2-ac9a-9e9cb5ddc847", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.897104+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "a4d6364e-eefa-453f-aac3-5d3ca54bed1f", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.905164+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "1906298e-6653-4c0f-a806-86d3ed534f97", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.913145+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "30a6756f-4be6-42e0-b72c-7e0e14e3cf9b", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.922119+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "68059663-3793-469e-8544-fdb490783994", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.931241+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "2243a276-b3d8-4d3f-9adf-1d62c98df78a", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.940444+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "e4cf738a-83a1-40bf-8578-81574cdaa488", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.948377+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "2958bbc3-b3cc-411d-90e2-c7b531482879", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.955992+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "efdc547a-4d17-4eca-bb25-dc346065558a", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:16.978207+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "770e3647-85c9-4cdb-88a6-b4c41c780676", "status_code": 404}
+{"timestamp": "2026-10-15T16:50:16.993626+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "69569bff-1d8b-46a6-a539-3d45008d477c", "status_code": 404}
+{"timestamp": "2026-10-15T16:50:17.011828+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "f52fab88-97db-4872-943c-7ade1de843f2", "status_code": 404}
+{"timestamp": "2026-10-15T16:50:17.028047+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "dfea88be-48e5-489f-959e-321237f9171a", "status_code": 404}
+{"timestamp": "2026-10-15T16:50:17.042723+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "dbcdd219-6c12-464a-af6f-f99c1297bd78", "status_code": 404}
+{"timestamp": "2026-10-15T16:50:17.057020+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "2cb2031c-2eb9-40fe-9acd-8dcb33beb012", "status_code": 404}
+{"timestamp": "2026-10-15T16:50:17.076850+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "66bf4075-ece9-49cb-8bcf-fad6d44c0c18", "status_code": 404}
+{"timestamp": "2026-10-15T16:50:17.087917+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "0d6be195-82da-46aa-8b93-d272bb69c2a2", "status_code": 404}
+{"timestamp": "2026-10-15T16:50:17.114174+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "28ca2b35-0bea-4062-836a-a38eaeb791e7", "status_code": 400}
+{"timestamp": "2026-10-15T16:50:17.125029+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "0e6033e3-5edb-4609-9c24-2704f060a6be", "status_code": 405}
+..{"timestamp": "2026-10-15T16:50:17.588738+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "3445772e-9598-4c0e-a52b-29127579b858", "status_code": 400}
+{"timestamp": "2026-10-15T16:50:17.627621+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "185fab80-3e78-48d4-99f6-080d8fee928d", "status_code": 400}
+...........{"timestamp": "2026-10-15T16:50:20.413665+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "0e02afc8-5eef-4db0-838f-af27ee2dc016", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:20.422876+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "887b3c7f-5a8d-40a3-9ac8-e13b9876b339", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:20.430743+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "e18b6133-997a-47fd-ac7a-202fd7a13310", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:20.440216+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "783466b4-52dc-4d8d-bfa8-c1c7bd91003b", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:20.446512+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "cd65612b-4a3e-4ab9-a44e-22d6108923db", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:20.453518+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "9328cd12-6519-457e-b591-2c96ac189c77", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:20.464436+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "c274c6a5-8530-4d86-8ab9-70757fe433b7", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:20.474528+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "9c762b66-579d-4493-8c0c-f86c37c3e463", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:20.484130+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "2dc95e23-43cc-45e6-9ae6-27d9620dd3fa", "status_code": 403}
+{"timestamp": "2026-10-15T16:50:20.501274+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "29b0c66d-45f2-4291-a28d-cdad62d2e667", "status_code": 401}
+.{"timestamp": "2026-10-15T16:50:20.617837+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "e9a929a5-fda9-4d28-a096-67b8de3f03e1", "status_code": 400}
+{"timestamp": "2026-10-15T16:50:20.624236+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "1c00c7ab-a2a0-499b-9ee6-3edff6a3ced5", "status_code": 405}
+{"timestamp": "2026-10-15T16:50:20.630624+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "98f6942c-281a-4914-923d-cfea12480b42", "status_code": 405}
+...../home/nelson/Proyectos/facturador-saas-api/backend/.venv/lib/python3.14/site-packages/django/core/handlers/base.py:61: UserWarning: No directory at: /home/nelson/Proyectos/facturador-saas-api/backend/staticfiles/
+  mw_instance = middleware(adapted_handler)
+{"timestamp": "2026-10-15T16:50:21.272242+00:00", "level": "WARNING", "logger": "django.request", "event": "%s: %s", "request_id": "4f39dbb0-3031-4026-98ae-4320860c68f9", "status_code": 403}
+........
+----------------------------------------------------------------------
+Ran 28 tests in 7.115s
+
+OK
+Destroying test database for alias 'default'...
+Found 28 test(s).
+System check identified no issues (0 silenced).

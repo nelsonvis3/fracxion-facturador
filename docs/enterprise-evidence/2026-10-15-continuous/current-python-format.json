@@ -1,0 +1,12 @@
+{
+  "name": "current-python-format",
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "--check",
+    "."
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 0.03
+}

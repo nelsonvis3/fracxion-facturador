@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { artifactPath, expect, test } from "./fixtures";
 import type { Page } from "@playwright/test";
 
 const api = "http://127.0.0.1:8001";
@@ -38,7 +38,7 @@ test("bienvenida con identidad real, sin credenciales, y despedida segura desde 
     const heading = document.querySelector(".session-transition-heading");
     return heading && Number(getComputedStyle(heading).opacity) >= .99;
   });
-  await page.screenshot({ path: "/tmp/fracxion-auth-transitions/welcome-desktop.png" });
+  await page.screenshot({ path: artifactPath("fracxion-auth-transitions/welcome-desktop.png") });
   await waitForDashboard(page);
   await page.reload();
   await waitForDashboard(page);
@@ -81,7 +81,7 @@ test("despedida de empresa en móvil retira el contenido privado antes de volver
     return heading && Number(getComputedStyle(heading).opacity) >= .99;
   });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: "/tmp/fracxion-auth-transitions/farewell-mobile.png" });
+  await page.screenshot({ path: artifactPath("fracxion-auth-transitions/farewell-mobile.png") });
   await expect(page).toHaveURL("http://127.0.0.1:3010/");
   await expect(page.locator(".login-experience")).toHaveAttribute("data-intro-state", "playing");
   await expect(page.locator(".login-intro")).toBeHidden({ timeout: 10000 });
@@ -106,7 +106,7 @@ test("la F gira durante una carga lenta y el dashboard solo se revela con sus da
   const before = await welcome.locator(".session-transition-spin").evaluate(el => getComputedStyle(el).transform);
   await expect.poll(async () => welcome.locator(".session-transition-spin").evaluate(el => getComputedStyle(el).transform)).not.toBe(before);
   expect(await welcome.evaluate(el => getComputedStyle(el).opacity)).toBe("1");
-  await page.screenshot({ path: "/tmp/fracxion-smooth-session/loading-desktop.png" });
+  await page.screenshot({ path: artifactPath("fracxion-smooth-session/loading-desktop.png") });
   release();
   await expect(welcome).toHaveAttribute("data-phase", "revealing");
   await expect.poll(async () => welcome.evaluate(el => Number(getComputedStyle(el).opacity))).toBeLessThan(1);

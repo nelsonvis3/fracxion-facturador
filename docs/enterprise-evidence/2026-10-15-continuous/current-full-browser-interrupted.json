@@ -1,0 +1,30 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "test:e2e"
+  ],
+  "exit_code": 143,
+  "interrupted": true,
+  "termination_origin": "not established",
+  "passed_test_lines": 39,
+  "completed_spec_files": 14,
+  "started_spec_files": [
+    "e2e/account-security.spec.ts",
+    "e2e/adversarial.spec.ts",
+    "e2e/analytics.spec.ts",
+    "e2e/auth-abuse.spec.ts",
+    "e2e/business.spec.ts",
+    "e2e/dashboard.spec.ts",
+    "e2e/email-verification.spec.ts",
+    "e2e/enterprise.spec.ts",
+    "e2e/expenses.spec.ts",
+    "e2e/login-intro.spec.ts",
+    "e2e/login-viewport.spec.ts",
+    "e2e/operations.spec.ts",
+    "e2e/payments.spec.ts",
+    "e2e/purchases.spec.ts",
+    "e2e/reports.spec.ts"
+  ],
+  "note": "Process terminated by SIGTERM before completion; this run is not a completed successful full suite."
+}

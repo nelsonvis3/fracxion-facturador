@@ -1,0 +1,14 @@
+{
+  "name": "sessions-tests",
+  "command": [
+    ".venv/bin/python",
+    "manage.py",
+    "test",
+    "accounts.test_sessions",
+    "--settings=config.test_settings",
+    "--noinput"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 1,
+  "seconds": 6.84
+}

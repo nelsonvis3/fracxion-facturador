@@ -1,6 +1,5 @@
 import type { Page } from "@playwright/test";
-import { mkdirSync } from "node:fs";
-import { expect, test } from "./fixtures";
+import { artifactPath, expect, test } from "./fixtures";
 
 const tenant = "00000000-0000-4000-8000-000000000001";
 const base = `/dashboard/${tenant}`;
@@ -52,7 +51,6 @@ test("dashboard legible en escritorio, tablet y móvil; navegación y contadores
   test.setTimeout(60000);
   await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
   await login(page);
-  mkdirSync("../docs/screenshots", { recursive: true });
   for (const viewport of [{ width: 1440, height: 1000 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 800 }]) {
     await page.setViewportSize(viewport);
     await page.goto("/dashboard");
@@ -65,7 +63,7 @@ test("dashboard legible en escritorio, tablet y móvil; navegación y contadores
       const content = await page.locator("main:visible").boundingBox();
       expect(content!.x).toBeGreaterThanOrEqual(sidebar!.x + sidebar!.width);
     }
-    if (viewport.width === 1440 || viewport.width === 390) await page.screenshot({ path: `../docs/screenshots/dashboard-${viewport.width === 1440 ? "desktop" : "mobile"}.png`, fullPage: true });
+    if (viewport.width === 1440 || viewport.width === 390) await page.screenshot({ path: artifactPath(`dashboard-${viewport.width === 1440 ? "desktop" : "mobile"}.png`), fullPage: true });
     await company.focus();
     await expect(company).toBeFocused();
     await page.keyboard.press("Enter");
@@ -78,7 +76,7 @@ test("dashboard legible en escritorio, tablet y móvil; navegación y contadores
     }));
     await expect(page.locator(".overview-metric strong")).toHaveText(counts);
     await checkReadability(page);
-    if (viewport.width === 1440 || viewport.width === 390) await page.screenshot({ path: `../docs/screenshots/company-dashboard-${viewport.width === 1440 ? "desktop" : "mobile"}.png`, fullPage: true });
+    if (viewport.width === 1440 || viewport.width === 390) await page.screenshot({ path: artifactPath(`company-dashboard-${viewport.width === 1440 ? "desktop" : "mobile"}.png`), fullPage: true });
     await page.locator(".workspace-modules").getByRole("link", { name: /Clientes/ }).click();
     await expect(page).toHaveURL(`${base}/customers`);
     await expect(page.getByRole("heading", { name: "Clientes", exact: true })).toBeVisible();

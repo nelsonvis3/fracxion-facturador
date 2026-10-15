@@ -1,0 +1,13 @@
+{
+  "name": "logging-current-style",
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "config/observability.py",
+    "config/settings.py",
+    "accounts/password_reset.py"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 0.02
+}

@@ -1,19 +1,26 @@
 "use client";
-import { Suspense, useState, type FormEvent } from "react";
+import { Suspense, useState, useSyncExternalStore, type FormEvent } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { authApi } from "@/lib/api";
 import { Alert, Loading, errorMessage } from "@/components/business-ui";
 
+const subscribeHash = (notify: () => void) => { window.addEventListener("hashchange", notify); return () => window.removeEventListener("hashchange", notify); };
+const hashSnapshot = () => window.location.hash.slice(1);
+
 function ResetPasswordForm() {
   const params = useSearchParams();
-  const uid = params.get("uid") ?? "";
-  const token = params.get("token") ?? "";
+  const hash = useSyncExternalStore(subscribeHash, hashSnapshot, () => null);
+  const fragment = new URLSearchParams(hash ?? "");
+  // New emails keep credentials out of HTTP URLs; older query links still work.
+  const uid = fragment.get("uid") ?? params.get("uid") ?? "";
+  const token = fragment.get("token") ?? params.get("token") ?? "";
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [busy, setBusy] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  if (hash === null) return <Loading />;
   async function submit(event: FormEvent) {
     event.preventDefault(); if (busy) return;
     if (password !== confirmation) { setError("Las contraseñas no coinciden."); return; }

@@ -1,0 +1,32 @@
+Creating test database for alias 'default'...
+.F
+======================================================================
+FAIL: test_payment_invoice_filter_has_no_global_existence_oracle (config.test_filter_privacy.RelatedFilterPrivacyTests.test_payment_invoice_filter_has_no_global_existence_oracle)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/nelson/Proyectos/facturador-saas-api/backend/config/test_filter_privacy.py", line 27, in test_payment_invoice_filter_has_no_global_existence_oracle
+    self.assert_private_filter("payments", "invoice", invoice.pk)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nelson/Proyectos/facturador-saas-api/backend/config/test_filter_privacy.py", line 21, in assert_private_filter
+    self.assertEqual([response.status_code for response in responses], [200, 200])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [200, 400] != [200, 200]
+
+First differing element 1:
+400
+200
+
+- [200, 400]
+?       ^
+
++ [200, 200]
+?       ^
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.232s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...
+Found 2 test(s).
+System check identified no issues (0 silenced).

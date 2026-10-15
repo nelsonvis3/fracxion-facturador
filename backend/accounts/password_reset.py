@@ -1,5 +1,5 @@
 import logging
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit, urlunsplit
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -18,6 +18,7 @@ from django.views.decorators.http import require_POST
 from config.parsers import parse_json_body
 
 from .rate_limits import is_rate_limited
+from .security import security_event
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +83,7 @@ def password_reset_request_view(request):
 
     # No diferenciamos la respuesta según exista la cuenta.
     response = JsonResponse(GENERIC_RESET_RESPONSE)
+    security_event(request, event="password_reset_requested", outcome="accepted")
 
     # Evita bombardear una cuenta desde distintas direcciones IP.
     if is_rate_limited(
@@ -112,9 +114,10 @@ def password_reset_request_view(request):
             }
         )
 
-        separator = "&" if "?" in settings.FRONTEND_PASSWORD_RESET_URL else "?"
-
-        reset_url = f"{settings.FRONTEND_PASSWORD_RESET_URL}{separator}{query}"
+        frontend = urlsplit(settings.FRONTEND_PASSWORD_RESET_URL)
+        reset_url = urlunsplit(
+            (frontend.scheme, frontend.netloc, frontend.path, frontend.query, query)
+        )
 
         subject = "Restablecer tu contraseña"
         message = (
@@ -136,8 +139,11 @@ def password_reset_request_view(request):
             )
         except Exception:
             # No revelamos errores de entrega al solicitante.
-            # El error completo queda en los logs del servidor.
-            logger.exception("No se pudo enviar el correo de recuperación.")
+            # El formatter conserva tipo/ubicación, sin texto de excepción ni secretos.
+            logger.exception(
+                "No se pudo enviar el correo de recuperación.",
+                extra={"request_id": getattr(request, "request_id", "")},
+            )
 
     return response
 
@@ -261,6 +267,12 @@ def password_reset_confirm_view(request):
 
         locked_user.set_password(password)
         locked_user.save(update_fields=["password"])
+        from django.contrib.sessions.models import Session
+
+        Session.objects.filter(account_record__user=locked_user).delete()
+        security_event(
+            request, event="password_reset_completed", outcome="success", actor=locked_user
+        )
 
     return JsonResponse(
         {

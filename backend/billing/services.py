@@ -1,4 +1,9 @@
+import hashlib
+import json
+import re
+from datetime import UTC, date, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
+from zoneinfo import ZoneInfo
 
 import pycountry
 from django.contrib.auth import get_user_model
@@ -13,6 +18,7 @@ from catalog.models import Product
 from customers.models import Customer
 from tenancy.models import Membership, Tenant
 
+from .exceptions import IdempotencyConflict
 from .models import (
     Invoice,
     InvoiceLine,
@@ -26,6 +32,7 @@ MAX_INVOICE_LINES = 100
 MAX_MONEY = Decimal("99999999999999.99")
 MAX_QUANTITY = Decimal("999999999.999")
 ADMIN_ROLES = frozenset({Membership.Role.OWNER, Membership.Role.ADMIN})
+UNSET = object()
 
 
 def round_money(amount: Decimal) -> Decimal:
@@ -46,6 +53,8 @@ def create_invoice_draft(
     actor,
     notes: str = "",
     request=None,
+    due_date=UNSET,
+    payment_terms_days=UNSET,
 ) -> Invoice:
     """
     Crea un borrador de factura interna y sus líneas.
@@ -64,6 +73,9 @@ def create_invoice_draft(
 
     tenant = locked_tenant
     _require_payment_role(tenant=tenant, actor=actor, allowed_roles=ADMIN_ROLES)
+
+    if not isinstance(notes, str) or len(notes) > 10000:
+        raise ValidationError({"notes": "Las notas admiten hasta 10000 caracteres."})
 
     if not lines:
         raise ValidationError({"lines": "La factura debe contener al menos una línea."})
@@ -124,7 +136,40 @@ def create_invoice_draft(
             {"currency": ("La moneda debe coincidir con la de todos los productos.")}
         )
 
-    # Crear la cabecera con snapshots del cliente.
+    from tenancy.models import BusinessSettings
+
+    preferences = BusinessSettings.objects.filter(tenant=tenant).first() or BusinessSettings(
+        tenant=tenant
+    )
+    if payment_terms_days is UNSET:
+        payment_terms_days = preferences.payment_terms_days
+    if payment_terms_days is not None and (
+        isinstance(payment_terms_days, bool)
+        or not isinstance(payment_terms_days, int)
+        or not 0 <= payment_terms_days <= 3650
+    ):
+        raise ValidationError({"payment_terms_days": "Los plazos admiten entre 0 y 3650 días."})
+    if due_date is UNSET:
+        due_date = (
+            timezone.localdate(timezone=ZoneInfo(preferences.timezone))
+            + timedelta(days=payment_terms_days)
+            if payment_terms_days is not None
+            else None
+        )
+    if due_date is not None and (
+        not isinstance(due_date, date) or isinstance(due_date, type(timezone.now()))
+    ):
+        raise ValidationError({"due_date": "El vencimiento debe ser una fecha válida."})
+    # Snapshot issuer settings as well; changes never rewrite issued documents.
+    issuer_snapshot = {
+        "name": tenant.name,
+        "legal_name": tenant.legal_name,
+        "tax_id": tenant.tax_id,
+        "country_code": preferences.country_code,
+        "address": preferences.address,
+        "contact_email": preferences.contact_email,
+        "contact_phone": preferences.contact_phone,
+    }
     invoice = Invoice.objects.create(
         tenant=tenant,
         customer=customer,
@@ -143,6 +188,10 @@ def create_invoice_draft(
         customer_country_code_snapshot=customer.country_code,
         customer_postal_code_snapshot=customer.postal_code,
         notes=notes,
+        due_date=due_date,
+        payment_terms_days=payment_terms_days,
+        issuer_snapshot=issuer_snapshot,
+        footer_snapshot=preferences.invoice_footer,
     )
 
     subtotal_total = Decimal("0.00")
@@ -353,18 +402,15 @@ def issue_invoice(
 
     # Verificar nuevamente la consistencia de cada línea antes
     # de asignar una numeración definitiva.
+    product_ids = {line.product_id for line in lines if line.product_id is not None}
+    authorized_products = set(
+        Product.objects.filter(pk__in=product_ids, tenant=locked_tenant).values_list(
+            "pk", flat=True
+        )
+    )
+    if product_ids != authorized_products:
+        raise ValidationError({"lines": "Una línea contiene un producto asociado a otra empresa."})
     for line in lines:
-        if line.product_id is not None:
-            product_belongs_to_tenant = Product.objects.filter(
-                pk=line.product_id,
-                tenant=locked_tenant,
-            ).exists()
-
-            if not product_belongs_to_tenant:
-                raise ValidationError(
-                    {"lines": ("Una línea contiene un producto asociado a otra empresa.")}
-                )
-
         expected_subtotal = round_money(line.quantity * line.unit_price)
 
         expected_tax = round_money(expected_subtotal * line.tax_rate / Decimal("100"))
@@ -538,6 +584,7 @@ def record_payment(
     received_at=None,
     notes="",
     request=None,
+    idempotency_key=None,
 ) -> Payment:
     """
     Registra un pago parcial o total.
@@ -611,6 +658,40 @@ def record_payment(
     if external_reference and len(external_reference) > 120:
         raise ValidationError({"external_reference": "La referencia admite hasta 120 caracteres."})
 
+    if received_at is not None and (
+        not isinstance(received_at, datetime) or not timezone.is_aware(received_at)
+    ):
+        raise ValidationError({"received_at": "La fecha debe incluir una zona horaria."})
+    if not isinstance(notes, str) or len(notes) > 10000:
+        raise ValidationError({"notes": "Las notas admiten hasta 10000 caracteres."})
+    request_digest = ""
+    if idempotency_key is not None:
+        if not isinstance(idempotency_key, str) or not re.fullmatch(
+            r"[A-Za-z0-9_-]{8,128}", idempotency_key
+        ):
+            raise ValidationError(
+                {
+                    "idempotency_key": "La clave admite entre 8 y 128 letras, números, guiones o guiones bajos."
+                }
+            )
+        canonical = {
+            "invoice": str(invoice.pk),
+            "amount": str(payment_amount),
+            "method": method,
+            "reference": external_reference,
+            "notes": notes,
+            "received_at": received_at.astimezone(UTC).isoformat() if received_at else None,
+        }
+        request_digest = hashlib.sha256(json.dumps(canonical, sort_keys=True).encode()).hexdigest()
+        previous = Payment.objects.filter(
+            tenant=locked_tenant, idempotency_key=idempotency_key
+        ).first()
+        if previous:
+            if previous.request_digest != request_digest:
+                raise IdempotencyConflict()
+            previous._idempotent_replay = True
+            return previous
+
     # Una referencia externa no se puede reutilizar dentro
     # de la misma empresa y método de pago.
     if (
@@ -622,9 +703,6 @@ def record_payment(
         ).exists()
     ):
         raise ValidationError({"external_reference": ("Esta referencia ya fue registrada.")})
-
-    if received_at is not None and not timezone.is_aware(received_at):
-        raise ValidationError({"received_at": "La fecha debe incluir una zona horaria."})
 
     paid_balance = get_invoice_balance(invoice)
 
@@ -645,6 +723,8 @@ def record_payment(
         external_reference=external_reference,
         received_at=received_at or timezone.now(),
         notes=notes,
+        idempotency_key=idempotency_key,
+        request_digest=request_digest,
     )
 
     record_audit_event(

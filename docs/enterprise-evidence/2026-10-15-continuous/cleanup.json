@@ -1,0 +1,38 @@
+{
+  "removed": [
+    {
+      "path": "/home/nelson/Proyectos/facturador-saas-api/frontend/.next/cache",
+      "bytes": 283793323,
+      "files": 92,
+      "reason": "regenerable QA/build output"
+    },
+    {
+      "path": "/home/nelson/Proyectos/facturador-saas-api/frontend/test-results",
+      "bytes": 45,
+      "files": 1,
+      "reason": "regenerable QA/build output"
+    },
+    {
+      "path": "/home/nelson/.local/state/fracxion-enterprise-qa/ruff-cache",
+      "bytes": 8658,
+      "files": 15,
+      "reason": "regenerable QA/build output"
+    },
+    {
+      "path": "/home/nelson/Proyectos/facturador-saas-api/frontend/e2e/reset-fixture.json",
+      "bytes": 65,
+      "files": 1,
+      "reason": "regenerable QA/build output"
+    },
+    {
+      "path": "/home/nelson/Proyectos/facturador-saas-api/frontend/e2e/invitation-fixture.json",
+      "bytes": 149,
+      "files": 1,
+      "reason": "regenerable QA/build output"
+    }
+  ],
+  "bytes_removed": 283802240,
+  "databases_removed": false,
+  "dependencies_removed": false,
+  "production_build_preserved": true
+}

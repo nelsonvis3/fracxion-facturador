@@ -1,0 +1,24 @@
+{
+  "head": "60753dc8f47e3823e796ba0e666fccb7a87bfde3",
+  "tracked_files_unchanged": true,
+  "preexisting_untracked_preserved": {
+    "docs/github-profile/README.md": true
+  },
+  "generated_temporary_paths_removed": [
+    "/tmp/fracxion-enterprise-audit-20261014/repo/frontend/node_modules",
+    "/tmp/fracxion-enterprise-audit-20261014/repo/frontend/.next",
+    "/tmp/fracxion-enterprise-audit-20261014/repo/backend/.ruff_cache",
+    "/tmp/fracxion-enterprise-audit-20261014/repo/frontend/tsconfig.tsbuildinfo"
+  ],
+  "synthetic_postgres_data_preserved_and_stopped": "/tmp/fracxion-enterprise-audit-20261014/postgres",
+  "product_files_dependencies_migrations_changed": false,
+  "new_documents": [
+    "docs/ENTERPRISE_AUDIT.md",
+    "docs/ENTERPRISE_ROADMAP.md",
+    "docs/enterprise-evidence/2026-10-14/"
+  ],
+  "final_reports_sha256": {
+    "docs/ENTERPRISE_AUDIT.md": "7b3d95f1be20bebdbda28378a0b64b2f1438180fd3e14092a4acefc11bcf9f03",
+    "docs/ENTERPRISE_ROADMAP.md": "e21e01bafc28343c687d5dde05cbc1055ce802c9553c84235c91cbc316e095eb"
+  }
+}

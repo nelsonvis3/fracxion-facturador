@@ -45,9 +45,12 @@ export type Invoice = {
   customer_email_snapshot: string; customer_country_code_snapshot: string; customer_postal_code_snapshot: string;
   subtotal: string; tax_total: string; total: string; paid_total: string; balance: string;
   notes: string; created_by: string | null; issued_by: string | null; issued_at: string | null;
+  due_date: string | null; payment_terms_days: number | null; footer_snapshot: string;
+  issuer_snapshot: { name?: string; legal_name?: string; tax_id?: string; address?: string; contact_email?: string; contact_phone?: string; country_code?: string };
+  receivable_status: "draft" | "paid" | "unscheduled" | "overdue" | "due_today" | "upcoming"; days_overdue: number | null;
   created_at: string; updated_at: string; lines: InvoiceLine[];
 };
-export type InvoiceDraft = { customer: string; currency: string; notes?: string; lines: { product: string; quantity: string }[] };
+export type InvoiceDraft = { customer: string; currency: string; notes?: string; due_date?: string | null; payment_terms_days?: number | null; lines: { product: string; quantity: string }[] };
 export const invoiceApi = {
   list: (tenant: string, filters?: Filters) => apiRequest<Page<Invoice>>(path(tenant, "invoices") + query(filters)),
   get: (tenant: string, id: string) => apiRequest<Invoice>(path(tenant, "invoices", id)),
@@ -65,7 +68,7 @@ export type Payment = {
 export type PaymentPayload = { invoice: string; method: PaymentMethod; amount: string; external_reference?: string; received_at?: string; notes?: string };
 export const paymentApi = {
   list: (tenant: string, filters?: Filters) => apiRequest<Page<Payment>>(path(tenant, "payments") + query(filters)),
-  create: (tenant: string, payload: PaymentPayload) => apiRequest<Payment>(path(tenant, "payments"), { method: "POST", body: JSON.stringify(payload) }),
+  create: (tenant: string, payload: PaymentPayload, idempotencyKey?: string) => apiRequest<Payment>(path(tenant, "payments"), { method: "POST", headers: idempotencyKey ? { "Idempotency-Key": idempotencyKey } : undefined, body: JSON.stringify(payload) }),
   reverse: (tenant: string, id: string, reason: string) => apiRequest<NonNullable<Payment["reversal"]>>(path(tenant, "payments", id) + "reverse/", { method: "POST", body: JSON.stringify({ reason }) }),
 };
 export type AuditEvent = {
@@ -84,6 +87,6 @@ export function money(value: string, currency: string) {
   const grouped = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   return `${currency} ${grouped},${fraction.padEnd(2, "0").slice(0, 2)}`;
 }
-export const dateTime = (value: string) => new Intl.DateTimeFormat("es-AR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Argentina/Cordoba" }).format(new Date(value));
+export const dateTime = (value: string, timeZone = "America/Argentina/Cordoba") => new Intl.DateTimeFormat("es-AR", { dateStyle: "short", timeStyle: "short", timeZone }).format(new Date(value));
 export const invoiceLabel = (invoice: Pick<Invoice, "internal_number">) => invoice.internal_number ? `Interna #${invoice.internal_number}` : "Borrador";
 export type CustomerOption = Pick<Customer, "id" | "name" | "document_number">;

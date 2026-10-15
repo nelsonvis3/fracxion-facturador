@@ -1,0 +1,12 @@
+{
+  "name": "final-precheck-style",
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "accounts/test_email_verification.py",
+    "operations/test_purchases.py"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 0.02
+}

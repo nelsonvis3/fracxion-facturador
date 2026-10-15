@@ -1,0 +1,55 @@
+
+> frontend@0.1.0 test:e2e
+> node scripts/run-e2e-isolated.mjs e2e/business.spec.ts e2e/email-verification.spec.ts e2e/security.spec.ts e2e/purchases.spec.ts
+
+
+API de pruebas aislada · e2e/business.spec.ts
+
+Running 6 tests using 1 worker
+
+(node:54294) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/business.spec.ts:19:5 › clientes, catálogo, emisión, pago y reversión con persistencia (23.6s)
+  ✓  2 [chromium] › e2e/business.spec.ts:86:5 › viewer consulta sin acciones de escritura y no accede a otra empresa (12.7s)
+  ✓  3 [chromium] › e2e/business.spec.ts:101:5 › sesión vencida devuelve al login (11.4s)
+  ✓  4 [chromium] › e2e/business.spec.ts:110:5 › recuperación genérica y restablecimiento real con token de un solo uso (2.2s)
+  ✓  5 [chromium] › e2e/business.spec.ts:132:5 › navegación móvil sin desbordamiento horizontal (10.5s)
+  ✓  6 [chromium] › e2e/business.spec.ts:140:5 › registro público crea empresa, valida errores y permite volver a iniciar sesión (24.7s)
+
+  6 passed (1.5m)
+
+API de pruebas aislada · e2e/email-verification.spec.ts
+
+Running 1 test using 1 worker
+
+(node:56328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/email-verification.spec.ts:7:5 › verificación real de correo: solicitud, enlace firmado de QA, confirmación, estado y rechazo de repetición (7.3s)
+
+  1 passed (9.0s)
+
+API de pruebas aislada · e2e/security.spec.ts
+
+Running 5 tests using 1 worker
+
+(node:56498) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/security.spec.ts:28:5 › API exige CSRF, rechaza origen ajeno y evita caché de identidad (751ms)
+  ✓  2 [chromium] › e2e/security.spec.ts:44:5 › viewer no puede escribir enviando privilegios falsificados (1.2s)
+  ✓  3 [chromium] › e2e/security.spec.ts:54:5 › datos de otra empresa no se leen ni se usan como relaciones (2.0s)
+  ✓  4 [chromium] › e2e/security.spec.ts:100:5 › entradas malformadas reciben 400 en la API en ejecución (556ms)
+  ✓  5 [chromium] › e2e/security.spec.ts:111:5 › logout descarta datos privados ocultos y evita recuperarlos desde el historial (44.5s)
+
+  5 passed (50.8s)
+
+API de pruebas aislada · e2e/purchases.spec.ts
+
+Running 2 tests using 1 worker
+
+(node:58291) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/purchases.spec.ts:5:5 › compras reales: borrador, confirmación, recepciones, reversión atómica, gasto asociado y cierre (20.1s)
+  ✓  2 [chromium] › e2e/purchases.spec.ts:38:5 › un pedido cancelado no cambia stock y el catálogo ajeno se rechaza desde la API real (3.8s)
+
+  2 passed (25.6s)
+Registros de API de pruebas: /tmp/fracxion-e2e-fZM5qD

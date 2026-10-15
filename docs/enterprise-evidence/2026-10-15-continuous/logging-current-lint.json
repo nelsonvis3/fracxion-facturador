@@ -1,0 +1,14 @@
+{
+  "name": "logging-current-lint",
+  "command": [
+    ".venv/bin/ruff",
+    "check",
+    "config/observability.py",
+    "config/settings.py",
+    "accounts/password_reset.py",
+    "--fix"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 0.02
+}

@@ -1,0 +1,37 @@
+{
+  "database": "test_facturador_e2e",
+  "port": "55439",
+  "issue_queries": [
+    {
+      "lines": 1,
+      "queries": 13,
+      "product_existence_queries": 1
+    },
+    {
+      "lines": 10,
+      "queries": 22,
+      "product_existence_queries": 10
+    },
+    {
+      "lines": 100,
+      "queries": 112,
+      "product_existence_queries": 100
+    }
+  ],
+  "repeated_payment_without_reference": {
+    "payments": 2,
+    "balance": "80.00"
+  },
+  "auth_audit": {
+    "login_http": 200,
+    "logout_http": 200,
+    "audit_events_delta": 0
+  },
+  "admin_last_owner": {
+    "http": 302,
+    "membership_active": false,
+    "active_owners": 0,
+    "business_audit_delta": 0,
+    "django_admin_log_entries": 1
+  }
+}

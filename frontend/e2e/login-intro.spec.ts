@@ -1,6 +1,6 @@
 import type { HyperframesPlayer } from "@hyperframes/player";
 import type { Page } from "@playwright/test";
-import { expect, test } from "./fixtures";
+import { artifactPath, expect, test } from "./fixtures";
 
 async function openIntro(page: Page) {
   // Only the unauthenticated identity response is controlled here. The animation,
@@ -56,7 +56,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     expect(word.revealed).toBe(1);
     expect(word.mark.x).toBeGreaterThan(0);
     expect(word.word.right).toBeLessThan(viewport.width);
-    await page.screenshot({ path: `/tmp/fracxion-enterprise-audit/intro-${viewport.width}-word.png` });
+    await page.screenshot({ path: artifactPath(`fracxion-enterprise-audit/intro-${viewport.width}-word.png`) });
 
     // Inspect intermediate frames: each glyph preserves its place in the word,
     // so a passing final frame cannot hide overlap during emergence/retraction.
@@ -65,7 +65,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
       sample.offsets.forEach((offset, index) => expect(offset).toBeCloseTo(word.offsets[index], 4));
     }
     await inspectFrame(page, 1.05);
-    await page.screenshot({ path: `/tmp/fracxion-auth-transitions/clean-${viewport.width}-emergence.png` });
+    await page.screenshot({ path: artifactPath(`fracxion-auth-transitions/clean-${viewport.width}-emergence.png`) });
 
     const closed = await inspectFrame(page, 2.8);
     expect(closed.revealed).toBe(0);
@@ -77,7 +77,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     expect(arrived.mark.y).toBeCloseTo(destination!.y, 0);
     expect(arrived.mark.width).toBeCloseTo(destination!.width, 0);
     expect(arrived.backdropOpacity).toBeLessThan(.15);
-    await page.screenshot({ path: `/tmp/fracxion-enterprise-audit/intro-${viewport.width}-arrival.png` });
+    await page.screenshot({ path: artifactPath(`fracxion-enterprise-audit/intro-${viewport.width}-arrival.png`) });
 
     await page.locator("hyperframes-player").evaluate(element => (element as HyperframesPlayer).play());
     await expect(page.locator(".login-intro")).toBeHidden();
@@ -88,7 +88,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     await expect(page.getByRole("button", { name: "Iniciar sesión", exact: true })).toBeEnabled();
     expect(externalAssets).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.screenshot({ path: `/tmp/fracxion-enterprise-audit/intro-${viewport.width}-login.png`, fullPage: true });
+    await page.screenshot({ path: artifactPath(`fracxion-enterprise-audit/intro-${viewport.width}-login.png`), fullPage: true });
 
     await page.reload();
     await expect(page.locator(".login-experience")).toHaveAttribute("data-intro-state", "playing");

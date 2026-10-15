@@ -1,0 +1,26 @@
+{
+  "python": "Python 3.14.7",
+  "node": "v24.21.0",
+  "postgres": "postgres (PostgreSQL) 18.6",
+  "npm": "11.19.0",
+  "next": "16.4.0",
+  "react": "19.3.0",
+  "react-dom": "19.3.0",
+  "typescript": "5.9.3",
+  "tailwindcss": "4.3.3",
+  "@playwright/test": "1.64.0",
+  "axe-core": "4.14.0",
+  "python_packages": {
+    "Django": "5.2.18",
+    "djangorestframework": "3.18.1",
+    "psycopg": "3.3.6",
+    "django-cors-headers": "4.9.0",
+    "django-filter": "26.2",
+    "drf-spectacular": "0.30.0",
+    "redis": "8.1.0",
+    "gunicorn": "26.2.0",
+    "ruff": "0.16.10",
+    "coverage": "7.16.2",
+    "pip-audit": "2.10.1"
+  }
+}

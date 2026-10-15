@@ -268,7 +268,7 @@ class PasswordResetFlowTests(TestCase):
 
         # El enlace se incluye en el cuerpo del correo de desarrollo.
         links = [
-            line.strip() for line in mail.outbox[-1].body.splitlines() if "/reset-password?" in line
+            line.strip() for line in mail.outbox[-1].body.splitlines() if "/reset-password#" in line
         ]
 
         self.assertTrue(
@@ -276,7 +276,10 @@ class PasswordResetFlowTests(TestCase):
             "El correo no contiene el enlace de recuperación.",
         )
 
-        query = parse_qs(urlparse(links[0]).query)
+        link = urlparse(links[0])
+        self.assertNotIn("token", parse_qs(link.query))
+        self.assertNotIn("uid", parse_qs(link.query))
+        query = parse_qs(link.fragment)
 
         return {
             "uid": query["uid"][0],

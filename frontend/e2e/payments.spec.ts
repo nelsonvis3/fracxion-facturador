@@ -1,6 +1,5 @@
 import type { APIRequestContext } from "@playwright/test";
-import { mkdirSync } from "node:fs";
-import { expect, test } from "./fixtures";
+import { artifactPath, expect, test } from "./fixtures";
 
 const api = "http://127.0.0.1:8001";
 
@@ -74,8 +73,7 @@ test("Pagos explica el selector vacío y permite elegir una factura emitida y re
   await invoices.selectOption(draft.id);
   await form.getByLabel("Importe (ARS) *", { exact: true }).fill("40.00");
   await page.setViewportSize({ width: 390, height: 844 });
-  mkdirSync("../docs/screenshots", { recursive: true });
-  await page.screenshot({ path: "../docs/screenshots/payment-selector.png", fullPage: true });
+  await page.screenshot({ path: artifactPath("payment-selector.png"), fullPage: true });
   await form.getByRole("button", { name: "Registrar pago", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.getByRole("cell", { name: "ARS 40,00", exact: true })).toBeVisible();

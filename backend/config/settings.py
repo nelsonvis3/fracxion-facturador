@@ -14,6 +14,7 @@ import os
 from ipaddress import ip_network
 from pathlib import Path
 
+from corsheaders.defaults import default_headers
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
@@ -80,12 +81,17 @@ INSTALLED_APPS = [
     "catalog",
     "billing",
     "auditlog",
+    "analytics",
+    "reports",
+    "automation",
+    "operations",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
     "config.middleware.TrustedProxyMiddleware",
+    "config.observability.RequestIDMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -93,6 +99,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "accounts.session_inventory.SessionInventoryMiddleware",
+    "config.middleware.SecurityEventsMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "config.middleware.PrivateResponseMiddleware",
@@ -199,6 +207,22 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
+    "ENUM_NAME_OVERRIDES": {
+        "MembershipRoleEnum": "tenancy.models.Membership.Role",
+        "AutomationKindEnum": "automation.models.AutomationRule.Kind",
+        "BillingPaymentMethodEnum": "billing.models.Payment.Method",
+        "ExpensePaymentMethodEnum": "operations.models.ExpensePayment.Method",
+        "ReportKindEnum": [
+            "sales",
+            "payments",
+            "receivables",
+            "customers",
+            "products",
+            "summary",
+            "expenses",
+            "payables",
+        ],
+    },
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAuthenticated"],
     "TITLE": "Facturador SaaS API",
     "DESCRIPTION": ("API multi-tenant de facturación, gestión empresarial y auditoría."),
@@ -210,6 +234,9 @@ CORS_ALLOWED_ORIGINS = env_list(
 )
 
 CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = (*default_headers, "idempotency-key")
+CORS_EXPOSE_HEADERS = ["Idempotent-Replayed", "X-Request-ID"]
 
 CSRF_TRUSTED_ORIGINS = env_list(
     "CSRF_TRUSTED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
@@ -247,7 +274,8 @@ CACHES = {
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "formatters": {"json": {"()": "config.observability.SafeJSONFormatter"}},
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "json"}},
     "root": {"handlers": ["console"], "level": "INFO"},
 }
 

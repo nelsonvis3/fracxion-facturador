@@ -26,7 +26,7 @@ services:
       retries: 5
     networks: [private]
 
-  backend:
+  backend: &backend_service
     build: ./backend
     restart: unless-stopped
     environment:
@@ -57,6 +57,27 @@ services:
       database: {condition: service_healthy}
       cache: {condition: service_healthy}
     networks: [private]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/ready/', headers={'Host': __import__('os').environ['DJANGO_ALLOWED_HOSTS'].split(',')[0]}), timeout=5)"]
+      interval: 15s
+      timeout: 7s
+      retries: 5
+      start_period: 30s
+
+  worker:
+    <<: *backend_service
+    command: ["python", "manage.py", "run_jobs"]
+    stop_grace_period: 15s
+    depends_on:
+      backend: {condition: service_healthy}
+      database: {condition: service_healthy}
+      cache: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "manage.py", "job_worker_health"]
+      interval: 15s
+      timeout: 7s
+      retries: 3
+      start_period: 30s
 
   frontend:
     build: ./frontend

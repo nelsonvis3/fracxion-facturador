@@ -1,0 +1,12 @@
+﻿Informe,Gastos registrados
+Empresa,Empresa 8a5f1792-5d58-4122-905c-856e5ec81828
+ID empresa,96642ffe-1590-4961-b4fa-7b2d85c99c0d
+Desde,2026-09-15
+Hasta,2026-10-15
+Moneda,ARS
+Zona horaria,America/Argentina/Cordoba
+Generado,2026-10-15T14:52:43.998986-03:00
+Criterio,Gastos registrados por fecha del gasto; pagos y saldos actuales. No constituye cierre contable ni valida comprobantes externos.
+
+ID gasto,Proveedor histórico,Categoría histórica,Descripción,Referencia,Fecha gasto,Vencimiento,Neto,Impuesto,Total,Pagado efectivo,Saldo actual
+ec56837f-120d-44d9-8c0a-aaa78e706d92,,Servicios profesionales,Honorarios de soporte,,2026-10-15,,100.00,21.00,121.00,121.00,0.00

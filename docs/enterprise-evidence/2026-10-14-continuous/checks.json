@@ -1,0 +1,548 @@
+[
+  {
+    "name": "analytics-format",
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "."
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 0.01
+  },
+  {
+    "name": "analytics-schema",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "spectacular",
+      "--validate",
+      "--fail-on-warn",
+      "--file",
+      "/tmp/fracxion-foundation-20261014/evidence/openapi.yaml"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 1.62
+  },
+  {
+    "name": "analytics-tests",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "test",
+      "analytics",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 5.63
+  },
+  {
+    "name": "attack-and-race-tests",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "test",
+      "config.test_adversarial",
+      "tenancy.test_foundation",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 6.21
+  },
+  {
+    "name": "baseline-regression",
+    "command": [
+      ".venv/bin/coverage",
+      "run",
+      "manage.py",
+      "test",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 1,
+    "seconds": 21.52
+  },
+  {
+    "name": "build-accessibility-fixed",
+    "command": [
+      "npm",
+      "run",
+      "build",
+      "--",
+      "--webpack"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 0,
+    "seconds": 35.11
+  },
+  {
+    "name": "build-enterprise",
+    "command": [
+      "npm",
+      "run",
+      "build",
+      "--",
+      "--webpack"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 0,
+    "seconds": 59.9
+  },
+  {
+    "name": "current-coverage",
+    "command": [
+      ".venv/bin/coverage",
+      "report",
+      "--fail-under=85"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 0.39
+  },
+  {
+    "name": "current-lint",
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "--fix",
+      "."
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 1,
+    "seconds": 0.04
+  },
+  {
+    "name": "declare-axe",
+    "command": [
+      "npm",
+      "install",
+      "--save-dev",
+      "--save-exact",
+      "--package-lock-only",
+      "--ignore-scripts",
+      "axe-core@4.14.0"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 0,
+    "seconds": 12.38
+  },
+  {
+    "name": "enterprise-e2e-fixed",
+    "command": [
+      "npm",
+      "run",
+      "test:e2e",
+      "--",
+      "e2e/enterprise.spec.ts"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 0,
+    "seconds": 23.24
+  },
+  {
+    "name": "enterprise-e2e",
+    "command": [
+      "npm",
+      "run",
+      "test:e2e",
+      "--",
+      "e2e/enterprise.spec.ts"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 1,
+    "seconds": 75.46
+  },
+  {
+    "name": "enterprise-format-2",
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "."
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 0.02
+  },
+  {
+    "name": "enterprise-format",
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "."
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 0.02
+  },
+  {
+    "name": "enterprise-lint",
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "--fix",
+      "."
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 0.03
+  },
+  {
+    "name": "enterprise-model-migrations",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "makemigrations",
+      "tenancy",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 1.76
+  },
+  {
+    "name": "enterprise-openapi-final",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "spectacular",
+      "--validate",
+      "--fail-on-warn",
+      "--file",
+      "/tmp/fracxion-foundation-20261014/evidence/openapi.yaml"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 2.31
+  },
+  {
+    "name": "enterprise-openapi-fixed",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "spectacular",
+      "--validate",
+      "--fail-on-warn",
+      "--file",
+      "/tmp/fracxion-foundation-20261014/evidence/openapi.yaml"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 1,
+    "seconds": 2.07
+  },
+  {
+    "name": "enterprise-openapi",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "spectacular",
+      "--validate",
+      "--fail-on-warn",
+      "--file",
+      "/tmp/fracxion-foundation-20261014/evidence/openapi.yaml"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 1,
+    "seconds": 1.76
+  },
+  {
+    "name": "enterprise-reseed",
+    "command": [
+      "env",
+      "DJANGO_SETTINGS_MODULE=config.e2e_settings",
+      ".venv/bin/python",
+      "scripts/seed_e2e.py"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 1.29
+  },
+  {
+    "name": "enterprise-seed",
+    "command": [
+      "env",
+      "DJANGO_SETTINGS_MODULE=config.e2e_settings",
+      ".venv/bin/python",
+      "scripts/seed_e2e.py"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 3.67
+  },
+  {
+    "name": "enterprise-targeted-fixed",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "test",
+      "tenancy.test_enterprise",
+      "billing.test_receivables",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 4.54
+  },
+  {
+    "name": "enterprise-targeted",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "test",
+      "tenancy.test_enterprise",
+      "billing.test_receivables",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 1,
+    "seconds": 4.66
+  },
+  {
+    "name": "format-foundation",
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "."
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 0.03
+  },
+  {
+    "name": "foundation-regression-fixed",
+    "command": [
+      ".venv/bin/coverage",
+      "run",
+      "manage.py",
+      "test",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 22.3
+  },
+  {
+    "name": "foundation-tests",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "test",
+      "tenancy.test_foundation",
+      "accounts.test_security_events",
+      "billing.test_regressions",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 9.24
+  },
+  {
+    "name": "frontend-lint-analytics",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 1,
+    "seconds": 11.25
+  },
+  {
+    "name": "frontend-lint-current",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 1,
+    "seconds": 10.67
+  },
+  {
+    "name": "frontend-lint-fixed",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 0,
+    "seconds": 11.56
+  },
+  {
+    "name": "frontend-server",
+    "command": [
+      "env",
+      "PORT=3010",
+      "HOSTNAME=127.0.0.1",
+      "npm",
+      "run",
+      "start"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 143,
+    "seconds": 241.99
+  },
+  {
+    "name": "frontend-types-context",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 0,
+    "seconds": 8.0
+  },
+  {
+    "name": "frontend-types-enterprise",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+    "exit_code": 0,
+    "seconds": 9.01
+  },
+  {
+    "name": "full-enterprise-backend",
+    "command": [
+      ".venv/bin/coverage",
+      "run",
+      "manage.py",
+      "test",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 23.09
+  },
+  {
+    "name": "idempotency-format",
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "."
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 0.05
+  },
+  {
+    "name": "idempotency-migration",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "makemigrations",
+      "billing",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 1.2
+  },
+  {
+    "name": "idempotency-regression",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "test",
+      "billing.test_idempotency",
+      "billing.test_regressions",
+      "tenancy.test_foundation",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 7.59
+  },
+  {
+    "name": "identity-race-regression",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "test",
+      "tenancy.test_foundation",
+      "tenancy.test_enterprise",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 5.34
+  },
+  {
+    "name": "pillow-install",
+    "command": [
+      ".venv/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "Pillow==12.3.0"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 5.83
+  },
+  {
+    "name": "receivable-migration",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "makemigrations",
+      "billing",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 1.76
+  },
+  {
+    "name": "ruff-fix",
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "--fix",
+      "."
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 0.08
+  },
+  {
+    "name": "snapshot-tests",
+    "command": [
+      ".venv/bin/python",
+      "manage.py",
+      "test",
+      "analytics",
+      "--settings=config.test_settings",
+      "--noinput"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 8.29
+  },
+  {
+    "name": "stop-test-frontend",
+    "command": [
+      ".venv/bin/python",
+      "/tmp/fracxion-foundation-20261014/stop_frontend.py"
+    ],
+    "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+    "exit_code": 0,
+    "seconds": 0.09
+  }
+]

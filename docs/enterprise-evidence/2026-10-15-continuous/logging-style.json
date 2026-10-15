@@ -1,0 +1,13 @@
+{
+  "name": "logging-style",
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "config/observability.py",
+    "config/test_observability.py",
+    "config/settings.py"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 0.02
+}

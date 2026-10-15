@@ -1,0 +1,16 @@
+{
+  "docker": null,
+  "podman": null,
+  "redis-server": null,
+  "pg_ctl": "/usr/bin/pg_ctl",
+  "initdb": "/usr/bin/initdb",
+  "pg_dump": "/usr/bin/pg_dump",
+  "pg_restore": "/usr/bin/pg_restore",
+  "brave": "/usr/bin/brave",
+  "kernel": "Linux 7.2.9-1-cachyos",
+  "tracked_environment_files": [
+    ".env.example",
+    "backend/.env.example",
+    "frontend/.env.example"
+  ]
+}

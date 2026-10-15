@@ -1,6 +1,8 @@
 from drf_spectacular.authentication import SessionScheme
 from rest_framework import serializers
 
+from tenancy.models import Membership
+
 
 class SessionAuthenticationScheme(SessionScheme):
     target_class = "accounts.authentication.SessionAuthentication"
@@ -19,7 +21,7 @@ class TenantOptionSerializer(serializers.Serializer):
     id = serializers.UUIDField()
     name = serializers.CharField()
     slug = serializers.CharField()
-    role = serializers.ChoiceField(choices=["owner", "admin", "accountant", "sales", "viewer"])
+    role = serializers.ChoiceField(choices=Membership.Role.choices)
 
 
 class TenantListSerializer(serializers.Serializer):

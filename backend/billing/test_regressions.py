@@ -3,8 +3,9 @@ from decimal import Decimal
 from threading import Barrier
 
 from django.contrib.auth import get_user_model
-from django.db import close_old_connections, connections
+from django.db import close_old_connections, connection, connections
 from django.test import TestCase, TransactionTestCase
+from django.test.utils import CaptureQueriesContext
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.test import APIClient
 
@@ -50,6 +51,18 @@ class BillingFixtures:
 
 
 class BillingRegressionTests(BillingFixtures, TestCase):
+    def test_issue_query_count_does_not_grow_per_line(self):
+        counts = []
+        for count in [1, 100]:
+            invoice = self.draft(
+                lines=[{"product": self.product.pk, "quantity": Decimal("1")}] * count
+            )
+            with CaptureQueriesContext(connection) as queries:
+                issue_invoice(tenant=self.tenant, invoice_id=invoice.pk, actor=self.user)
+            counts.append(len(queries))
+        self.assertEqual(counts[0], counts[1])
+        self.assertLessEqual(counts[1], 20)
+
     def test_direct_draft_service_checks_roles(self):
         for role in ["viewer", "sales", "accountant"]:
             self.membership.role = role
@@ -138,6 +151,23 @@ class BillingRegressionTests(BillingFixtures, TestCase):
 
 
 class BillingConcurrencyTests(BillingFixtures, TransactionTestCase):
+    def test_concurrent_retries_record_one_payment(self):
+        invoice = self.issued()
+
+        def pay():
+            return record_payment(
+                tenant=self.tenant,
+                invoice_id=invoice.pk,
+                actor=self.user,
+                method="cash",
+                amount="100.00",
+                idempotency_key="concurrent-retry-key",
+            ).pk
+
+        results = self.concurrent([pay, pay])
+        self.assertEqual(results[0], results[1])
+        self.assertEqual(Payment.objects.count(), 1)
+
     def concurrent(self, operations):
         barrier = Barrier(len(operations))
 

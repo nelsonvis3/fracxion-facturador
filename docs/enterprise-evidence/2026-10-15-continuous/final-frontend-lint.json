@@ -1,0 +1,11 @@
+{
+  "name": "final-frontend-lint",
+  "command": [
+    "npm",
+    "run",
+    "lint"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+  "exit_code": 0,
+  "seconds": 17.1
+}

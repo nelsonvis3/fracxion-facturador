@@ -1,0 +1,4 @@
+Operations to perform:
+  Apply all migrations: accounts, admin, auditlog, auth, automation, billing, catalog, contenttypes, customers, operations, sessions, tenancy
+Running migrations:
+  No migrations to apply.
