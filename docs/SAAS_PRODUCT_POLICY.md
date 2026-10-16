@@ -1,6 +1,6 @@
 # Diseño de comercialización e integraciones
 
-Estado: diseño técnico y decisiones abiertas, 2026-10-15. No activa precios, cobros, límites comerciales, pasarelas o conexiones externas. La operación existente conserva su disponibilidad. Los módulos ejecutables y sus resultados están separados en `ENTERPRISE_ARCHITECTURE.md` y `ENTERPRISE_TESTING.md`.
+Estado: diseño técnico y decisiones abiertas, 2026-10-15. No activa precios, cobros, límites comerciales, pasarelas o conexiones externas. La operación existente conserva su disponibilidad. La arquitectura de los módulos actuales está en [ARQUITECTURA.md](ARQUITECTURA.md).
 
 ## Suscripciones y derechos de uso
 
@@ -73,4 +73,4 @@ La verificación optativa de correo y MFA TOTP están implementados localmente. 
 
 Producción requiere además medir recursos con carga representativa, probar el stack exacto del despliegue, validar SMTP y restaurar backups externos cifrados. La restauración local de una base sintética acredita el procedimiento de copia/restauración en ese entorno; no acredita recuperación ante pérdida del host de producción.
 
-La verificación optativa de correo y la gestión de sesiones ya existen localmente y tienen evidencia en TESTING. Las pruebas MFA cubren login API/Admin, recuperación, sesión anterior y consumo concurrente de códigos. El despliegue y resguardo de claves se describen en ORACLE_ENVIRONMENT.md.
+La verificación optativa de correo y la gestión de sesiones ya existen localmente y tienen evidencia en TESTING. Las pruebas MFA cubren login API/Admin, recuperación, sesión anterior y consumo concurrente de códigos. El despliegue y el resguardo de claves están en [DESPLIEGUE_ORACLE.md](DESPLIEGUE_ORACLE.md).

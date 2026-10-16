@@ -177,7 +177,7 @@ la máquina no dispone de Docker.
 | Reproducción de transiciones, revisión anterior | 1440×900 y 390×844: introducción, bienvenida, F girando, fundido, despedida e introducción posterior al logout. Giro y posición central comprobados; tamaño/posición de la F antes y después del cambio de documento coinciden con menos de 1 px de diferencia. Cero excepciones JavaScript, respuestas 5xx y solicitudes externas. Sesión revocada y DOM privado retirado durante la despedida. |
 | Grabaciones de transiciones, revisión anterior | Dos WebM del flujo completo decodificadas íntegramente con FFmpeg; capturas y secuencias de cuadros inspeccionadas en ambas resoluciones. |
 | `npm audit --omit=dev`, revisión anterior | 0 vulnerabilidades conocidas reportadas. |
-| `npm audit` completo, revisión anterior | 5 avisos altos de desarrollo en la cadena ESLint/`braces` ya documentada en `AUDIT.md`; sin `audit fix --force`. |
+| `npm audit` completo, revisión anterior | 5 avisos altos de desarrollo en la cadena ESLint/`braces`; sin `audit fix --force`. |
 | Linter Hyperframes, composición sin cambios | 0 errores; 2 sugerencias para separar escenas anidadas en subcomposiciones de Studio. Se conserva esta composición breve con dos pistas. |
 
 El build verificado utiliza Webpack. En la entrega inicial, Turbopack no pudo abrir

@@ -1,6 +1,6 @@
 # Operación y despliegue
 
-Para Oracle consultar primero [ORACLE_DEPLOYMENT.md](ORACLE_DEPLOYMENT.md) y su overlay ARM64; aún no hay una VM desplegada. La referencia general es `compose.yaml`: un dominio HTTPS, Caddy, Next.js standalone, Gunicorn, PostgreSQL y Redis. Solo el proxy publica puertos. El backend valida sesión, CSRF, membresía y empresa activa en cada petición.
+Para Oracle Cloud ver [DESPLIEGUE_ORACLE.md](DESPLIEGUE_ORACLE.md) y su overlay ARM64; todavía no hay una VM desplegada. La referencia general es `compose.yaml`: un dominio HTTPS, Caddy, Next.js standalone, Gunicorn, PostgreSQL y Redis. Solo el proxy publica puertos. El backend valida sesión, CSRF, membresía y empresa activa en cada petición.
 
 ## Publicar una instalación nueva
 
@@ -80,9 +80,7 @@ Se construyeron las imágenes con sus dependencias reales y se verificó el arra
 
 El limitador usa Redis y operaciones atómicas, con ventana de 15 minutos. Si Redis falla, la autenticación no continúa sin controles; `/ready/` indica la indisponibilidad. Los límites no reemplazan las defensas del proxy ni el monitoreo de abuso.
 
-## Revisión continua local — 2026-10-15
-
-Las verificaciones operativas históricas de arriba no se atribuyen automáticamente a los cambios nuevos. Esta ejecución dispone de PostgreSQL nativo 18.6, Python 3.14.7, Node 24 y Brave; no de Docker/Redis/Caddy/SMTP real. Ver comandos/resultados en `enterprise-evidence/2026-10-15-continuous/`. Una restauración real entre dos bases vacías de QA conservó importes, reversiones, saldos, stock y auditoría; no acredita backups externos ni recuperación del despliegue actual.
+## Worker, verificación de correo y MFA
 
 La cola empresarial se procesa con `python manage.py run_jobs`; requiere supervisor/reinicio y la misma configuración de DB de la API. `python manage.py job_worker_health` comprueba el latido del worker. `run_jobs --scheduler-only` puede separar la programación; múltiples schedulers se coordinan mediante locks. No habilitar reglas ni destinatarios reales durante pruebas. Los avisos actuales son internos; no son campañas de correo a clientes. Los informes generados vencen a los siete días y el worker retira solo sus binarios regenerables, conservando solicitudes/intentos/auditoría.
 

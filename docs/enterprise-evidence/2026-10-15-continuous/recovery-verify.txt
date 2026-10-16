@@ -1,1 +1,0 @@
-{"audit_events": 11, "collected": "30.00", "companies": 1, "expense_balance": "101.00", "expense_paid": "20.00", "expense_total": "121.00", "expenses": 1, "invoice_total": "121.00", "invoices": 1, "payment_records": 2, "receivable": "91.00", "reversals": 1, "stock_balance": "3.000", "stock_movements": 2, "users": 1}

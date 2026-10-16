@@ -1,8 +1,0 @@
-Warning: unable to load choice override for MembershipRoleEnum from ENUM_NAME_OVERRIDES. please check module path string.
-Error: ENUM_NAME_OVERRIDES has duplication issues. Encountered multiple names for the same choice set. Enum naming might be unexpected.
-
-Schema generation summary:
-Warnings: 1 (1 unique)
-Errors:   1 (1 unique)
-
-SchemaGenerationError: Failing as requested due to warnings

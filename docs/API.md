@@ -30,6 +30,8 @@ Con una sesión iniciada, el esquema OpenAPI completo está en `/api/schema/` y 
 | GET, POST | `/api/auth/sessions/`, `.../{id}/revoke/`, `.../revoke-others/` | Ver y cerrar sesiones abiertas |
 | GET | `/api/reference/countries/`, `/api/reference/countries/{code}/subdivisions/` | Países y provincias para los formularios |
 
+Si la cuenta tiene MFA activo, `POST /api/auth/login/` no abre la sesión: responde `{"mfa_required": true, "expires_in": 300, "csrfToken": "..."}`. La sesión se completa en los 5 minutos siguientes con `POST /api/auth/mfa/login/` y el `code` (TOTP o de recuperación).
+
 ## Operaciones por empresa
 
 Todas las rutas empiezan con `/api/tenants/{tenant_id}/`.

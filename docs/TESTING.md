@@ -76,9 +76,9 @@ Los escenarios API comprueban CSRF, origen ajeno, CORS, caché privada, privileg
 
 El script genera `frontend/e2e/reset-fixture.json`, ignorado por Git y excluido de Docker. Antes de repetir la suite, ejecutar otra vez `seed_e2e.py` para regenerar la contraseña y el token consumido. Los tests dejan operaciones sintéticas; la selección usa búsqueda para no depender de la primera página. Reiniciar la API de pruebas si varias ejecuciones agotan los límites de login o registro del caché local.
 
-Los fallos guardan trazas en `frontend/test-results/`. Los flujos aprobados generan `docs/screenshots/invoice.png`, `payment-selector.png` y las capturas `dashboard-{desktop,mobile}.png` y `company-dashboard-{desktop,mobile}.png`; son evidencia de prueba, no capturas de producción. Un build E2E incorpora la URL del puerto 8001: volver a compilar con el entorno definitivo antes de desplegar. Docker realiza su propio build.
+Los fallos guardan trazas en `frontend/test-results/`. Los flujos aprobados guardan capturas (por ejemplo `invoice.png`, `payment-selector.png`, `dashboard-{desktop,mobile}.png` y `company-dashboard-{desktop,mobile}.png`) en el directorio temporal `fracxion-e2e-*`; las de `docs/screenshots/` se copian de ahí a mano. Un build E2E incorpora la URL del puerto 8001: volver a compilar con el entorno definitivo antes de desplegar. Docker realiza su propio build.
 
-Las regresiones del 10 de octubre están en `accounts/test_security.py` y `config/test_security.py`. Cubren entradas excesivas, Unicode/NUL, tamaño/profundidad JSON, búsqueda, límites de credenciales y rechazo de configuración insegura de producción. El diagnóstico, corrección y resultados se conservan en [AUDIT_LOG.md](AUDIT_LOG.md).
+Las regresiones del 10 de octubre están en `accounts/test_security.py` y `config/test_security.py`. Cubren entradas excesivas, Unicode/NUL, tamaño/profundidad JSON, búsqueda, límites de credenciales y rechazo de configuración insegura de producción.
 
 ## Introducción del login
 
@@ -107,16 +107,15 @@ el Chromium instalado por Playwright, como en CI.
 
 ## CI y alcance
 
-`.github/workflows/ci.yml` ejecuta dos jobs con PostgreSQL: backend y frontend/E2E. El umbral de cobertura es 85%. La auditoría de npm de producción es obligatoria; los avisos de desarrollo se documentan en `AUDIT.md`.
+`.github/workflows/ci.yml` ejecuta dos jobs con PostgreSQL: backend y frontend/E2E. El umbral de cobertura es 85%. CI corre `npm audit --omit=dev` y también `npm audit` completo.
 
 Estas comprobaciones no sustituyen pruebas de carga, SMTP real, backups externos ni aceptación por usuarios de negocio. Al finalizar, detener los servidores temporales. El contenedor `facturador-tests` puede detenerse con `docker stop facturador-tests`; conservar o eliminar sus datos según se necesiten nuevas ejecuciones.
 
 ## Ampliación empresarial continua
 
-Los recorridos actuales suman 53 escenarios en 18 archivos e incluyen compras/recepciones, gastos, analítica, exportaciones/workers, equipo/configuración, ataques locales y seguridad de cuenta/correo. Los resultados realmente ejecutados, interrupciones y repeticiones se registran en `ENTERPRISE_TESTING.md`; este número es inventario de escenarios y no afirma aprobación de una ejecución por sí solo. Si el entorno limita la duración de un proceso, pasar archivos concretos al arnés (`npm run test:e2e -- e2e/security.spec.ts`) y conservar la evidencia de todos. No bajar límites de seguridad ni cobertura para completar la ejecución.
+Los recorridos actuales suman 53 escenarios en 18 archivos e incluyen compras/recepciones, gastos, analítica, exportaciones/workers, equipo/configuración, ataques locales y seguridad de cuenta/correo. El 16 de octubre de 2026 pasaron los 53 en una sola ejecución. Si el entorno limita la duración de un proceso, pasar archivos concretos al arnés (`npm run test:e2e -- e2e/security.spec.ts`) y conservar la evidencia de todos. No bajar límites de seguridad ni cobertura para completar la ejecución.
 
 La revisión previa a Oracle añade `e2e/mfa.spec.ts` y
 `npm run test:lint-contract`. La semilla MFA de config.e2e_settings es una fixture
-pública sintética: nunca usarla en producción. Los resultados actuales se
-registran en ORACLE_DEPLOYMENT_TESTING.md. `requirements.lock` fija también
+pública sintética: nunca usarla en producción. `requirements.lock` fija también
 las dependencias transitivas de producción; instalarlo o requirements-dev.txt.

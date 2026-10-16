@@ -1,4 +1,0 @@
-Migrations for 'accounts':
-  accounts/migrations/0002_user_session_version_accountsession.py
-    + Add field session_version to user
-    + Create model AccountSession

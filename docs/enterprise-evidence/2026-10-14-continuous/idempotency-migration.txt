@@ -1,5 +1,0 @@
-Migrations for 'billing':
-  billing/migrations/0005_payment_idempotency_key_payment_request_digest_and_more.py
-    + Add field idempotency_key to payment
-    + Add field request_digest to payment
-    + Create constraint uniq_payment_idempotency_key on model payment

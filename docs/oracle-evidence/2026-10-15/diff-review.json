@@ -1,9 +1,0 @@
-{
-  "utc": "2026-10-15T18:57:28.725715+00:00",
-  "base_head": "2ad91d706d3c6f4b1b894c59b5d3b55bc95a25e6",
-  "changed_tracked_count": 31,
-  "untracked_count": 99,
-  "private_marker_scan": [],
-  "old_tracked_migration_changes": [],
-  "scope": "name/marker scan and manual diff review; not a guarantee of absence of secrets"
-}

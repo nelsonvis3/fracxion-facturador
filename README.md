@@ -51,6 +51,8 @@ Dos emisiones al mismo tiempo podrían recibir el mismo número, y dos cobros si
 
 Una factura emitida o un pago no se editan ni se borran: un error se corrige con una reversión. El stock funciona igual, como una lista de movimientos con clave de idempotencia y una restricción que impide saldo negativo ([`operations/models.py`](backend/operations/models.py)). Cada operación y su evento de auditoría se guardan en la misma transacción, así que si falla la auditoría tampoco se guarda la operación.
 
+El resto de las decisiones (cola de trabajos, sesiones, MFA, inventario y compras) está en [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
+
 ## Cómo correrlo
 
 Necesitás Python 3.14, Node.js 22 y PostgreSQL. Crear la base:
@@ -103,7 +105,7 @@ Son 367 tests de backend con 92% de cobertura y 53 escenarios de Playwright en 1
 
 ## Estado
 
-Todo lo de "Qué hace" funciona en local y pasa en CI. No hay demo pública todavía: el despliegue en una VM de Oracle Cloud está preparado en [docs/ORACLE_DEPLOYMENT.md](docs/ORACLE_DEPLOYMENT.md), pero falta validar dominio, correo y backups.
+Todo lo de "Qué hace" funciona en local y pasa en CI. No hay demo pública todavía: el despliegue en una VM de Oracle Cloud está preparado en [docs/DESPLIEGUE_ORACLE.md](docs/DESPLIEGUE_ORACLE.md), pero falta validar dominio, correo y backups.
 
 Las facturas son de gestión interna: no se conectan con ARCA ni obtienen CAE. Las notas de crédito y débito existen en el modelo, pero todavía no se pueden emitir. Tampoco hay conciliación bancaria, planes de suscripción ni pruebas de carga.
 

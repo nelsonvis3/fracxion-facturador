@@ -1,5 +1,0 @@
-
-> frontend@0.1.0 typecheck
-> tsc --noEmit
-
-src/app/layout.tsx(11,50): error TS2304: Cannot find name 'LayoutProps'.

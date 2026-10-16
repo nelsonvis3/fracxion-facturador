@@ -1,7 +1,0 @@
-{
-  "spec_files": 15,
-  "scenarios_passed": 49,
-  "failed": 0,
-  "source": "full-browser-regression-fixed.txt",
-  "runner_exit_code": 0
-}
