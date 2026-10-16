@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
+from django.utils.crypto import constant_time_compare
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
@@ -129,8 +130,21 @@ def login_view(request):
         )
 
     with transaction.atomic():
-        security_event(request, event="login", outcome="success", actor=user)
-        login(request, user)
+        from . import mfa
+
+        authenticated_hash = user.password
+        user = mfa.lock_user(user.pk)
+        if user is None or not constant_time_compare(user.password, authenticated_hash):
+            return JsonResponse(
+                {"detail": "Correo electrónico o contraseña incorrectos."}, status=401
+            )
+        device = mfa.lock_device(user)
+        if device and device.confirmed_at:
+            mfa.start_challenge(request, user, device)
+            return JsonResponse(
+                {"mfa_required": True, "expires_in": 300, "csrfToken": get_token(request)}
+            )
+        mfa.complete_login(request, user)
 
     return JsonResponse(
         {

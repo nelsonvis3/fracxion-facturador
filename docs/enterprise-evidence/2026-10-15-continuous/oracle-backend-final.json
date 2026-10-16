@@ -1,0 +1,14 @@
+{
+  "name": "oracle-backend-final",
+  "command": [
+    ".venv/bin/coverage",
+    "run",
+    "manage.py",
+    "test",
+    "--settings=config.test_settings",
+    "--noinput"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 71.71
+}

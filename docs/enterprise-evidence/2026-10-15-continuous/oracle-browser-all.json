@@ -1,0 +1,11 @@
+{
+  "name": "oracle-browser-all",
+  "command": [
+    "npm",
+    "run",
+    "test:e2e"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+  "exit_code": 0,
+  "seconds": 565.75
+}

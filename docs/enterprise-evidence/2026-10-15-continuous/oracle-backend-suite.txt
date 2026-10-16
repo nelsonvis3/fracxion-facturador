@@ -1,0 +1,11 @@
+Creating test database for alias 'default'...
+......................................................................................................................................................................................................................................................................................................................No se pudo entregar una invitación de equipo; revisar configuración de correo.
+..................................62f7cb2a-baac-4f92-b244-e278ef15fb6a: succeeded
+....................
+----------------------------------------------------------------------
+Ran 364 tests in 53.206s
+
+OK
+Destroying test database for alias 'default'...
+Found 364 test(s).
+System check identified no issues (0 silenced).

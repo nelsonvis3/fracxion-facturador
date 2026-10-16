@@ -9,7 +9,7 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 # Same-origin API en producción; las variables NEXT_PUBLIC se fijan en el build.
 ENV NEXT_PUBLIC_API_BASE_URL="" NEXT_TELEMETRY_DISABLED=1
-RUN npm run build
+RUN npm run build -- --webpack
 
 FROM node:22-bookworm-slim AS runner
 WORKDIR /app

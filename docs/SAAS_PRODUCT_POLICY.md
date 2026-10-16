@@ -69,8 +69,8 @@ Los payloads deben ser versionados y mínimos. Evitar datos personales/financier
 
 [OWASP ASVS](https://owasp.org/projects/asvs) se usa como referencia de controles y pruebas, no como certificación. La revisión actual comprueba sesiones/CSRF, autorización, aislamiento, entradas, archivos, precisión/transacciones, auditoría y dependencias. No se declara cobertura total de ASVS ni auditoría externa.
 
-MFA y verificación de correo siguen pendientes de implementación y de pruebas completas, incluida la entrada por Django Admin y la recuperación. Activar MFA solo en el login público dejaría una vía alternativa de acceso; no se presentará ese resultado parcial como protección de cuentas privilegiadas. Los métodos de recuperación deben definirse antes de imponer obligatoriedad.
+La verificación optativa de correo y MFA TOTP están implementados localmente. MFA cubre API y Django Admin, secretos cifrados y códigos de recuperación de un solo uso. La obligatoriedad para privilegiados se decide con un procedimiento operativo de recuperación; no se impone retrospectivamente sin esa política.
 
 Producción requiere además medir recursos con carga representativa, probar el stack exacto del despliegue, validar SMTP y restaurar backups externos cifrados. La restauración local de una base sintética acredita el procedimiento de copia/restauración en ese entorno; no acredita recuperación ante pérdida del host de producción.
 
-La verificación optativa de correo y la gestión de sesiones ya existen localmente y tienen evidencia en TESTING. MFA permanece pendiente de un flujo completo que cubra login API, Django Admin, recuperación y gestión segura de secretos; no se presenta un segundo paso visual como MFA terminado.
+La verificación optativa de correo y la gestión de sesiones ya existen localmente y tienen evidencia en TESTING. Las pruebas MFA cubren login API/Admin, recuperación, sesión anterior y consumo concurrente de códigos. El despliegue y resguardo de claves se describen en ORACLE_ENVIRONMENT.md.

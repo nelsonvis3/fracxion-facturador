@@ -1,3 +1,12 @@
+# Revisión actual previa a Oracle — 2026-10-15
+
+El estado más reciente está en [ORACLE_DEPLOYMENT_TESTING.md](ORACLE_DEPLOYMENT_TESTING.md):
+367 tests backend aprobados, 92 % de cobertura y 53 escenarios browser / 18 archivos
+aprobados en una ejecución completa, más comprobaciones específicas de MFA.
+El audit npm completo y pip-audit con lock no encontraron vulnerabilidades conocidas.
+Los resultados y avisos anteriores se conservan debajo como historial, no estado actual.
+No se ejecutó todavía el stack de destino OCI/ARM64/PG17/Redis8/HTTPS público.
+
 # Pruebas del desarrollo empresarial
 
 Actualización: 2026-10-15. El entorno temporal del 14 ya no estaba disponible al reanudar. Se creó un clúster sintético nuevo en `/home/nelson/.local/state/fracxion-enterprise-qa/postgres`, con PostgreSQL 18.6 y puerto local 55439. DB de suite `test_postgres`, DB de navegador `test_facturador_e2e`; ninguna base comercial. El runner guarda cada comprobación completada directamente en `docs/enterprise-evidence/2026-10-15-continuous/`, además de su directorio local de QA.

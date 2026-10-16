@@ -1,0 +1,25 @@
+
+> frontend@0.1.0 test:e2e
+> node scripts/run-e2e-isolated.mjs e2e/mfa.spec.ts e2e/account-security.spec.ts
+
+
+API de pruebas aislada · e2e/mfa.spec.ts
+
+Running 1 test using 1 worker
+
+(node:95695) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/mfa.spec.ts:15:5 › MFA real: activar, invalidar otro acceso, login con recuperación, rechazar repetición y desactivar (12.6s)
+
+  1 passed (18.6s)
+
+API de pruebas aislada · e2e/account-security.spec.ts
+
+Running 1 test using 1 worker
+
+(node:97437) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/account-security.spec.ts:5:5 › dos navegadores: revocar sesiones, cambiar contraseña y conservar el acceso actual (24.2s)
+
+  1 passed (28.2s)
+Registros de API de pruebas: /tmp/fracxion-e2e-xIhsms

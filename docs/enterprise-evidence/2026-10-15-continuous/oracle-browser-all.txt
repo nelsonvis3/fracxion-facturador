@@ -1,0 +1,220 @@
+
+> frontend@0.1.0 test:e2e
+> node scripts/run-e2e-isolated.mjs
+
+
+API de pruebas aislada · e2e/account-security.spec.ts
+
+Running 1 test using 1 worker
+
+(node:73892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/account-security.spec.ts:5:5 › dos navegadores: revocar sesiones, cambiar contraseña y conservar el acceso actual (7.3s)
+
+  1 passed (8.8s)
+
+API de pruebas aislada · e2e/adversarial.spec.ts
+
+Running 1 test using 1 worker
+
+(node:74094) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/adversarial.spec.ts:4:5 › ataques controlados a configuración, miembros, invitaciones y análisis no filtran empresas (2.8s)
+
+  1 passed (4.5s)
+
+API de pruebas aislada · e2e/analytics.spec.ts
+
+Running 2 tests using 1 worker
+
+(node:74228) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/analytics.spec.ts:5:5 › indicadores reales, filtros de moneda y reversiones cambian los resultados (4.7s)
+  ✓  2 [chromium] › e2e/analytics.spec.ts:34:5 › módulos empresariales son accesibles y no desbordan en escritorio y móvil (22.0s)
+
+  2 passed (28.7s)
+
+API de pruebas aislada · e2e/auth-abuse.spec.ts
+
+Running 1 test using 1 worker
+
+(node:74458) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/auth-abuse.spec.ts:4:5 › fuerza bruta local queda bloqueada sin abrir sesión ni aceptar headers falsificados (2.9s)
+
+  1 passed (4.2s)
+
+API de pruebas aislada · e2e/business.spec.ts
+
+Running 6 tests using 1 worker
+
+(node:74590) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/business.spec.ts:19:5 › clientes, catálogo, emisión, pago y reversión con persistencia (22.6s)
+  ✓  2 [chromium] › e2e/business.spec.ts:86:5 › viewer consulta sin acciones de escritura y no accede a otra empresa (13.2s)
+  ✓  3 [chromium] › e2e/business.spec.ts:101:5 › sesión vencida devuelve al login (10.5s)
+  ✓  4 [chromium] › e2e/business.spec.ts:110:5 › recuperación genérica y restablecimiento real con token de un solo uso (1.9s)
+  ✓  5 [chromium] › e2e/business.spec.ts:132:5 › navegación móvil sin desbordamiento horizontal (11.9s)
+  ✓  6 [chromium] › e2e/business.spec.ts:140:5 › registro público crea empresa, valida errores y permite volver a iniciar sesión (26.9s)
+
+  6 passed (1.5m)
+
+API de pruebas aislada · e2e/dashboard.spec.ts
+
+Running 3 tests using 1 worker
+
+(node:76702) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/dashboard.spec.ts:50:5 › dashboard legible en escritorio, tablet y móvil; navegación y contadores reales (16.5s)
+  ✓  2 [chromium] › e2e/dashboard.spec.ts:90:5 › selector muestra carga, error con reintento y estado sin empresas (14.3s)
+  ✓  3 [chromium] › e2e/dashboard.spec.ts:110:5 › resumen viewer conserva permisos al mostrar accesos y acciones (11.1s)
+
+  3 passed (43.8s)
+
+API de pruebas aislada · e2e/email-verification.spec.ts
+
+Running 1 test using 1 worker
+
+(node:78559) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/email-verification.spec.ts:7:5 › verificación real de correo: solicitud, enlace firmado de QA, confirmación, estado y rechazo de repetición (6.5s)
+
+  1 passed (8.0s)
+
+API de pruebas aislada · e2e/enterprise.spec.ts
+
+Running 4 tests using 1 worker
+
+(node:78716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/enterprise.spec.ts:5:5 › configuración, logo, vencimiento y datos históricos persisten desde la interfaz (9.4s)
+  ✓  2 [chromium] › e2e/enterprise.spec.ts:50:5 › equipo permite invitar, reenviar y revocar y protege al último propietario (2.6s)
+  ✓  3 [chromium] › e2e/enterprise.spec.ts:69:5 › invitación real permite crear cuenta sin empresa extra y no admite reutilización (2.2s)
+  ✓  4 [chromium] › e2e/enterprise.spec.ts:86:5 › modal conserva navegación de teclado y devuelve el foco en sus tres cierres (5.3s)
+
+  4 passed (21.1s)
+
+API de pruebas aislada · e2e/expenses.spec.ts
+
+Running 1 test using 1 worker
+
+(node:79022) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/expenses.spec.ts:6:5 › gasto real: categorías, adjunto privado, registro, pagos y reversión con saldos correctos (15.4s)
+
+  1 passed (17.5s)
+
+API de pruebas aislada · e2e/login-intro.spec.ts
+
+Running 8 tests using 1 worker
+
+(node:79256) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/login-intro.spec.ts:39:7 › F, Fracxion, retracción y llegada al logo real a 1440px (14.6s)
+  ✓  2 [chromium] › e2e/login-intro.spec.ts:39:7 › F, Fracxion, retracción y llegada al logo real a 390px (3.8s)
+  ✓  3 [chromium] › e2e/login-intro.spec.ts:100:5 › se puede omitir con teclado y el foco pasa al correo (1.5s)
+  ✓  4 [chromium] › e2e/login-intro.spec.ts:111:5 › movimiento reducido permite entrar directamente (928ms)
+  ✓  5 [chromium] › e2e/login-intro.spec.ts:122:5 › un fallo de la composición no bloquea el login (1.0s)
+  ✓  6 [chromium] › e2e/login-intro.spec.ts:130:5 › Escape y un cambio de viewport dejan disponible el formulario (2.1s)
+  ✓  7 [chromium] › e2e/login-intro.spec.ts:141:5 › la introducción se reproduce y termina automáticamente a velocidad normal (7.1s)
+  ✓  8 [chromium] › e2e/login-intro.spec.ts:150:5 › el almacenamiento restringido no impide reproducir ni omitir (2.2s)
+
+  8 passed (36.0s)
+
+API de pruebas aislada · e2e/login-viewport.spec.ts
+
+Running 5 tests using 1 worker
+
+(node:81210) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/login-viewport.spec.ts:26:5 › el primer render ya ocupa todo el viewport mientras JavaScript sigue pendiente (2.9s)
+  ✓  2 [chromium] › e2e/login-viewport.spec.ts:44:7 › sin scrollbar ni franjas durante carga/reproducción; scroll al terminar a 1440px (8.5s)
+  ✓  3 [chromium] › e2e/login-viewport.spec.ts:44:7 › sin scrollbar ni franjas durante carga/reproducción; scroll al terminar a 390px (7.1s)
+  ✓  4 [chromium] › e2e/login-viewport.spec.ts:78:5 › omisión, error y movimiento reducido liberan el scroll (4.0s)
+  ✓  5 [chromium] › e2e/login-viewport.spec.ts:93:5 › sin JavaScript el login no queda bloqueado por el estado pendiente (1.2s)
+
+  5 passed (25.2s)
+
+API de pruebas aislada · e2e/mfa.spec.ts
+
+Running 1 test using 1 worker
+
+(node:83017) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/mfa.spec.ts:15:5 › MFA real: activar, invalidar otro acceso, login con recuperación, rechazar repetición y desactivar (13.6s)
+
+  1 passed (16.8s)
+
+API de pruebas aislada · e2e/operations.spec.ts
+
+Running 2 tests using 1 worker
+
+(node:84783) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/operations.spec.ts:5:5 › proveedores persisten cambios y se desactivan sin eliminar su historia (7.4s)
+  ✓  2 [chromium] › e2e/operations.spec.ts:31:5 › inventario real bloquea stock negativo y revierte mediante un movimiento adicional (17.1s)
+
+  2 passed (29.1s)
+
+API de pruebas aislada · e2e/payments.spec.ts
+
+Running 1 test using 1 worker
+
+(node:85062) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/payments.spec.ts:16:5 › Pagos explica el selector vacío y permite elegir una factura emitida y registrar el cobro (10.6s)
+
+  1 passed (12.4s)
+
+API de pruebas aislada · e2e/purchases.spec.ts
+
+Running 2 tests using 1 worker
+
+(node:85208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/purchases.spec.ts:5:5 › compras reales: borrador, confirmación, recepciones, reversión atómica, gasto asociado y cierre (20.1s)
+  ✓  2 [chromium] › e2e/purchases.spec.ts:38:5 › un pedido cancelado no cambia stock y el catálogo ajeno se rechaza desde la API real (4.0s)
+
+  2 passed (25.4s)
+
+API de pruebas aislada · e2e/reports.spec.ts
+
+Running 2 tests using 1 worker
+
+(node:86920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/reports.spec.ts:17:5 › informes CSV, Excel y PDF reales; worker separado y avisos privados (10.8s)
+  ✓  2 [chromium] › e2e/reports.spec.ts:53:5 › configuración de automatizaciones persiste y respeta movimiento reducido y móvil (10.5s)
+
+  2 passed (22.6s)
+
+API de pruebas aislada · e2e/security.spec.ts
+
+Running 5 tests using 1 worker
+
+(node:88605) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/security.spec.ts:28:5 › API exige CSRF, rechaza origen ajeno y evita caché de identidad (601ms)
+  ✓  2 [chromium] › e2e/security.spec.ts:44:5 › viewer no puede escribir enviando privilegios falsificados (979ms)
+  ✓  3 [chromium] › e2e/security.spec.ts:54:5 › datos de otra empresa no se leen ni se usan como relaciones (1.7s)
+  ✓  4 [chromium] › e2e/security.spec.ts:100:5 › entradas malformadas reciben 400 en la API en ejecución (427ms)
+  ✓  5 [chromium] › e2e/security.spec.ts:111:5 › logout descarta datos privados ocultos y evita recuperarlos desde el historial (44.4s)
+
+  5 passed (49.5s)
+
+API de pruebas aislada · e2e/session-transition.spec.ts
+
+Running 7 tests using 1 worker
+
+(node:90366) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/session-transition.spec.ts:27:5 › bienvenida con identidad real, sin credenciales, y despedida segura desde el selector (15.6s)
+  ✓  2 [chromium] › e2e/session-transition.spec.ts:60:5 › el usuario sin nombre recibe una bienvenida con su empresa autorizada (5.1s)
+  ✓  3 [chromium] › e2e/session-transition.spec.ts:68:5 › despedida de empresa en móvil retira el contenido privado antes de volver al login (14.3s)
+  ✓  4 [chromium] › e2e/session-transition.spec.ts:90:5 › la F gira durante una carga lenta y el dashboard solo se revela con sus datos listos (5.9s)
+  ✓  5 [chromium] › e2e/session-transition.spec.ts:118:5 › un error de carga del destino se revela con su opción de reintentar (5.8s)
+  ✓  6 [chromium] › e2e/session-transition.spec.ts:130:5 › credenciales inválidas no muestran bienvenida y un logout rechazado no muestra despedida (8.7s)
+  ✓  7 [chromium] › e2e/session-transition.spec.ts:150:5 › movimiento reducido conserva login y logout reales sin esperas de animación (3.3s)
+
+  7 passed (1.0m)
+Registros de API de pruebas: /tmp/fracxion-e2e-Cdiuhn

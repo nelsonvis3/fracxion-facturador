@@ -1,4 +1,4 @@
--r requirements.txt
+-r requirements.lock
 coverage==7.16.2
 ruff==0.16.10
 pip-audit==2.10.1

@@ -1,11 +1,11 @@
 # Operación y despliegue
 
-La referencia de despliegue es `compose.yaml`: un dominio HTTPS, Caddy, Next.js standalone, Gunicorn, PostgreSQL y Redis. Solo el proxy publica puertos. El backend valida sesión, CSRF, membresía y empresa activa en cada petición.
+Para Oracle consultar primero [ORACLE_DEPLOYMENT.md](ORACLE_DEPLOYMENT.md) y su overlay ARM64; aún no hay una VM desplegada. La referencia general es `compose.yaml`: un dominio HTTPS, Caddy, Next.js standalone, Gunicorn, PostgreSQL y Redis. Solo el proxy publica puertos. El backend valida sesión, CSRF, membresía y empresa activa en cada petición.
 
 ## Publicar una instalación nueva
 
 1. Preparar un host con Docker Engine y Compose; apuntar el DNS del dominio al host y habilitar 80/443 para Caddy.
-2. Copiar `.env.example` a `.env`. Configurar dominio, correo SMTP y contraseñas propias. Generar `DJANGO_SECRET_KEY` con `python -c 'import secrets; print(secrets.token_urlsafe(64))'` y guardarla solo en el entorno privado.
+2. Copiar `.env.example` a `.env`. Configurar dominio, correo SMTP, MFA_ENCRYPTION_KEYS y contraseñas propias. Generar `DJANGO_SECRET_KEY` con `python -c 'import secrets; print(secrets.token_urlsafe(64))'` y guardarla solo en el entorno privado.
 3. Construir y aplicar migraciones antes de iniciar la aplicación:
 
 ```sh
@@ -18,7 +18,7 @@ docker compose up -d
 
 El propietario puede registrarse desde **Crear cuenta** en el login. `/register` crea una cuenta normal, una empresa nueva y la membresía de propietario, y abre su sesión. Como alternativa de bootstrap administrativo, usar `docker compose run --rm backend python manage.py create_workspace --email propietario@tuempresa.com --name "Tu empresa" --slug tu-empresa`; solicita una contraseña validada y puede vincular una cuenta activa existente. Ningún flujo convierte al propietario en administrador de la plataforma. Para gestionar otras cuentas, empresas y membresías desde `/admin/`, crear por separado un superusuario con `docker compose run --rm backend python manage.py createsuperuser`.
 
-El registro público tiene CSRF, límite compartido de diez intentos por IP cada quince minutos, validación de contraseña, confirmación y unicidad de correo. No admite elegir rol ni unirse a una empresa existente. No envía un correo de verificación; SMTP continúa destinado a recuperación de acceso. Si la instalación incorpora invitaciones o verificación de correo en el futuro, implementar sus tokens y políticas como flujos separados.
+El registro público tiene CSRF, límite compartido de diez intentos por IP cada quince minutos, validación de contraseña, confirmación y unicidad de correo. No admite elegir rol ni unirse a una empresa existente. El registro no envía verificación automáticamente. La verificación optativa y las invitaciones ya tienen flujos separados con expiración y tokens de uso único; SMTP también sirve a recuperación.
 
 `backend/start.sh` rechaza migraciones pendientes, recolecta estáticos y ejecuta Gunicorn. El frontend incluye su servidor standalone y los assets. El código no incorpora usuarios de demo en producción.
 
@@ -41,7 +41,7 @@ La topología provista usa un solo dominio: `/api/`, `/admin/` y `/static/` van 
 
 Caddy ocupa `172.29.33.10` en la red privada y reemplaza `X-Client-IP` con la dirección observada. Django acepta esa cabecera únicamente desde `TRUSTED_PROXY_NETWORKS`; descarta `X-Forwarded-Proto` de emisores no autorizados. Esto evita que usuarios falsifiquen la IP para eludir límites. Si se cambia el proxy o la red, actualizar ambos extremos; si se añade un CDN, configurar explícitamente los proxies de confianza del borde.
 
-HSTS se activa por un año e incluye subdominios. Caddy lo entrega en todas las rutas, incluidas las páginas de Next.js; Django también lo aplica a sus respuestas HTTPS. Si se cambia la política, actualizar `deploy/Caddyfile` y los valores de Django de forma consistente para la infraestructura real. La configuración sigue los controles de la [lista de despliegue de Django](https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/).
+HSTS se activa por un año para el host. includeSubDomains y preload quedan desactivados hasta revisar el dominio; los warnings Django W005/W021 siguen visibles y deben evaluarse antes de apertura. Caddy lo entrega en todas las rutas, incluidas las páginas de Next.js; Django también lo aplica a sus respuestas HTTPS. Si se cambia la política, actualizar `deploy/Caddyfile` y los valores de Django de forma consistente para la infraestructura real. La configuración sigue los controles de la [lista de despliegue de Django](https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/).
 
 ## Correos
 
@@ -86,6 +86,6 @@ Las verificaciones operativas históricas de arriba no se atribuyen automáticam
 
 La cola empresarial se procesa con `python manage.py run_jobs`; requiere supervisor/reinicio y la misma configuración de DB de la API. `python manage.py job_worker_health` comprueba el latido del worker. `run_jobs --scheduler-only` puede separar la programación; múltiples schedulers se coordinan mediante locks. No habilitar reglas ni destinatarios reales durante pruebas. Los avisos actuales son internos; no son campañas de correo a clientes. Los informes generados vencen a los siete días y el worker retira solo sus binarios regenerables, conservando solicitudes/intentos/auditoría.
 
-La verificación de correo se solicita desde Seguridad de mi cuenta. Usa el origen de `FRONTEND_PASSWORD_RESET_URL` y la ruta `/verify-email#token=...`; configurar dominio HTTPS correcto y remitente autorizado antes de desplegar. SMTP tiene timeout y el error permite reenviar manualmente; la aceptación SMTP no garantiza llegada a bandeja. Verificar DNS/entrega con el proveedor final, sin copiar enlaces o tokens a logs. No se impone verificación obligatoria retroactiva ni MFA todavía.
+La verificación de correo se solicita desde Seguridad de mi cuenta. Usa el origen de `FRONTEND_PASSWORD_RESET_URL` y la ruta `/verify-email#token=...`; configurar dominio HTTPS correcto y remitente autorizado antes de desplegar. SMTP tiene timeout y el error permite reenviar manualmente; la aceptación SMTP no garantiza llegada a bandeja. Verificar DNS/entrega con el proveedor final, sin copiar enlaces o tokens a logs. No se impone verificación obligatoria retroactiva. MFA TOTP es optativo y ya cubre login API/Admin y recuperación; configurar su cifrado antes de ofrecerlo.
 
 La recuperación ampliada también comprobó compras/recepciones/reversión, vínculo de gasto, correo verificado y autenticación de una sesión restaurada. Tras una restauración motivada por incidente, definir la rotación de secretos e invalidación de accesos conforme al procedimiento de recuperación: un backup contiene el estado de credenciales/sesiones de su fecha. Los dumps de QA se mantienen privados fuera de Git y no se confunden con backups externos de producción.

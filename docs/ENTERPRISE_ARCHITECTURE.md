@@ -103,7 +103,7 @@ Los pedidos de compra tienen borrador editable, confirmación con snapshots y ha
 
 ## Límites que siguen requiriendo trabajo o decisiones
 
-Planes/precios, límites comerciales, pasarela de suscripciones, integraciones bancarias, autorizaciones fiscales y envío real a destinatarios no se activan. Todavía deben evaluarse MFA y API keys/webhooks según el roadmap actualizado. No hay afirmación de que el producto ya cubra todo SaaS posible.
+Planes/precios, límites comerciales, pasarela de suscripciones, integraciones bancarias, autorizaciones fiscales y envío real a destinatarios no se activan. MFA TOTP optativo está implementado con recuperación, cifrado y protección API/Admin. API keys/webhooks siguen como diseño. No hay afirmación de que el producto ya cubra todo SaaS posible.
 
 Docker/Redis/Caddy/SMTP no están disponibles en la máquina de esta ejecución; Compose y sus healthchecks requieren verificación real posterior en un entorno controlado. La base local es PostgreSQL 18.6 y Node es 24; Compose/CI declaran PostgreSQL 17 y Node 22. Las pruebas locales no acreditan esos contenedores ni producción.
 
@@ -118,3 +118,17 @@ Disponible de forma explícita desde Seguridad de mi cuenta, sin envío automát
 El transporte SMTP se ejecuta fuera de la transacción y tiene timeout; el usuario puede reenviar ante un error. Se distingue aceptación por el transporte de llegada a bandeja. Este envío no es una cola durable y no acredita entregabilidad externa. Los tests usan únicamente correo en memoria. Las ediciones Admin guardan solo campos modificados; un formulario antiguo no restaura versiones de sesión, nonces o verificación recientes. El formulario de contraseña Admin guarda solo el hash de contraseña y se serializa con los servicios de seguridad.
 
 Los nuevos mensajes de recuperación de contraseña también usan fragmento (`/reset-password#uid=...&token=...`); la interfaz conserva compatibilidad con enlaces anteriores por query. El navegador entrega las credenciales a Django en el POST con CSRF. Una prueba comprueba que la navegación HTTP nueva no contiene el token. No cambia el generador, vencimiento o regla de uso único de Django.
+
+## Identidad y preparación Oracle — 2026-10-15
+
+AccountMFA mantiene una relación uno a uno con User: semilla cifrada, generación,
+confirmación, vencimiento de alta, último paso TOTP y hashes de recuperación.
+User → AccountMFA es el orden de locks. Una contraseña válida inicia un desafío
+anónimo de cinco minutos; TOTP o recuperación completan la sesión. Un middleware
+rechaza sesiones sin prueba del segundo factor, incluido Admin. La recuperación
+de contraseña no elimina MFA. Cambios sensibles de MFA requieren contraseña y
+código, invalidan otros accesos y generan auditoría sin secretos.
+
+El despliegue propuesto conserva seis servicios en una VM ARM64; el scheduler
+vive en el worker PostgreSQL existente. Ver ORACLE_DEPLOYMENT_AUDIT.md y
+ORACLE_INFRASTRUCTURE.md para estado comprobado y límites pendientes.

@@ -1,0 +1,11 @@
+{
+  "name": "oracle-pip-audit",
+  "command": [
+    ".venv/bin/pip-audit",
+    "-r",
+    "requirements.lock"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 15.02
+}

@@ -33,6 +33,7 @@ services:
       DJANGO_ENV: production
       DJANGO_DEBUG: "False"
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Complete DJANGO_SECRET_KEY}
+      MFA_ENCRYPTION_KEYS: ${MFA_ENCRYPTION_KEYS:?Complete MFA_ENCRYPTION_KEYS}
       DJANGO_ALLOWED_HOSTS: ${SITE_DOMAIN:?Complete SITE_DOMAIN}
       DB_NAME: facturador
       DB_USER: facturador

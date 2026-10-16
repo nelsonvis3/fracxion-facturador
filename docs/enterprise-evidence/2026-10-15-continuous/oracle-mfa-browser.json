@@ -1,0 +1,13 @@
+{
+  "name": "oracle-mfa-browser",
+  "command": [
+    "npm",
+    "run",
+    "test:e2e",
+    "--",
+    "e2e/mfa.spec.ts"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+  "exit_code": 0,
+  "seconds": 22.86
+}

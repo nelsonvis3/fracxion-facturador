@@ -111,3 +111,15 @@ class AccountSession(models.Model):
     class Meta:
         ordering = ["-last_seen", "-pk"]
         indexes = [models.Index(fields=["user", "-last_seen"], name="account_session_user_idx")]
+
+
+class AccountMFA(models.Model):
+    """One encrypted TOTP authenticator; recovery credentials are hashes only."""
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    encrypted_secret = models.TextField(editable=False)
+    generation = models.UUIDField(default=uuid.uuid4, editable=False)
+    confirmed_at = models.DateTimeField(null=True, editable=False)
+    setup_expires_at = models.DateTimeField(editable=False)
+    last_t = models.BigIntegerField(default=-1, editable=False)
+    recovery_hashes = models.JSONField(default=list, editable=False)

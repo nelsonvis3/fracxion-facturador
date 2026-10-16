@@ -1,0 +1,12 @@
+{
+  "name": "oracle-seed",
+  "command": [
+    "env",
+    "DJANGO_SETTINGS_MODULE=config.e2e_settings",
+    ".venv/bin/python",
+    "scripts/seed_e2e.py"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 2.21
+}

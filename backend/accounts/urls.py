@@ -8,6 +8,7 @@ from .email_verification import (
     VerificationRequestView,
     VerificationStatusView,
 )
+from .mfa_views import MFAManageView, MFAStatusView, mfa_login_view
 from .password_reset import (
     password_reset_confirm_view,
     password_reset_request_view,
@@ -25,6 +26,9 @@ from .views import (
 router = SimpleRouter()
 router.register("sessions", AccountSessionViewSet, basename="account-sessions")
 urlpatterns = [
+    path("mfa/", MFAStatusView.as_view(), name="mfa-status"),
+    path("mfa/manage/", MFAManageView.as_view(), name="mfa-manage"),
+    path("mfa/login/", mfa_login_view, name="mfa-login"),
     path("email-verification/", VerificationStatusView.as_view(), name="email-verification-status"),
     path(
         "email-verification/request/",

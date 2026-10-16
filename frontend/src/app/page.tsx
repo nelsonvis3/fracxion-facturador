@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -29,6 +29,13 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaCode, setMfaCode] = useState("");
+  const mfaInput = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (mfaRequired) mfaInput.current?.focus();
+  }, [mfaRequired]);
 
   useEffect(() => {
     let active = true;
@@ -58,7 +65,16 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await authApi.login(email.trim(), password);
+      const response = mfaRequired
+        ? await authApi.mfaLogin(mfaCode.trim())
+        : await authApi.login(email.trim(), password);
+      if ("mfa_required" in response) {
+        setMfaRequired(true);
+        setPassword("");
+        setMfaCode("");
+        return;
+      }
+      setMfaCode("");
       // Clear credentials before showing the successful-access presentation.
       setPassword("");
       setEmail("");
@@ -73,7 +89,7 @@ export default function LoginPage() {
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.status === 401) {
-          setError("El correo o la contraseña no son correctos.");
+          setError(mfaRequired ? "Código inválido, utilizado o solicitud vencida. Podés volver al inicio e intentarlo nuevamente." : "El correo o la contraseña no son correctos.");
         } else if (err.status === 403) {
           setError(
             "No se pudo validar la solicitud. Actualizá la página e intentá nuevamente.",
@@ -176,7 +192,7 @@ export default function LoginPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="login-form">
-              <div className="field-group">
+              {!mfaRequired && <><div className="field-group">
                 <label htmlFor="email">Correo electrónico</label>
 
                 <div className="input-shell">
@@ -245,6 +261,35 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              </>}
+              {mfaRequired && (
+                <div className="field-group">
+                  <label htmlFor="mfa-code">Código MFA o de recuperación</label>
+                  <p className="mb-3 text-sm text-slate-600">
+                    Ingresá el código de tu autenticador o uno de tus códigos de recuperación.
+                    La solicitud vence en cinco minutos.
+                  </p>
+                  <input
+                    ref={mfaInput}
+                    className="input"
+                    id="mfa-code"
+                    autoComplete="one-time-code"
+                    value={mfaCode}
+                    onChange={event => setMfaCode(event.target.value)}
+                    required
+                    maxLength={64}
+                    disabled={loading}
+                  />
+                  <button
+                    type="button"
+                    className="forgot-link mt-3"
+                    disabled={loading}
+                    onClick={() => { setMfaRequired(false); setMfaCode(""); setError(""); }}
+                  >
+                    Volver al inicio de sesión
+                  </button>
+                </div>
+              )}
               {error && (
                 <div className="form-error" role="alert">
                   {error}
@@ -254,7 +299,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 className="login-submit"
-                disabled={loading || !email.trim() || !password}
+                disabled={loading || (mfaRequired ? !mfaCode.trim() : !email.trim() || !password)}
               >
                 {loading ? (
                   <>
@@ -263,7 +308,7 @@ export default function LoginPage() {
                   </>
                 ) : (
                   <>
-                    Iniciar sesión
+                    {mfaRequired ? "Verificar y entrar" : "Iniciar sesión"}
                     <ArrowRight size={19} />
                   </>
                 )}

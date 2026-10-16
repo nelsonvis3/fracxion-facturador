@@ -1,0 +1,10 @@
+{
+  "name": "oracle-deploy-check",
+  "command": [
+    ".venv/bin/python",
+    "../tools/check-deployment-settings.py"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 1,
+  "seconds": 3.84
+}

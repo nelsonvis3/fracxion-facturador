@@ -11,7 +11,8 @@
     "start": "node .next/standalone/server.js",
     "lint": "eslint --max-warnings=0",
     "typecheck": "next typegen && tsc --noEmit",
-    "test:e2e": "node scripts/run-e2e-isolated.mjs"
+    "test:e2e": "node scripts/run-e2e-isolated.mjs",
+    "test:lint-contract": "node scripts/lint-contract.test.mjs"
   },
   "dependencies": {
     "@hyperframes/core": "0.8.155",
@@ -34,5 +35,10 @@
     "postcss": "^8.5.29",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@next/eslint-plugin-next": {
+      "fast-glob": "npm:tinyglobby@0.2.17"
+    }
   }
 }

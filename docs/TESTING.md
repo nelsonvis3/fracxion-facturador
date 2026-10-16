@@ -113,4 +113,10 @@ Estas comprobaciones no sustituyen pruebas de carga, SMTP real, backups externos
 
 ## Ampliación empresarial continua
 
-Los recorridos actuales suman 52 escenarios en 17 archivos e incluyen compras/recepciones, gastos, analítica, exportaciones/workers, equipo/configuración, ataques locales y seguridad de cuenta/correo. Los resultados realmente ejecutados, interrupciones y repeticiones se registran en `ENTERPRISE_TESTING.md`; este número es inventario de escenarios y no afirma aprobación de una ejecución por sí solo. Si el entorno limita la duración de un proceso, pasar archivos concretos al arnés (`npm run test:e2e -- e2e/security.spec.ts`) y conservar la evidencia de todos. No bajar límites de seguridad ni cobertura para completar la ejecución.
+Los recorridos actuales suman 53 escenarios en 18 archivos e incluyen compras/recepciones, gastos, analítica, exportaciones/workers, equipo/configuración, ataques locales y seguridad de cuenta/correo. Los resultados realmente ejecutados, interrupciones y repeticiones se registran en `ENTERPRISE_TESTING.md`; este número es inventario de escenarios y no afirma aprobación de una ejecución por sí solo. Si el entorno limita la duración de un proceso, pasar archivos concretos al arnés (`npm run test:e2e -- e2e/security.spec.ts`) y conservar la evidencia de todos. No bajar límites de seguridad ni cobertura para completar la ejecución.
+
+La revisión previa a Oracle añade `e2e/mfa.spec.ts` y
+`npm run test:lint-contract`. La semilla MFA de config.e2e_settings es una fixture
+pública sintética: nunca usarla en producción. Los resultados actuales se
+registran en ORACLE_DEPLOYMENT_TESTING.md. `requirements.lock` fija también
+las dependencias transitivas de producción; instalarlo o requirements-dev.txt.

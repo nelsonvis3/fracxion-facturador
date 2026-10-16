@@ -8,7 +8,10 @@ from auditlog.models import AuditEvent
 from auditlog.services import record_audit_event
 from tenancy.services import guard_user_deactivation
 
+from .mfa_admin import MFAAdminAuthenticationForm
 from .models import User
+
+admin.site.login_form = MFAAdminAuthenticationForm
 
 
 class AccountCreationForm(UserCreationForm):

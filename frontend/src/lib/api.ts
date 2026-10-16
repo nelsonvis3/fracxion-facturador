@@ -198,8 +198,12 @@ export const authApi = {
     return apiRequest<AuthResponse>("/api/auth/me/");
   },
 
-  login(email: string, password: string): Promise<AuthResponse> {
-    return apiRequest<AuthResponse>(
+  mfaLogin(code: string): Promise<AuthResponse> {
+    return apiRequest<AuthResponse>("/api/auth/mfa/login/", {method: "POST", body: JSON.stringify({code})});
+  },
+
+  login(email: string, password: string): Promise<AuthResponse | {mfa_required:true;expires_in:number;csrfToken:string}> {
+    return apiRequest<AuthResponse | {mfa_required:true;expires_in:number;csrfToken:string}>(
       "/api/auth/login/",
       {
         method: "POST",

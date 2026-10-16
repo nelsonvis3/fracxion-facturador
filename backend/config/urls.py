@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -25,8 +26,6 @@ from .reference_views import country_list, country_subdivisions
 urlpatterns = [
     path("health/", health, name="health"),
     path("ready/", ready, name="ready"),
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="api-docs"),
     path("admin/", admin.site.urls),
     path("api/tenants/<uuid:tenant_id>/", include("tenancy.urls")),
     path("api/tenants/<uuid:tenant_id>/", include("analytics.urls")),
@@ -64,3 +63,10 @@ urlpatterns = [
         name="reference-country-subdivisions",
     ),
 ]
+
+# Keep the public demo's schema/debugging surface closed by default in production.
+if not settings.PRODUCTION:
+    urlpatterns += [
+        path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+        path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="api-docs"),
+    ]

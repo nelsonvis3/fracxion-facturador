@@ -1,0 +1,12 @@
+{
+  "name": "oracle-pip-check",
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "pip",
+    "check"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 0.42
+}

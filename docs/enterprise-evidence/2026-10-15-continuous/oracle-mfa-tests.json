@@ -1,0 +1,14 @@
+{
+  "name": "oracle-mfa-tests",
+  "command": [
+    ".venv/bin/python",
+    "manage.py",
+    "test",
+    "accounts.test_mfa",
+    "--settings=config.test_settings",
+    "--noinput"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 8.85
+}

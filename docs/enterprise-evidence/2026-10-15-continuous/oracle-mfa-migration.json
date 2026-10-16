@@ -1,0 +1,13 @@
+{
+  "name": "oracle-mfa-migration",
+  "command": [
+    ".venv/bin/python",
+    "manage.py",
+    "makemigrations",
+    "accounts",
+    "--noinput"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/backend",
+  "exit_code": 0,
+  "seconds": 1.79
+}

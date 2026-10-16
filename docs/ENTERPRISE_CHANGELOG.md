@@ -52,3 +52,16 @@ Producción: `Pillow==12.3.0` para imágenes, `reportlab==5.0.1` y `openpyxl==3.
 ## Estado de validación
 
 Consultar `ENTERPRISE_TESTING.md`. Cada resultado corresponde al estado probado en ese momento; ningún resultado anterior acredita cambios posteriores automáticamente. La revisión funcional, adversarial y de interfaz continúa.
+
+## Revisión previa a Oracle — 2026-10-15
+
+- MFA TOTP opcional API/Admin y UI, semillas cifradas, recuperación de uso único,
+  locks/replay protection y sesiones invalidadas; accounts 0004 aditiva.
+- django-otp 1.7.4 y cryptography 50.0.2; lock transitivo de producción.
+- Sustitución acotada fast-glob→tinyglobby para Next ESLint, con contrato que
+  conserva detección de errores; audit completo sin vulnerabilidades conocidas.
+- Overlay ARM64 con límites/logs/health frontend, build Webpack explícito,
+  documentación API cerrada en producción y HSTS limitado al host.
+- Nueve documentos Oracle, preflight y backup Restic/timer preparados.
+- Restore cifrado real local con MFA y saldos conservados. Sin recursos remotos
+  creados, push, DNS o demo pública. Ver ORACLE_DEPLOYMENT_TESTING.md.

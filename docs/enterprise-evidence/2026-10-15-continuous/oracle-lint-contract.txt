@@ -1,0 +1,14 @@
+
+> frontend@0.1.0 test:lint-contract
+> node scripts/lint-contract.test.mjs
+
+✔ the Next-only fast-glob alias is the maintained tinyglobby implementation (4.117055ms)
+✔ Next rules still detect internal HTML links for literal, glob and array roots (171.172767ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 243.444482

@@ -43,3 +43,6 @@ frontend/playwright-report/
 backups/
 frontend/e2e/reset-fixture.json
 frontend/e2e/invitation-fixture.json
+
+# Host-specific release and encrypted-backup runtime state
+/release-commit.txt

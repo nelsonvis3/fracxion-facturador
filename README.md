@@ -416,7 +416,7 @@ Una base separada y PostgreSQL real son parte de esta verificación: SQLite no r
 
 [GitHub Actions](.github/workflows/ci.yml) configura dos jobs: backend y frontend/E2E. Incluye PostgreSQL 17, Ruff, validación de migraciones y OpenAPI, cobertura, build, auditorías de dependencias y Playwright. El workflow está incluido; una ejecución local aprobada no informa por sí sola el estado de CI remoto.
 
-Las auditorías más recientes registradas reportaron cero vulnerabilidades conocidas en `npm audit --omit=dev` y cinco avisos altos en dependencias de desarrollo de la cadena ESLint/`braces`. El detalle y la decisión de conservar versiones compatibles están en [AUDIT.md](docs/AUDIT.md). Las auditorías deben repetirse al actualizar dependencias; los resultados están sujetos a la fecha y a las bases consultadas.
+La revisión del 15 de octubre de 2026 registró cero vulnerabilidades conocidas en npm audit completo y pip-audit. La cadena de desarrollo ESLint/braces se sustituyó de forma acotada, conservando reglas oficiales y pruebas de su funcionamiento. Ver [ORACLE_DEPLOYMENT_TESTING.md](docs/ORACLE_DEPLOYMENT_TESTING.md). Los audits deben repetirse: no garantizan ausencia de vulnerabilidades futuras.
 
 ## Despliegue y operación
 
@@ -473,3 +473,11 @@ La preparación de producción también requiere completar pruebas de carga, SMT
 | [AUDIT_LOG.md](docs/AUDIT_LOG.md) | Hallazgos, correcciones y resultados de revisiones sucesivas. |
 
 Los documentos de auditoría conservan los resultados de cada revisión; sus cantidades de pruebas pueden diferir de la suite actual. Para reproducir los flujos recientes, usar la guía de pruebas y los escenarios presentes en el código.
+
+### Preparación Oracle Cloud
+
+La aplicación se prepara para una única VM ARM64 con seis servicios Compose.
+Todavía no existe una URL pública verificada. La cuenta, cuotas, dominio, SMTP y
+backups externos requieren validación. Consultar [auditoría Oracle](docs/ORACLE_DEPLOYMENT_AUDIT.md),
+[infraestructura](docs/ORACLE_INFRASTRUCTURE.md) y [procedimiento](docs/ORACLE_DEPLOYMENT.md).
+MFA optativo ya protege los accesos API/Admin de cuentas que lo activen.

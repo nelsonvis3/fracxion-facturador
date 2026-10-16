@@ -1,0 +1,11 @@
+{
+  "name": "oracle-npm-audit",
+  "command": [
+    "npm",
+    "audit",
+    "--json"
+  ],
+  "cwd": "/home/nelson/Proyectos/facturador-saas-api/frontend",
+  "exit_code": 0,
+  "seconds": 1.07
+}

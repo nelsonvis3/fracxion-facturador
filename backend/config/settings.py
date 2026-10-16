@@ -32,6 +32,18 @@ def env_list(name, default=""):
 
 
 PRODUCTION = os.getenv("DJANGO_ENV", "development") == "production"
+MFA_ENCRYPTION_KEYS = [
+    key.strip() for key in os.getenv("MFA_ENCRYPTION_KEYS", "").split(",") if key.strip()
+]
+
+if MFA_ENCRYPTION_KEYS:
+    from cryptography.fernet import Fernet
+
+    try:
+        for encryption_key in MFA_ENCRYPTION_KEYS:
+            Fernet(encryption_key)
+    except (ValueError, TypeError) as exc:
+        raise ImproperlyConfigured("MFA_ENCRYPTION_KEYS must contain valid Fernet keys.") from exc
 
 
 # Quick-start development settings - unsuitable for production
@@ -99,6 +111,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "accounts.mfa_middleware.MFASessionMiddleware",
     "accounts.session_inventory.SessionInventoryMiddleware",
     "config.middleware.SecurityEventsMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -251,8 +264,8 @@ CSRF_COOKIE_SAMESITE = os.getenv("CSRF_COOKIE_SAMESITE", "Lax")
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", PRODUCTION)
 SECURE_REDIRECT_EXEMPT = [r"^health/$", r"^ready/$"]
 SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "31536000" if PRODUCTION else "0"))
-SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", PRODUCTION)
-SECURE_HSTS_PRELOAD = env_bool("SECURE_HSTS_PRELOAD", PRODUCTION)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", False)
+SECURE_HSTS_PRELOAD = env_bool("SECURE_HSTS_PRELOAD", False)
 SECURE_REFERRER_POLICY = "same-origin"
 TRUST_PROXY_HTTPS = env_bool("TRUST_PROXY_HTTPS")
 if TRUST_PROXY_HTTPS:

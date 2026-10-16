@@ -1,0 +1,12 @@
+{
+  "command": [
+    "ssh",
+    "-F",
+    "/dev/null",
+    "-G",
+    "localhost"
+  ],
+  "exit_code": 0,
+  "verification": "configuration parse only; no connection; host-key verification remains enabled by default",
+  "stderr": "Pseudo-terminal will not be allocated because stdin is not a terminal.\n"
+}
