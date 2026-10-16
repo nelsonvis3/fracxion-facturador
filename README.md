@@ -111,10 +111,7 @@ Las facturas son de gestión interna: no se conectan con ARCA ni obtienen CAE. L
 
 ## Qué aprendí
 
-<!-- Nelson: respondé con tus palabras, 3-5 líneas:
-- ¿Qué fue lo que más te costó y cómo lo resolviste?
-- ¿Qué harías distinto si lo empezaras hoy?
-- ¿Qué parte te gustaría explicar en una entrevista? -->
+Armar un SaaS me enseñó que separar empresas no es un filtro que se agrega al final: cada consulta, permiso y exportación tiene que partir de la empresa de la sesión. También aprendí que numerar, cobrar y revertir necesitan bloqueos y tests con conexiones reales a PostgreSQL, porque esos errores no aparecen probando a mano.
 
 ## Licencia
 
