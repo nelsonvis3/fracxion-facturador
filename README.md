@@ -115,4 +115,4 @@ Armar un SaaS me enseñó que separar empresas no es un filtro que se agrega al 
 
 ## Licencia
 
-Todavía no tiene licencia.
+MIT. Ver [LICENSE](LICENSE).
