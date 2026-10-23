@@ -1,92 +1,104 @@
 # Fracxion
 
-Aplicación web de gestión comercial para negocios que llevan una o varias empresas: clientes, catálogo, facturas internas, cobros, compras, gastos e inventario, con datos separados por empresa y permisos por rol.
+**Gestión comercial multiempresa, con permisos por rol, operaciones trazables y datos aislados en el backend.**
+
+Fracxion es una aplicación full stack para administrar clientes, productos, facturas internas, cobros, compras, gastos e inventario desde un mismo lugar. Una cuenta puede trabajar con varias empresas sin mezclar su información: cada operación se valida según la empresa activa y el rol del usuario.
 
 [![CI](https://github.com/nelsonvis3/fracxion-facturador/actions/workflows/ci.yml/badge.svg)](https://github.com/nelsonvis3/fracxion-facturador/actions/workflows/ci.yml)
 
-Demo en preparación · [Caso de estudio](https://nelsonsivisstum.vercel.app/proyectos/fracxion/)
+**[Caso de estudio](https://nelsonsivisstum.vercel.app/proyectos/fracxion/)** · **Demo pública: pendiente** · **[Documentación técnica](docs/ARQUITECTURA.md)**
 
-![Resumen de una empresa con los módulos de Fracxion](docs/screenshots/company-dashboard-desktop.png)
+![Panel de gestión comercial de Fracxion](docs/screenshots/company-dashboard-desktop.png)
 
-> **English summary:** Fracxion is a multi-company business app built with Django REST Framework, Next.js and PostgreSQL. It covers customers, a product catalog, internal (non-fiscal) invoices, payments with reversals, purchases, expenses and inventory. Each company's data is isolated on the server and every user works with the role of their membership.
+> **English overview:** Fracxion is a multi-company business management application built with Next.js, Django REST Framework, and PostgreSQL. It provides internal invoicing, payments, purchases, expenses, inventory, and reporting. Tenant-scoped queries, role-based access, database transactions, and audit records protect the integrity of each company's data. The free-tier deployment configuration is prepared and locally tested; a public demo has not yet been released.
 
-## Qué hace
+## El problema que resuelve
 
-- Una cuenta puede pertenecer a varias empresas, con un rol distinto en cada una (`owner`, `admin`, `accountant`, `sales`, `viewer`). Hay registro, verificación de correo, recuperación de contraseña, MFA opcional con TOTP e invitaciones al equipo.
-- Clientes y productos o servicios con SKU, moneda, precio e impuesto. Se desactivan en lugar de borrarse, para no romper documentos viejos.
-- Facturas internas de hasta 100 líneas. El servidor calcula los importes, asigna un número correlativo por empresa al emitir y la factura se imprime desde el navegador.
-- Cobros parciales o totales y reversiones con motivo. El pago original queda en el historial.
-- Compras a proveedores: borrador, confirmación, recepción que suma stock y cierre. El inventario se mueve solo con movimientos registrados, no admite stock negativo y avisa al llegar al mínimo.
-- Gastos con categoría, comprobante adjunto, pagos y anulación.
-- Tablero con lo facturado, cobrado, pendiente y vencido por período; informes en CSV, Excel o PDF; reglas que generan alertas internas de vencimiento e informes programados, ejecutadas por un worker aparte.
+Una aplicación para varias empresas necesita algo más que mostrar una lista de facturas. Debe impedir que un usuario consulte datos ajenos, evitar números duplicados cuando dos operaciones ocurren a la vez y conservar un historial fiable de cobros e inventario. Fracxion aborda estas reglas **en el servidor y en la base de datos**, no solo en la interfaz.
 
-Un ejemplo con los números que usan los tests: un servicio de ARS 100 con 21% de impuesto genera una factura de ARS 121. Un cobro de ARS 40 deja un saldo de ARS 81. Si ese cobro se revierte, el saldo vuelve a ARS 121 y los dos movimientos quedan registrados ([captura de esa factura](docs/screenshots/invoice.png)).
+## Funcionalidades principales
 
-## Stack
+- **Empresas y accesos.** Una cuenta puede pertenecer a varias empresas con roles `owner`, `admin`, `accountant`, `sales` y `viewer`. Incluye verificación de correo, recuperación de contraseña, invitaciones y MFA opcional con TOTP.
+- **Clientes y catálogo.** Productos y servicios con SKU, precios, moneda e impuestos. Los registros se desactivan sin borrar su historial documental.
+- **Facturación y cobros internos.** Facturas con hasta 100 líneas, totales calculados por el servidor, numeración correlativa por empresa, cobros parciales y reversiones auditables.
+- **Compras, gastos e inventario.** Flujo de compras a proveedores, movimientos de stock, control de existencias y seguimiento de pagos y gastos.
+- **Reportes y automatizaciones.** Resúmenes de ventas y saldos, exportaciones CSV/Excel/PDF, alertas y trabajos procesados por un worker.
 
-| Parte | Tecnologías |
+![Ejemplo de factura interna](docs/screenshots/invoice.png)
+
+## Tecnologías y arquitectura
+
+| Área | Implementación |
 | --- | --- |
-| Backend | Python 3.14, Django 5.2, Django REST Framework, PostgreSQL 17 |
-| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4 |
-| Infraestructura | Docker Compose con Gunicorn, Redis, Caddy y un worker de tareas |
-| Pruebas | Django TestCase, Coverage, Ruff, ESLint, Playwright y GitHub Actions |
+| Frontend | Next.js 16.4.2, React 19, TypeScript, Tailwind CSS 4 |
+| Backend | Python 3.14, Django 5.2, Django REST Framework |
+| Datos | PostgreSQL 17; Redis para caché y límites compartidos |
+| Infraestructura | Docker Compose, Gunicorn y Caddy; perfil alternativo Netlify + Render + Neon |
+| Correo | SMTP; transporte HTTPS de Brevo preparado para el perfil Render |
+| Calidad | Django TestCase, Coverage, Ruff, Playwright, ESLint y GitHub Actions |
 
-El backend está dividido por dominio en [`backend/`](backend): `accounts` (cuentas, sesiones, MFA), `tenancy` (empresas, membresías, permisos), `customers`, `catalog`, `billing` (facturas y cobros), `operations` (proveedores, inventario, compras y gastos), `analytics`, `reports`, `automation` (reglas, tareas y notificaciones) y `auditlog`.
+El código de Django está dividido por dominio: [`accounts`](backend/accounts), [`tenancy`](backend/tenancy), [`customers`](backend/customers), [`catalog`](backend/catalog), [`billing`](backend/billing), [`operations`](backend/operations), [`analytics`](backend/analytics), [`reports`](backend/reports), [`automation`](backend/automation) y [`auditlog`](backend/auditlog).
 
-## Decisiones técnicas
+La interfaz Next.js utiliza una API de Django REST Framework. PostgreSQL conserva los datos y las tareas durables. Redis se emplea para caché y controles compartidos; no es la fuente de verdad de facturas, pagos o trabajos.
 
-### Datos separados por empresa
+## Decisiones técnicas destacadas
 
-Todas las empresas comparten tablas, así que un error en un filtro podría mostrar datos de otra. La empresa sale del `tenant_id` de la URL y [`TenantAccessPermission`](backend/tenancy/permissions.py) comprueba que el usuario, la membresía y la empresa estén activos y que el rol permita la acción. Los [mixins de tenancy](backend/tenancy/mixins.py) filtran cada consulta con ese contexto, y al crear una factura el cliente y los productos también tienen que ser de la misma empresa: un UUID válido de otra empresa devuelve 404.
+### Aislamiento entre empresas
 
-### Importes calculados en el servidor
+[`TenantAccessPermission`](backend/tenancy/permissions.py) comprueba membresía y permisos. Los [mixins de tenancy](backend/tenancy/mixins.py) restringen las consultas a la empresa solicitada. Además, al crear documentos se valida que clientes y productos pertenezcan a esa misma empresa; conocer el identificador de otra empresa no concede acceso a sus registros.
 
-Si el navegador mandara precios, cualquiera podría cambiarlos. El cliente envía producto y cantidad; [`billing/services.py`](backend/billing/services.py) toma precio e impuesto del catálogo y calcula con `Decimal`, redondeando a centavos con `ROUND_HALF_UP`. La API devuelve los importes como texto para no perder decimales.
+### Consistencia de importes y operaciones concurrentes
 
-### Operaciones simultáneas
+El servidor recupera los precios del catálogo y calcula con `Decimal` y `ROUND_HALF_UP` en [`billing/services.py`](backend/billing/services.py). Para emitir o cobrar, utiliza `transaction.atomic()`, bloqueos con `select_for_update()` y restricciones únicas de PostgreSQL. Así se evitan numeraciones repetidas y cobros que superen el saldo disponible.
 
-Dos emisiones al mismo tiempo podrían recibir el mismo número, y dos cobros simultáneos podrían pasar el saldo. Emitir y cobrar corren dentro de `transaction.atomic()` con `select_for_update()` sobre la empresa y la factura, y PostgreSQL tiene una restricción única para el número dentro de cada empresa. Bloquear por empresa serializa esas escrituras; a cambio, la regla es fácil de seguir. Los tests de concurrencia usan conexiones separadas contra PostgreSQL.
+### Historial en lugar de borrado
 
-### Corregir con otro movimiento, nunca editando
+Los pagos se corrigen mediante reversiones, y el inventario se registra como movimientos en [`operations/models.py`](backend/operations/models.py). Cada operación relevante comparte una transacción con su evento de auditoría. La clave de idempotencia reduce el riesgo de repetir movimientos ante un reintento.
 
-Una factura emitida o un pago no se editan ni se borran: un error se corrige con una reversión. El stock funciona igual, como una lista de movimientos con clave de idempotencia y una restricción que impide saldo negativo ([`operations/models.py`](backend/operations/models.py)). Cada operación y su evento de auditoría se guardan en la misma transacción, así que si falla la auditoría tampoco se guarda la operación.
+### Seguridad y despliegue de bajo costo
 
-El resto de las decisiones (cola de trabajos, sesiones, MFA, inventario y compras) está en [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
+El perfil alternativo de despliegue añade un proxy de Netlify que reenvía solicitudes a Render por HTTPS. Django autentica ese proxy antes de confiar en metadatos de IP o esquema; la configuración para Neon exige PostgreSQL con TLS. Se implementó también un backend de correo con la API HTTPS de Brevo y pruebas de los casos de error. Estos componentes forman parte de la **preparación técnica**, no de una demo ya desplegada.
 
-## Cómo correrlo
+La explicación detallada de las decisiones está en [Arquitectura](docs/ARQUITECTURA.md).
 
-Necesitás Python 3.14, Node.js 22 y PostgreSQL. Crear la base:
+## Ejecutar en local
+
+Requisitos: **Python 3.14**, **Node.js 22**, **PostgreSQL** y npm. El entorno local necesita una base PostgreSQL y un usuario con permisos para crear y migrar tablas.
+
+Desde la raíz del repositorio, preparar PostgreSQL:
 
 ```bash
 createuser --pwprompt facturador
 createdb --owner=facturador facturador
 ```
 
-Backend, desde la raíz del repositorio (la contraseña de `createuser` va en `DB_PASSWORD` de `backend/.env`):
+### Backend
 
 ```bash
 cd backend
 python3.14 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
 cp .env.example .env
+# Configurar DB_PASSWORD y el resto de variables locales en backend/.env
 .venv/bin/python manage.py migrate
 .venv/bin/python manage.py runserver localhost:8000
 ```
 
-Frontend, en otra terminal:
+### Frontend
+
+En otra terminal, desde la carpeta `frontend/`:
 
 ```bash
-cd frontend
 cp .env.example .env.local
 npm ci
 npm run dev
 ```
 
-Abrir http://localhost:3000 y elegir **Crear cuenta**: el registro crea la empresa y te deja como propietario. Las variables, los comandos de administración y los problemas comunes están en [docs/DESARROLLO.md](docs/DESARROLLO.md). La instalación con Docker Compose para un servidor está en [docs/OPERATIONS.md](docs/OPERATIONS.md) y la API en [docs/API.md](docs/API.md).
+Abrir **http://localhost:3000**. El registro inicial crea la empresa y asigna al usuario el rol de propietario. Para variables de entorno y solución de problemas, consultar [Desarrollo](docs/DESARROLLO.md).
 
-## Tests
+## Pruebas
 
-El backend necesita un PostgreSQL donde el usuario pueda crear la base de pruebas. Desde `backend/`:
+Desde `backend/`, con PostgreSQL configurado y las dependencias de desarrollo instaladas:
 
 ```bash
 .venv/bin/coverage run manage.py test --settings=config.test_settings --noinput
@@ -101,18 +113,30 @@ npm run typecheck
 npm run test:e2e
 ```
 
-Son 367 tests de backend con 92% de cobertura y 53 escenarios de Playwright en 18 archivos, medidos el 16 de octubre de 2026. Cubren permisos y aislamiento entre empresas, cálculo de importes, numeración y cobros concurrentes, registro, recuperación, MFA, compras, gastos, inventario, informes y el recorrido completo en el navegador. Los E2E necesitan una base y una API de prueba aparte: los pasos están en [docs/TESTING.md](docs/TESTING.md). GitHub Actions corre todo esto en cada push.
+También existen pruebas específicas para el proxy Netlify y la supervisión de procesos. La [guía de despliegue gratuito](docs/DESPLIEGUE_GRATUITO.md) documenta una ejecución local de **381 pruebas de Django el 22 de octubre de 2026**, seguida de nuevas comprobaciones específicas de hosting y seguridad. Esos resultados describen las verificaciones realizadas entonces; **no equivalen a una validación del despliegue en proveedores externos**. Las pruebas E2E requieren un entorno aislado según [Testing](docs/TESTING.md).
 
-## Estado
+## Despliegue y estado actual
 
-Todo lo de "Qué hace" funciona en local y pasa en CI. No hay demo pública todavía: el despliegue en una VM de Oracle Cloud está preparado en [docs/DESPLIEGUE_ORACLE.md](docs/DESPLIEGUE_ORACLE.md), pero falta validar dominio, correo y backups.
+**El sistema funciona en entornos de desarrollo y tiene infraestructura de despliegue preparada, pero no se anuncia una demo pública operativa.** Hay dos caminos documentados:
 
-Las facturas son de gestión interna: no se conectan con ARCA ni obtienen CAE. Las notas de crédito y débito existen en el modelo, pero todavía no se pueden emitir. Tampoco hay conciliación bancaria, planes de suscripción ni pruebas de carga.
+- [Docker Compose, Gunicorn y Caddy](docs/OPERATIONS.md), para un servidor administrado.
+- [Netlify + Render + Neon + Redis + Brevo](docs/DESPLIEGUE_GRATUITO.md), orientado a una demo de bajo tráfico con recursos gratuitos. Incluye archivos [`netlify.toml`](netlify.toml) y [`render.yaml`](render.yaml), controles de proxy y pruebas locales. Aún faltan provisionar los servicios y validar sesiones, correos reales, backups y consumo de recursos en producción.
 
-## Qué aprendí
+**Límites funcionales:** las facturas son **documentos internos no fiscales**: no se integran con ARCA ni emiten CAE. Las notas de crédito y débito están modeladas, pero su emisión no está habilitada. Tampoco hay conciliación bancaria, suscripciones SaaS ni pruebas de carga concluyentes.
 
-Armar un SaaS me enseñó que separar empresas no es un filtro que se agrega al final: cada consulta, permiso y exportación tiene que partir de la empresa de la sesión. También aprendí que numerar, cobrar y revertir necesitan bloqueos y tests con conexiones reales a PostgreSQL, porque esos errores no aparecen probando a mano.
+## Documentación
+
+- [Desarrollo local y variables de entorno](docs/DESARROLLO.md)
+- [Arquitectura y decisiones](docs/ARQUITECTURA.md)
+- [API](docs/API.md)
+- [Testing](docs/TESTING.md)
+- [Operación con Docker Compose](docs/OPERATIONS.md)
+- [Preparación de despliegue gratuito](docs/DESPLIEGUE_GRATUITO.md)
+
+## Aprendizajes
+
+Este proyecto me obligó a pensar en reglas que una interfaz por sí sola no puede garantizar: el aislamiento entre empresas, los bloqueos para operaciones simultáneas y la trazabilidad de los cambios. También aprendí a separar las tareas durables de un proceso web y a verificar los límites de seguridad entre un proxy público y la API.
 
 ## Licencia
 
-MIT. Ver [LICENSE](LICENSE).
+Código disponible bajo licencia [MIT](LICENSE).
