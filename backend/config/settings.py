@@ -18,6 +18,8 @@ from corsheaders.defaults import default_headers
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
+from .database import database_from_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -143,7 +145,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
+    "default": database_from_url(os.environ["DATABASE_URL"])
+    if os.getenv("DATABASE_URL")
+    else {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ["DB_NAME"],
         "USER": os.environ["DB_USER"],
@@ -326,6 +330,7 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() in {"true", "1", "yes
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_TIMEOUT = 10
+BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
 
 if PRODUCTION:
     if not SESSION_COOKIE_SECURE or not CSRF_COOKIE_SECURE or not SECURE_SSL_REDIRECT:
@@ -354,5 +359,9 @@ if PRODUCTION:
         )
     if not FRONTEND_PASSWORD_RESET_URL.startswith("https://"):
         raise ImproperlyConfigured("FRONTEND_PASSWORD_RESET_URL debe usar HTTPS en producción.")
-    if EMAIL_BACKEND != "django.core.mail.backends.smtp.EmailBackend" or not EMAIL_HOST:
-        raise ImproperlyConfigured("Configurá SMTP en producción para recuperar contraseñas.")
+    smtp_configured = EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend" and EMAIL_HOST
+    brevo_configured = EMAIL_BACKEND == "config.email_backend.BrevoEmailBackend" and BREVO_API_KEY
+    if not (smtp_configured or brevo_configured):
+        raise ImproperlyConfigured(
+            "Configurá SMTP o Brevo en producción para recuperar contraseñas."
+        )

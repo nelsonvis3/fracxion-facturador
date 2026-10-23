@@ -4,7 +4,7 @@ Aplicación web de gestión comercial para negocios que llevan una o varias empr
 
 [![CI](https://github.com/nelsonvis3/fracxion-facturador/actions/workflows/ci.yml/badge.svg)](https://github.com/nelsonvis3/fracxion-facturador/actions/workflows/ci.yml)
 
-Demo en preparación · [Caso de estudio](https://nelsonvis-portfolio.vercel.app/proyectos/fracxion/)
+Demo en preparación · [Caso de estudio](https://nelsonsivisstum.vercel.app/proyectos/fracxion/)
 
 ![Resumen de una empresa con los módulos de Fracxion](docs/screenshots/company-dashboard-desktop.png)
 

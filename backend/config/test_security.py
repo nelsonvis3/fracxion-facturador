@@ -3,11 +3,12 @@ import secrets
 import subprocess
 import sys
 
+from cryptography.fernet import Fernet
 from django.test import SimpleTestCase
 
 
 class ProductionSecurityTests(SimpleTestCase):
-    def load_production_settings(self, overrides=None):
+    def load_production_settings(self, overrides=None, module="config.settings"):
         env = {
             **os.environ,
             "DJANGO_ENV": "production",
@@ -28,7 +29,7 @@ class ProductionSecurityTests(SimpleTestCase):
             **(overrides or {}),
         }
         return subprocess.run(
-            [sys.executable, "-c", "import config.settings"],
+            [sys.executable, "-c", f"import {module}"],
             env=env,
             capture_output=True,
             text=True,
@@ -46,6 +47,41 @@ class ProductionSecurityTests(SimpleTestCase):
                 result = self.load_production_settings({flag: "False"})
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn("ImproperlyConfigured", result.stderr)
+
+    def test_production_accepts_https_mail_and_requires_key(self):
+        values = {
+            "DJANGO_EMAIL_BACKEND": "config.email_backend.BrevoEmailBackend",
+            "BREVO_API_KEY": "synthetic-key",
+            "EMAIL_HOST": "",
+        }
+        result = self.load_production_settings(values)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = self.load_production_settings({**values, "BREVO_API_KEY": ""})
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_console_mail_remains_forbidden_in_production(self):
+        result = self.load_production_settings(
+            {"DJANGO_EMAIL_BACKEND": "django.core.mail.backends.console.EmailBackend"}
+        )
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_render_requires_production_mfa_and_proxy_secret(self):
+        values = {
+            "MFA_ENCRYPTION_KEYS": Fernet.generate_key().decode(),
+            "FRACXION_PROXY_SECRET": secrets.token_urlsafe(32),
+        }
+        result = self.load_production_settings(values, "config.render_settings")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for override in [
+            {"DJANGO_ENV": "development"},
+            {"MFA_ENCRYPTION_KEYS": ""},
+            {"FRACXION_PROXY_SECRET": ""},
+        ]:
+            with self.subTest(override=override):
+                result = self.load_production_settings(
+                    {**values, **override}, "config.render_settings"
+                )
+                self.assertNotEqual(result.returncode, 0)
 
     def test_https_proxy_requires_explicit_valid_networks(self):
         for networks in ["", "not-a-network"]:
