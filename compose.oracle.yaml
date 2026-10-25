@@ -1,0 +1,64 @@
+# Use only on the approved linux/arm64 Oracle VM, with compose.yaml.
+x-logging: &bounded_logs
+  driver: local
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  database:
+    platform: linux/arm64
+    mem_limit: 2g
+    cpus: 1.0
+    pids_limit: 200
+    logging: *bounded_logs
+  cache:
+    platform: linux/arm64
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 50
+    logging: *bounded_logs
+  backend:
+    platform: linux/arm64
+    mem_limit: 1536m
+    cpus: 1.0
+    pids_limit: 200
+    init: true
+    environment:
+      WEB_CONCURRENCY: "2"
+      SECURE_HSTS_INCLUDE_SUBDOMAINS: "False"
+      SECURE_HSTS_PRELOAD: "False"
+    logging: *bounded_logs
+  worker:
+    platform: linux/arm64
+    mem_limit: 1536m
+    cpus: 0.75
+    pids_limit: 100
+    init: true
+    environment:
+      WEB_CONCURRENCY: "2"
+      SECURE_HSTS_INCLUDE_SUBDOMAINS: "False"
+      SECURE_HSTS_PRELOAD: "False"
+    logging: *bounded_logs
+  frontend:
+    platform: linux/arm64
+    mem_limit: 1g
+    cpus: 0.75
+    pids_limit: 100
+    init: true
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging: *bounded_logs
+  proxy:
+    platform: linux/arm64
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 100
+    depends_on:
+      backend: {condition: service_healthy}
+      frontend: {condition: service_healthy}
+    logging: *bounded_logs

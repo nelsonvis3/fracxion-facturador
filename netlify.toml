@@ -1,0 +1,28 @@
+[build]
+  base = "frontend"
+  command = "npm run build -- --webpack"
+  publish = ".next"
+  edge_functions = "netlify/edge-functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NEXT_TELEMETRY_DISABLED = "1"
+  NEXT_PUBLIC_API_BASE_URL = ""
+
+# BACKEND_ORIGIN and FRACXION_PROXY_SECRET belong in the Netlify dashboard,
+# available to Functions in the production context. Never commit their values.
+[[edge_functions]]
+  function = "backend"
+  path = "/api/*"
+
+[[edge_functions]]
+  function = "backend"
+  path = "/admin"
+
+[[edge_functions]]
+  function = "backend"
+  path = "/admin/*"
+
+[[edge_functions]]
+  function = "backend"
+  path = "/static/*"

@@ -1,0 +1,40 @@
+import { readFile } from "node:fs/promises";
+import { artifactPath, expect, test } from "./fixtures";
+import { checkAccessibility } from "./accessibility";
+import { api, register } from "./support";
+
+test("gasto real: categorías, adjunto privado, registro, pagos y reversión con saldos correctos", async ({page})=>{
+  test.setTimeout(120000);
+  const tenant=await register(page);const base=`/api/tenants/${tenant.id}`;
+  await page.goto(`/dashboard/${tenant.id}/expenses`);
+  await page.getByRole("button",{name:"Categorías",exact:true}).click();
+  let dialog=page.getByRole("dialog");await dialog.getByLabel("Nombre de categoría").fill("Servicios profesionales");await dialog.getByRole("button",{name:"Crear categoría"}).click();
+  await expect(dialog.getByText("Servicios profesionales · Activa",{exact:true})).toBeVisible();
+  await dialog.getByRole("button",{name:"Cerrar formulario"}).click();
+  await page.getByRole("button",{name:"Nuevo gasto",exact:true}).click();dialog=page.getByRole("dialog");
+  await dialog.getByLabel("Descripción",{exact:true}).fill("Honorarios de soporte");
+  await dialog.getByRole("combobox",{name:"Categoría",exact:true}).selectOption({label:"Servicios profesionales"});
+  await dialog.getByLabel("Importe neto",{exact:true}).fill("100.00");await dialog.getByLabel("Impuesto configurado (%)",{exact:true}).fill("21.00");
+  await dialog.getByLabel("Adjunto PNG o JPEG (opcional)",{exact:true}).setInputFiles({name:"receipt.png",mimeType:"image/png",buffer:Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABLbSncAAAAFElEQVR4nGNkYPjPgA0wYRUdtBIAy0MBD1YkjLoAAAAASUVORK5CYII=","base64")});
+  await dialog.getByRole("button",{name:"Guardar borrador de gasto"}).click();await expect(dialog).toHaveCount(0);
+  await page.getByRole("link",{name:"Honorarios de soporte",exact:true}).click();
+  await page.waitForURL(/expenses\/[0-9a-f-]+$/);const id=page.url().split("/").at(-1)!;
+  await expect(page.getByRole("main").getByText("Borrador",{exact:true})).toBeVisible();
+  page.once("dialog",dialog=>dialog.accept());await page.getByRole("button",{name:"Registrar gasto",exact:true}).click();
+  await expect(page.getByRole("main").getByText("Registrado",{exact:true})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Editar borrador",exact:true})).toHaveCount(0);
+  const [receipt]=await Promise.all([page.waitForEvent("download"),page.getByRole("button",{name:"Descargar adjunto",exact:true}).click()]);
+  await receipt.saveAs(artifactPath("expense-attachment.png"));expect((await readFile(artifactPath("expense-attachment.png"))).subarray(1,4).toString()).toBe("PNG");
+  await page.getByRole("button",{name:"Registrar pago",exact:true}).click();dialog=page.getByRole("dialog");await dialog.getByLabel("Importe pagado",{exact:true}).fill("40.00");await dialog.getByRole("button",{name:"Confirmar pago de gasto"}).click();await expect(dialog).toHaveCount(0);
+  let record=await (await page.request.get(`${api}${base}/expenses/${id}/`)).json();expect(record.total).toBe("121.00");expect(record.balance).toBe("81.00");expect(record.paid_amount).toBe("40.00");
+  await page.getByRole("button",{name:"Revertir pago",exact:true}).click();dialog=page.getByRole("dialog");await dialog.getByLabel("Motivo",{exact:true}).fill("Medio de pago incorrecto");await dialog.getByRole("button",{name:"Confirmar",exact:true}).click();await expect(dialog).toHaveCount(0);
+  record=await (await page.request.get(`${api}${base}/expenses/${id}/`)).json();expect(record.balance).toBe("121.00");expect(record.paid_amount).toBe("0.00");
+  await page.getByRole("button",{name:"Registrar pago",exact:true}).click();dialog=page.getByRole("dialog");await dialog.getByRole("button",{name:"Confirmar pago de gasto"}).click();await expect(dialog).toHaveCount(0);
+  await expect(page.getByRole("button",{name:"Registrar pago",exact:true})).toHaveCount(0);
+  record=await (await page.request.get(`${api}${base}/expenses/${id}/`)).json();expect(record.balance).toBe("0.00");
+  await checkAccessibility(page);await page.screenshot({path:artifactPath("expense-detail-desktop.png"),fullPage:true});
+  await page.goto(`/dashboard/${tenant.id}/reports`);await page.getByRole("combobox",{name:"Informe",exact:true}).selectOption("expenses");
+  await expect(page.getByRole("combobox",{name:"Proveedor",exact:true})).toBeVisible();
+  const [csv]=await Promise.all([page.waitForEvent("download"),page.getByRole("button",{name:"Descargar ahora",exact:true}).click()]);await csv.saveAs(artifactPath("expense-report.csv"));const text=await readFile(artifactPath("expense-report.csv"),"utf8");expect(text).toContain("Honorarios de soporte");expect(text).toContain("121.00");
+  await page.setViewportSize({width:390,height:844});await page.emulateMedia({reducedMotion:"reduce"});for(const route of ["expenses",`expenses/${id}`]){await page.goto(`/dashboard/${tenant.id}/${route}`);await expect(page.getByRole("heading",{level:1})).toBeVisible();await checkAccessibility(page);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:artifactPath(`${route.includes("/")?"expense-detail":"expenses"}-390.png`),fullPage:true});}
+});

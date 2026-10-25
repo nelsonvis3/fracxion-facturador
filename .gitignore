@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+backend/.venv/
+
+# Django
+backend/db.sqlite3
+backend/staticfiles/
+backend/media/
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Node.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+
+# Logs
+*.log
+
+# Editores
+.vscode/
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Informes y artefactos locales
+.coverage
+htmlcov/
+.ruff_cache/
+*.tsbuildinfo
+frontend/test-results/
+frontend/playwright-report/
+backups/
+frontend/e2e/reset-fixture.json
+frontend/e2e/invitation-fixture.json
+
+# Host-specific release and encrypted-backup runtime state
+/release-commit.txt
+
+# Privado: despliegue, hosting, evidencias internas y archivos de agente.
+# Quedan en la PC de Nelson; el repo público muestra solo la aplicación.
+/deploy/
+/tools/
+/compose.yaml
+/compose.oracle.yaml
+/render.yaml
+/netlify.toml
+/frontend/netlify/
+/backend/Dockerfile
+/backend/.dockerignore
+/backend/start.sh
+/backend/render_start.py
+/backend/config/render_settings.py
+/backend/config/render_proxy.py
+/backend/config/test_hosting.py
+/frontend/Dockerfile
+/frontend/.dockerignore
+/docs/*
+!/docs/API.md
+!/docs/ARQUITECTURA.md
+!/docs/DESARROLLO.md
+!/docs/TESTING.md
+!/docs/screenshots/
+AGENTS.md
+CLAUDE.md
+/.env.example

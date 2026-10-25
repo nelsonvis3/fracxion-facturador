@@ -1,0 +1,37 @@
+# Resolved production versions, checked for CPython 3.14 ARM64 on 2026-10-15.
+# 2026-10-23: security updates to DRF 3.18.2 and Pillow 13.0.0; revalidate on target architecture.
+-r requirements.txt
+asgiref==3.12.1
+attrs==26.1.0
+cffi==2.1.1
+charset-normalizer==3.5.2
+cryptography==50.0.2
+django==5.2.18
+django-cors-headers==4.9.0
+django-filter==26.2
+django-localflavor==5.1
+django-otp==1.7.4
+djangorestframework==3.18.2
+drf-spectacular==0.30.0
+et-xmlfile==2.0.0
+gunicorn==26.2.0
+inflection==0.5.1
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+openpyxl==3.1.5
+phonenumbers==9.0.41
+pillow==13.0.0
+psycopg==3.3.6
+psycopg-binary==3.3.6
+pycountry==26.2.16
+pycparser==3.11
+python-dotenv==1.2.4
+python-stdnum==2.2
+pyyaml==6.0.3
+redis==8.1.0
+referencing==0.37.0
+reportlab==5.0.1
+rpds-py==2026.9.1
+sqlparse==0.6.0
+uritemplate==4.2.0
+whitenoise==6.12.0

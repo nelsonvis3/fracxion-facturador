@@ -1,0 +1,22 @@
+[Unit]
+Description=Fracxion encrypted external PostgreSQL and configuration backup
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+UMask=0077
+WorkingDirectory=/srv/fracxion
+EnvironmentFile=/etc/fracxion/backup.env
+StateDirectory=fracxion
+CacheDirectory=fracxion-restic
+Environment=RESTIC_CACHE_DIR=/var/cache/fracxion-restic
+ExecStart=/usr/bin/bash /srv/fracxion/deploy/oracle/backup.sh
+TimeoutStartSec=30min
+Nice=10
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
