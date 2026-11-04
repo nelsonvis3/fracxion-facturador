@@ -331,6 +331,7 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_TIMEOUT = 10
 BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
+RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 
 if PRODUCTION:
     if not SESSION_COOKIE_SECURE or not CSRF_COOKIE_SECURE or not SECURE_SSL_REDIRECT:
@@ -361,7 +362,10 @@ if PRODUCTION:
         raise ImproperlyConfigured("FRONTEND_PASSWORD_RESET_URL debe usar HTTPS en producción.")
     smtp_configured = EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend" and EMAIL_HOST
     brevo_configured = EMAIL_BACKEND == "config.email_backend.BrevoEmailBackend" and BREVO_API_KEY
-    if not (smtp_configured or brevo_configured):
+    resend_configured = (
+        EMAIL_BACKEND == "config.email_backend.ResendEmailBackend" and RESEND_API_KEY
+    )
+    if not (smtp_configured or brevo_configured or resend_configured):
         raise ImproperlyConfigured(
-            "Configurá SMTP o Brevo en producción para recuperar contraseñas."
+            "Configurá SMTP, Brevo o Resend en producción para recuperar contraseñas."
         )

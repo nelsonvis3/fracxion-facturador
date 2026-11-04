@@ -12,7 +12,7 @@ from django.http import HttpResponse
 from django.test import Client, RequestFactory, SimpleTestCase, TestCase, override_settings
 
 from config.database import database_from_url
-from config.email_backend import BrevoEmailBackend, EmailDeliveryError
+from config.email_backend import BrevoEmailBackend, EmailDeliveryError, ResendEmailBackend
 from config.render_proxy import NetlifyProxyMiddleware
 
 
@@ -94,6 +94,46 @@ class BrevoTransportTests(SimpleTestCase):
     def test_no_recipients_sends_nothing(self, send):
         self.assertEqual(BrevoEmailBackend().send_messages([EmailMessage("Subject", "Body")]), 0)
         send.assert_not_called()
+
+
+
+@override_settings(RESEND_API_KEY="synthetic-resend-key", EMAIL_TIMEOUT=10)
+class ResendTransportTests(SimpleTestCase):
+    @patch("config.email_backend.urlopen")
+    def test_acceptance_preserves_payload_and_uses_bearer_key(self, send):
+        send.return_value.__enter__.return_value.status = 200
+        message = EmailMultiAlternatives(
+            "Verificá tu correo",
+            "Enlace privado",
+            "Fracxion <from@example.com>",
+            ["to@example.com"],
+            reply_to=["Soporte <help@example.com>"],
+        )
+        message.attach_alternative("<p>Enlace privado</p>", "text/html")
+        self.assertEqual(ResendEmailBackend().send_messages([message]), 1)
+        request = send.call_args.args[0]
+        self.assertEqual(request.full_url, "https://api.resend.com/emails")
+        self.assertEqual(request.get_header("Authorization"), "Bearer synthetic-resend-key")
+        self.assertEqual(
+            json.loads(request.data),
+            {
+                "from": "Fracxion <from@example.com>",
+                "subject": "Verificá tu correo",
+                "text": "Enlace privado",
+                "html": "<p>Enlace privado</p>",
+                "to": ["to@example.com"],
+                "reply_to": "Soporte <help@example.com>",
+            },
+        )
+
+    @patch("config.email_backend.urlopen")
+    def test_unexpected_status_and_missing_key_fail_closed(self, send):
+        send.return_value.__enter__.return_value.status = 202
+        message = EmailMessage("Subject", "Body", "from@example.com", ["to@example.com"])
+        with self.assertRaises(EmailDeliveryError):
+            ResendEmailBackend().send_messages([message])
+        with override_settings(RESEND_API_KEY=""), self.assertRaises(ImproperlyConfigured):
+            ResendEmailBackend().send_messages([message])
 
 
 @override_settings(

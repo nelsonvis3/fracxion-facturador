@@ -11,7 +11,7 @@ real ni una garantía de disponibilidad. Oracle queda descartado para este camin
 | Render Web Service | Free | Django y un proceso `run_jobs`, compartiendo 512 MB |
 | Render Key Value | Free | Redis para los límites de intentos; red privada |
 | Neon PostgreSQL | Free | Datos y resultados de trabajos durables |
-| Brevo | Free | Correos transaccionales por API HTTPS |
+| Resend | Free | Correos transaccionales por API HTTPS (3.000/mes, 100/día) |
 
 No se crea PostgreSQL en Render: su plan gratuito vence a los 30 días. Neon tiene
 cuotas de almacenamiento, cómputo y transferencia; el worker hace consultas
@@ -50,10 +50,13 @@ recurso. Esta configuración no mantiene el backend despierto mediante pings.
    consultar su estado. Usar las cuentas del propietario del proyecto.
 2. Crear o iniciar sesión en **Netlify** con acceso al repositorio
    `nelsonvis3/fracxion-facturador`. Confirmar el plan Free.
-3. Crear una cuenta **Brevo Free**, validar un remitente y habilitar correo
-   transaccional. La aprobación de la cuenta y la entrega deben comprobarse con un
-   correo real. Un remitente gratuito puede ser reescrito por Brevo; un dominio
-   propio autenticado mejora la entrega, pero no se compra un dominio en este plan.
+3. Crear una cuenta **Resend Free** (se puede entrar con GitHub; Brevo exige un
+   teléfono para activar la cuenta). Sin dominio verificado, Resend solo envía desde
+   `onboarding@resend.dev` y solo a la dirección de la cuenta. Para enviar a cualquier
+   usuario hay que verificar un dominio propio en Resend (por ejemplo uno gratuito de
+   DigitalPlat FreeDomain); no se compra un dominio en este plan. La entrega debe
+   comprobarse con un correo real. `config.email_backend.BrevoEmailBackend` sigue
+   disponible si se prefiere Brevo.
 
 Las credenciales se cargan directamente en las variables de los proveedores o en
 un archivo local ignorado con permisos 600. No pegarlas en el chat, commits, logs,
@@ -85,7 +88,7 @@ capturas ni variables `NEXT_PUBLIC_*`.
    | `CORS_ALLOWED_ORIGINS` | `https://` + dominio real de Netlify |
    | `CSRF_TRUSTED_ORIGINS` | El mismo origen exacto, sin `/` final |
    | `FRONTEND_PASSWORD_RESET_URL` | Ese origen + `/reset-password` |
-   | `BREVO_API_KEY` | Clave de API transaccional, no clave SMTP |
+   | `RESEND_API_KEY` | Clave de API de Resend con permiso de envío |
    | `DEFAULT_FROM_EMAIL` | `Fracxion <remitente-verificado>` |
 
    Render genera `FRACXION_PROXY_SECRET`; el mismo valor se configura en Netlify.
@@ -150,7 +153,7 @@ En local siguen funcionando los ajustes originales de desarrollo y Docker/Caddy.
 - [Netlify: Next.js](https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/)
 - [Netlify: variables de Edge Functions](https://docs.netlify.com/build/edge-functions/environment-variables/)
 - [Netlify: planes](https://www.netlify.com/pricing/)
-- [Brevo: envío transaccional](https://developers.brevo.com/reference/send-transac-email)
+- [Resend: enviar correo](https://resend.com/docs/api-reference/emails/send-email)
 
 ## Validación local de esta preparación — 22 de octubre de 2026
 

@@ -37,7 +37,7 @@ Una aplicación para varias empresas necesita algo más que mostrar una lista de
 | Frontend | Next.js 16.4.2, React 19, TypeScript, Tailwind CSS 4 |
 | Backend | Python 3.14, Django 5.2, Django REST Framework |
 | Datos | PostgreSQL 17; Redis para caché y límites compartidos |
-| Correo | SMTP o API HTTPS de Brevo |
+| Correo | SMTP o API HTTPS de Brevo o Resend |
 | Calidad | Django TestCase, Coverage, Ruff, Playwright, ESLint y GitHub Actions |
 
 El código de Django está dividido por dominio: [`accounts`](backend/accounts), [`tenancy`](backend/tenancy), [`customers`](backend/customers), [`catalog`](backend/catalog), [`billing`](backend/billing), [`operations`](backend/operations), [`analytics`](backend/analytics), [`reports`](backend/reports), [`automation`](backend/automation) y [`auditlog`](backend/auditlog).

@@ -83,9 +83,13 @@ class ReportTests(BillingFixtures, TestCase):
 
     def test_payment_reversal_keeps_original_record_and_zero_effective_amount(self):
         payment = self.payment()
-        reverse_payment(
-            tenant=self.tenant, payment_id=payment.pk, actor=self.user, reason="Correction"
-        )
+        # Keep the reversal inside the October filter regardless of today's date.
+        with patch(
+            "django.utils.timezone.now", return_value=datetime(2026, 10, 20, 15, tzinfo=UTC)
+        ):
+            reverse_payment(
+                tenant=self.tenant, payment_id=payment.pk, actor=self.user, reason="Correction"
+            )
         result = dataset(self.tenant, self.filters | {"kind": "payments"})
         self.assertEqual(result["rows"][0][-3:], [Decimal("40.00"), Decimal("0.00"), "Revertido"])
         ledger = dataset(self.tenant, self.filters | {"kind": "customers"})

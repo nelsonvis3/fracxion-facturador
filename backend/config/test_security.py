@@ -57,6 +57,11 @@ class ProductionSecurityTests(SimpleTestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         result = self.load_production_settings({**values, "BREVO_API_KEY": ""})
         self.assertNotEqual(result.returncode, 0)
+        resend = {**values, "DJANGO_EMAIL_BACKEND": "config.email_backend.ResendEmailBackend"}
+        result = self.load_production_settings({**resend, "RESEND_API_KEY": "synthetic-key"})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = self.load_production_settings(resend)
+        self.assertNotEqual(result.returncode, 0)
 
     def test_console_mail_remains_forbidden_in_production(self):
         result = self.load_production_settings(
