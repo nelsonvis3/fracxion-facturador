@@ -14,6 +14,7 @@ from django.test import Client, RequestFactory, SimpleTestCase, TestCase, overri
 
 from config.database import database_from_url
 from config.email_backend import (
+    AppsScriptEmailBackend,
     BrevoEmailBackend,
     EmailDeliveryError,
     MailerooEmailBackend,
@@ -182,6 +183,55 @@ class MailerooTransportTests(SimpleTestCase):
         self.assertNotIn("key", str(error.exception))
         with override_settings(MAILEROO_API_KEY=""), self.assertRaises(ImproperlyConfigured):
             MailerooEmailBackend().send_messages([message])
+
+
+@override_settings(
+    APPS_SCRIPT_MAIL_URL="https://script.google.com/macros/s/synthetic/exec",
+    APPS_SCRIPT_MAIL_SECRET="synthetic-apps-script-secret-32-chars-long",
+    EMAIL_TIMEOUT=10,
+)
+class AppsScriptTransportTests(SimpleTestCase):
+    def message(self):
+        return EmailMessage(
+            "Tu código de Fracxion: 123456",
+            "Código 123456",
+            "Fracxion <no-reply@fracxion.dpdns.org>",
+            ["to@example.com"],
+            reply_to=["help@example.com"],
+        )
+
+    @patch("config.email_backend.urlopen")
+    def test_payload_carries_secret_and_requires_ok_body(self, send):
+        response = send.return_value.__enter__.return_value
+        response.status = 200
+        response.read.return_value = b'{"ok": true}'
+        self.assertEqual(AppsScriptEmailBackend().send_messages([self.message()]), 1)
+        request = send.call_args.args[0]
+        self.assertEqual(request.full_url, "https://script.google.com/macros/s/synthetic/exec")
+        self.assertEqual(
+            json.loads(request.data),
+            {
+                "secret": "synthetic-apps-script-secret-32-chars-long",
+                "to": "to@example.com",
+                "subject": "Tu código de Fracxion: 123456",
+                "body": "Código 123456",
+                "name": "Fracxion",
+                "replyTo": "help@example.com",
+            },
+        )
+
+    @patch("config.email_backend.urlopen")
+    def test_script_error_page_and_foreign_url_fail_closed(self, send):
+        response = send.return_value.__enter__.return_value
+        response.status = 200
+        response.read.return_value = b"<html>Error</html>"
+        with self.assertRaises(EmailDeliveryError):
+            AppsScriptEmailBackend().send_messages([self.message()])
+        send.reset_mock()
+        with override_settings(APPS_SCRIPT_MAIL_URL="https://evil.example/exec"):
+            with self.assertRaises(ImproperlyConfigured):
+                AppsScriptEmailBackend().send_messages([self.message()])
+        send.assert_not_called()
 
 
 @override_settings(

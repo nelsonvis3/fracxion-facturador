@@ -47,8 +47,10 @@ services:
       - key: FRONTEND_PASSWORD_RESET_URL
         sync: false
       - key: DJANGO_EMAIL_BACKEND
-        value: config.email_backend.MailerooEmailBackend
-      - key: MAILEROO_API_KEY
+        value: config.email_backend.AppsScriptEmailBackend
+      - key: APPS_SCRIPT_MAIL_URL
+        sync: false
+      - key: APPS_SCRIPT_MAIL_SECRET
         sync: false
       - key: DEFAULT_FROM_EMAIL
         sync: false

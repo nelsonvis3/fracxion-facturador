@@ -333,6 +333,8 @@ EMAIL_TIMEOUT = 10
 BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 MAILEROO_API_KEY = os.getenv("MAILEROO_API_KEY", "")
+APPS_SCRIPT_MAIL_URL = os.getenv("APPS_SCRIPT_MAIL_URL", "")
+APPS_SCRIPT_MAIL_SECRET = os.getenv("APPS_SCRIPT_MAIL_SECRET", "")
 # Read-only demo account behind the "Probar demo" button; empty disables it.
 DEMO_LOGIN_EMAIL = os.getenv("DEMO_LOGIN_EMAIL", "").strip().lower()
 
@@ -371,7 +373,19 @@ if PRODUCTION:
     maileroo_configured = (
         EMAIL_BACKEND == "config.email_backend.MailerooEmailBackend" and MAILEROO_API_KEY
     )
-    if not (smtp_configured or brevo_configured or resend_configured or maileroo_configured):
+    apps_script_configured = (
+        EMAIL_BACKEND == "config.email_backend.AppsScriptEmailBackend"
+        and APPS_SCRIPT_MAIL_URL.startswith("https://script.google.com/macros/s/")
+        and len(APPS_SCRIPT_MAIL_SECRET) >= 32
+    )
+    if not (
+        smtp_configured
+        or brevo_configured
+        or resend_configured
+        or maileroo_configured
+        or apps_script_configured
+    ):
         raise ImproperlyConfigured(
-            "Configurá SMTP, Brevo, Resend o Maileroo en producción para recuperar contraseñas."
+            "Configurá SMTP, Brevo, Resend, Maileroo o Apps Script en producción "
+            "para recuperar contraseñas."
         )

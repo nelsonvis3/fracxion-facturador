@@ -12,7 +12,6 @@ import {
   LockKeyhole,
   Mail,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 
 import { ApiError, authApi, tenantApi, type AuthResponse, type MfaRequired } from "@/lib/api";
@@ -149,11 +148,6 @@ export default function LoginPage() {
             </Link>
 
             <div className="login-headline auth-enter">
-              <div className="eyebrow-pill">
-                <Sparkles size={14} />
-                <span>Simple por naturaleza</span>
-              </div>
-
               <h1>
                 Tu empresa,
                 <br />
@@ -176,11 +170,6 @@ export default function LoginPage() {
               <div className="login-benefit">
                 <ShieldCheck size={18} />
                 <span>Accesos y datos protegidos por empresa</span>
-              </div>
-
-              <div className="login-benefit">
-                <Sparkles size={18} />
-                <span>Menos complejidad, más claridad</span>
               </div>
             </div>
 

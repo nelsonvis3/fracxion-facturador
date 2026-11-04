@@ -11,7 +11,7 @@ real ni una garantía de disponibilidad. Oracle queda descartado para este camin
 | Render Web Service | Free | Django y un proceso `run_jobs`, compartiendo 512 MB |
 | Render Key Value | Free | Redis para los límites de intentos; red privada |
 | Neon PostgreSQL | Free | Datos y resultados de trabajos durables |
-| Maileroo | Free | Correos transaccionales por API HTTPS (3.000/mes, 30/hora) |
+| Google Apps Script | Gratis | Correos desde una cuenta de Gmail por HTTPS (~100 destinatarios/día) |
 | DigitalPlat + Cloudflare | Free | Dominio `fracxion.dpdns.org` y su DNS (SPF, DKIM, DMARC) |
 
 No se crea PostgreSQL en Render: su plan gratuito vence a los 30 días. Neon tiene
@@ -56,8 +56,13 @@ recurso. Esta configuración no mantiene el backend despierto mediante pings.
    (DigitalPlat FreeDomain), delegado a Cloudflare Free. En Cloudflare van el SPF
    `v=spf1 include:_spf.maileroo.com ~all`, el DKIM `mta._domainkey` que muestra
    Maileroo y `_dmarc` con `v=DMARC1; p=none;`. El remitente es
-   `Fracxion <no-reply@fracxion.dpdns.org>`. Brevo y Resend siguen disponibles como
-   backends (`BrevoEmailBackend`, `ResendEmailBackend`).
+   `Fracxion <no-reply@fracxion.dpdns.org>`. **Gmail rebota esos correos como spam**
+   (reputación del dominio gratuito), así que ahora el correo sale desde una cuenta
+   de Gmail con **Google Apps Script** (`AppsScriptEmailBackend`, ~100 destinatarios
+   por día): pegar `deploy/apps-script/Code.gs` en script.google.com, cargar
+   `MAIL_SECRET` en las propiedades del script y publicarlo como aplicación web
+   (ejecutar como yo, acceso: cualquiera). Brevo, Resend y Maileroo siguen
+   disponibles como backends.
 
 Las credenciales se cargan directamente en las variables de los proveedores o en
 un archivo local ignorado con permisos 600. No pegarlas en el chat, commits, logs,
@@ -91,7 +96,8 @@ capturas ni variables `NEXT_PUBLIC_*`.
    | `CORS_ALLOWED_ORIGINS` | `https://` + dominio real de Netlify |
    | `CSRF_TRUSTED_ORIGINS` | El mismo origen exacto, sin `/` final |
    | `FRONTEND_PASSWORD_RESET_URL` | Ese origen + `/reset-password` |
-   | `MAILEROO_API_KEY` | Sending key del dominio en Maileroo |
+   | `APPS_SCRIPT_MAIL_URL` | URL `/exec` de la aplicación web de Apps Script |
+   | `APPS_SCRIPT_MAIL_SECRET` | 32+ caracteres al azar, igual a `MAIL_SECRET` del script |
    | `DEFAULT_FROM_EMAIL` | `Fracxion <remitente-verificado>` |
 
    Render genera `FRACXION_PROXY_SECRET`; el mismo valor se configura en Netlify.

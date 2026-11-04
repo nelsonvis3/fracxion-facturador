@@ -67,6 +67,15 @@ class ProductionSecurityTests(SimpleTestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         result = self.load_production_settings(maileroo)
         self.assertNotEqual(result.returncode, 0)
+        script = {
+            **values,
+            "DJANGO_EMAIL_BACKEND": "config.email_backend.AppsScriptEmailBackend",
+            "APPS_SCRIPT_MAIL_URL": "https://script.google.com/macros/s/synthetic/exec",
+        }
+        result = self.load_production_settings({**script, "APPS_SCRIPT_MAIL_SECRET": "s" * 32})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = self.load_production_settings({**script, "APPS_SCRIPT_MAIL_SECRET": "short"})
+        self.assertNotEqual(result.returncode, 0)
 
     def test_console_mail_remains_forbidden_in_production(self):
         result = self.load_production_settings(

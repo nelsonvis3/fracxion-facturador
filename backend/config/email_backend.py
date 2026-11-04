@@ -34,6 +34,9 @@ class HTTPSEmailBackend(BaseEmailBackend):
     def payload(self, message, html):
         raise NotImplementedError
 
+    def accepted(self, response):
+        return response.status == self.accepted_status
+
     def send_messages(self, email_messages):
         key = getattr(settings, self.key_setting, "")
         if not key:
@@ -65,7 +68,7 @@ class HTTPSEmailBackend(BaseEmailBackend):
                 )
                 try:
                     with urlopen(request, timeout=settings.EMAIL_TIMEOUT) as response:
-                        if response.status != self.accepted_status:
+                        if not self.accepted(response):
                             raise EmailDeliveryError("El proveedor no aceptó el correo.")
                 except HTTPError as exc:
                     code = exc.code
@@ -158,3 +161,49 @@ class MailerooEmailBackend(HTTPSEmailBackend):
         if message.reply_to:
             payload["reply_to"] = maileroo_address(message.reply_to[0])
         return payload
+
+
+class AppsScriptEmailBackend(HTTPSEmailBackend):
+    """Sends through a Google Apps Script web app so mail leaves from a Gmail account.
+
+    Gmail rejects free domains like dpdns.org as spam; Gmail-to-Gmail is delivered.
+    shortcut: consumer Gmail allows ~100 recipients/day, move to a paid domain if that is hit.
+    """
+
+    key_setting = "APPS_SCRIPT_MAIL_SECRET"
+
+    @property
+    def endpoint(self):
+        url = settings.APPS_SCRIPT_MAIL_URL
+        # The secret travels in the body, so never post it anywhere but Apps Script.
+        if not url.startswith("https://script.google.com/macros/s/"):
+            raise ImproperlyConfigured("Configurá APPS_SCRIPT_MAIL_URL.")
+        return url
+
+    def headers(self, key):
+        return {}
+
+    def payload(self, message, html):
+        name = mailbox(message.from_email).get("name", "")
+        payload = {
+            "secret": settings.APPS_SCRIPT_MAIL_SECRET,
+            "to": ",".join(mailbox(value)["email"] for value in message.to),
+            "subject": message.subject,
+            "body": message.body if message.content_subtype != "html" else "",
+            "name": name,
+        }
+        if html is not None:
+            payload["htmlBody"] = html
+        for field in ("cc", "bcc"):
+            if addresses := getattr(message, field):
+                payload[field] = ",".join(mailbox(value)["email"] for value in addresses)
+        if message.reply_to:
+            payload["replyTo"] = mailbox(message.reply_to[0])["email"]
+        return payload
+
+    def accepted(self, response):
+        # Apps Script answers 200 with an HTML error page when the script throws.
+        try:
+            return response.status == 200 and json.loads(response.read()).get("ok") is True
+        except (ValueError, AttributeError):
+            return False
