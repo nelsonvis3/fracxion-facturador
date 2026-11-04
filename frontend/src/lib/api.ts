@@ -105,10 +105,13 @@ async function getCsrfToken(): Promise<string> {
   );
 
   if (!response.ok) {
+    // The Netlify proxy answers 503 with a "starting up" detail while Render wakes up.
+    const body: unknown = await response.json().catch(() => null);
+    const detail = (body as { detail?: unknown } | null)?.detail;
     throw new ApiError(
-      "No se pudo iniciar la protección CSRF.",
+      typeof detail === "string" ? detail : "No se pudo iniciar la protección CSRF.",
       response.status,
-      null,
+      body,
     );
   }
 
