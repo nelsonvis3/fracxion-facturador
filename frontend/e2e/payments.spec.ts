@@ -1,5 +1,6 @@
 import type { APIRequestContext } from "@playwright/test";
 import { artifactPath, expect, test } from "./fixtures";
+import { signUp } from "./support";
 
 const api = "http://127.0.0.1:8001";
 
@@ -17,13 +18,11 @@ test("Pagos explica el selector vacío y permite elegir una factura emitida y re
   test.setTimeout(60000);
   const suffix = Date.now();
   const password = "SyntheticPaymentPassword2026!";
-  const registration = await post(page.request, "/api/auth/register/", {
+  const tenant = (await signUp(page.request, {
     first_name: "Prueba",
     company_name: `Empresa pagos ${suffix}`, email: `payments.${suffix}@e2e.example`,
     password, password_confirm: password,
-  });
-  expect(registration.status()).toBe(201);
-  const tenant = (await registration.json()).tenant.id as string;
+  })).id;
   const base = `/dashboard/${tenant}`;
   const root = `/api/tenants/${tenant}`;
   await page.goto(`${base}/payments`);

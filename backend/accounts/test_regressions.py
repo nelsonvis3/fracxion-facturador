@@ -1,16 +1,16 @@
 import json
 
-from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.test import Client, TestCase
 
+from accounts.testing import create_verified_user
 from tenancy.models import Membership, Tenant
 
 
 class SessionRegressionTests(TestCase):
     def setUp(self):
         cache.clear()
-        self.user = get_user_model().objects.create_user(
+        self.user = create_verified_user(
             email="session@example.com", password="AstrongTestPassword77!"
         )
         self.client = Client(enforce_csrf_checks=True)

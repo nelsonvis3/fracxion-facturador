@@ -16,6 +16,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django_otp.oath import TOTP
 
+from accounts.testing import create_verified_user
 from auditlog.models import AuditEvent
 
 from . import mfa
@@ -30,7 +31,7 @@ User = get_user_model()
 class MFATests(TestCase):
     def setUp(self):
         cache.clear()
-        self.user = User.objects.create_user(
+        self.user = create_verified_user(
             email="mfa@example.com", password=PASSWORD, is_staff=True, is_superuser=True
         )
         self.client.force_login(self.user)
@@ -275,7 +276,7 @@ class MFATests(TestCase):
 @override_settings(MFA_ENCRYPTION_KEYS=[KEY])
 class MFAConcurrencyTests(TransactionTestCase):
     def test_same_recovery_code_is_consumed_once_under_concurrency(self):
-        user = User.objects.create_user(email="concurrent-mfa@example.com", password=PASSWORD)
+        user = create_verified_user(email="concurrent-mfa@example.com", password=PASSWORD)
         with transaction.atomic():
             device, _, _ = mfa.setup(user)
             device.confirmed_at = timezone.now()
@@ -296,7 +297,7 @@ class MFAConcurrencyTests(TransactionTestCase):
             self.assertEqual(sorted(pool.map(attempt, range(2))), [False, True])
 
     def test_same_totp_is_consumed_once_under_concurrency(self):
-        user = User.objects.create_user(email="totp-race@example.com", password=PASSWORD)
+        user = create_verified_user(email="totp-race@example.com", password=PASSWORD)
         with transaction.atomic():
             device, _, _ = mfa.setup(user)
             device.confirmed_at = timezone.now()

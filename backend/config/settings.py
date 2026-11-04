@@ -332,6 +332,8 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_TIMEOUT = 10
 BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
+# Read-only demo account behind the "Probar demo" button; empty disables it.
+DEMO_LOGIN_EMAIL = os.getenv("DEMO_LOGIN_EMAIL", "").strip().lower()
 
 if PRODUCTION:
     if not SESSION_COOKIE_SECURE or not CSRF_COOKIE_SECURE or not SECURE_SSL_REDIRECT:

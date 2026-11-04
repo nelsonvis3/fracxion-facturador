@@ -4,6 +4,7 @@ from threading import Barrier
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.core.cache import cache
 from django.db import IntegrityError, connections
 from django.test import Client, TestCase, TransactionTestCase, override_settings
@@ -42,7 +43,7 @@ class RegistrationTests(TestCase):
             **({"HTTP_X_CSRFTOKEN": self.token} if csrf else {}),
         )
 
-    def test_registration_creates_account_company_owner_and_session(self):
+    def test_registration_creates_account_and_company_and_waits_for_the_code(self):
         response = self.register(registration_data(email="  NEW.OWNER@EXAMPLE.COM  "))
         self.assertEqual(response.status_code, 201)
         user = User.objects.get()
@@ -59,11 +60,25 @@ class RegistrationTests(TestCase):
         self.assertEqual(membership.tenant, tenant)
         self.assertEqual(membership.user, user)
         self.assertEqual(membership.role, Membership.Role.OWNER)
-        self.assertEqual(response.json()["tenant"]["id"], str(tenant.pk))
+        body = response.json()
+        self.assertEqual(
+            {key: body[key] for key in ("verification_required", "email", "email_sent")},
+            {"verification_required": True, "email": "new.owner@example.com", "email_sent": True},
+        )
+        self.assertFalse(user.is_email_verified)
+        self.assertEqual(self.client.get("/api/auth/me/").status_code, 401)
+        code = mail.outbox[0].subject.rsplit(" ", 1)[-1]
+        confirmed = self.client.post(
+            "/api/auth/signup-code/confirm/",
+            json.dumps({"email": user.email, "code": code}),
+            content_type="application/json",
+            HTTP_X_CSRFTOKEN=body["csrfToken"],
+        )
+        self.assertEqual(confirmed.status_code, 200)
+        self.assertNotEqual(confirmed.json()["csrfToken"], body["csrfToken"])
         self.assertEqual(self.client.get("/api/auth/me/").json()["user"]["id"], str(user.pk))
         self.assertEqual(
-            self.client.get("/api/auth/tenants/").json()["results"],
-            [response.json()["tenant"]],
+            self.client.get("/api/auth/tenants/").json()["results"][0]["id"], str(tenant.pk)
         )
         self.assertEqual(self.client.get(f"/api/tenants/{tenant.pk}/customers/").status_code, 200)
 
@@ -72,31 +87,13 @@ class RegistrationTests(TestCase):
         self.assertFalse(User.objects.exists())
         self.assertFalse(Tenant.objects.exists())
 
-    def test_csrf_rotates_and_private_response_omits_passwords(self):
+    def test_private_response_omits_passwords_and_opens_no_session(self):
         response = self.register()
         body = response.json()
-        self.assertNotEqual(body["csrfToken"], self.token)
+        self.assertEqual(self.client.get("/api/auth/me/").status_code, 401)
         self.assertIn("no-store", response["Cache-Control"])
         self.assertIn("private", response["Cache-Control"])
         self.assertNotIn("password", json.dumps(body))
-        self.assertEqual(
-            self.client.post(
-                "/api/auth/logout/",
-                "{}",
-                content_type="application/json",
-                HTTP_X_CSRFTOKEN=self.token,
-            ).status_code,
-            403,
-        )
-        self.assertEqual(
-            self.client.post(
-                "/api/auth/logout/",
-                "{}",
-                content_type="application/json",
-                HTTP_X_CSRFTOKEN=body["csrfToken"],
-            ).status_code,
-            200,
-        )
 
     def test_django_password_policy_is_applied(self):
         for password in [
@@ -252,7 +249,7 @@ class RegistrationTests(TestCase):
 
     def test_onboarding_is_audited_without_password_or_request_body(self):
         self.register()
-        event = AuditEvent.objects.get()
+        event = AuditEvent.objects.get(entity_type="tenancy.tenant")
         self.assertEqual(event.entity_type, "tenancy.tenant")
         self.assertEqual(event.tenant, Tenant.objects.get())
         self.assertEqual(event.actor, User.objects.get())
@@ -300,4 +297,4 @@ class ConcurrentRegistrationTests(TransactionTestCase):
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(Tenant.objects.count(), 1)
         self.assertEqual(Membership.objects.count(), 1)
-        self.assertEqual(AuditEvent.objects.count(), 1)
+        self.assertEqual(AuditEvent.objects.filter(entity_type="tenancy.tenant").count(), 1)

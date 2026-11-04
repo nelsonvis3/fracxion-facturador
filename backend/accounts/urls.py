@@ -17,10 +17,13 @@ from .session_views import AccountSessionViewSet, ChangePasswordView
 from .views import (
     csrf_token_view,
     current_user_view,
+    demo_login_view,
     login_view,
     logout_view,
     my_tenants,
     register_view,
+    signup_code_confirm_view,
+    signup_code_resend_view,
 )
 
 router = SimpleRouter()
@@ -48,6 +51,9 @@ urlpatterns = [
     path("csrf/", csrf_token_view, name="auth-csrf"),
     path("register/", register_view, name="auth-register"),
     path("login/", login_view, name="auth-login"),
+    path("demo/", demo_login_view, name="auth-demo"),
+    path("signup-code/confirm/", signup_code_confirm_view, name="signup-code-confirm"),
+    path("signup-code/resend/", signup_code_resend_view, name="signup-code-resend"),
     path("logout/", logout_view, name="auth-logout"),
     path("me/", current_user_view, name="auth-me"),
     # Recuperación de contraseña

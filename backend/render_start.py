@@ -63,7 +63,11 @@ def main():
         raise SystemExit("Render startup requires DJANGO_SETTINGS_MODULE=config.render_settings.")
     # Free services have no pre-deploy command. Migrations must succeed before
     # either long-running process starts. Deploy manually after reviewing them.
-    for arguments in (["check"], ["migrate", "--noinput"], ["collectstatic", "--noinput"]):
+    steps = [["check"], ["migrate", "--noinput"], ["collectstatic", "--noinput"]]
+    # Free Render has no shell, so the idempotent demo seed runs on every start.
+    if os.environ.get("DEMO_LOGIN_EMAIL"):
+        steps.append(["seed_demo"])
+    for arguments in steps:
         subprocess.run([sys.executable, "manage.py", *arguments], cwd=ROOT, check=True)
     port = int(os.getenv("PORT", "10000"))
     if not 1 <= port <= 65535:

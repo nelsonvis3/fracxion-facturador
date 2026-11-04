@@ -1,6 +1,7 @@
 import type { Page } from "@playwright/test";
 import { artifactPath, expect, test } from "./fixtures";
 import { readFileSync } from "node:fs";
+import { signupCode } from "./support";
 
 const tenant = "00000000-0000-4000-8000-000000000001";
 const base = `/dashboard/${tenant}`;
@@ -164,6 +165,9 @@ test("registro público crea empresa, valida errores y permite volver a iniciar 
   await expect(page.locator("#register-password_confirm-error")).toHaveText("Las contraseñas no coinciden.");
   await registrationForm.getByLabel("Confirmá la contraseña", { exact: true }).fill(signupPassword);
   await page.getByRole("button", { name: "Crear cuenta", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Confirmá tu correo" })).toBeVisible();
+  await page.getByLabel("Código de verificación", { exact: true }).fill(signupCode(email));
+  await page.getByRole("button", { name: "Confirmar y entrar", exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard\/[0-9a-f-]{36}$/);
   const workspace = new URL(page.url()).pathname;
   await expect(page.locator(".business-company")).toContainText(company);

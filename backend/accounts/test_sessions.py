@@ -9,6 +9,7 @@ from django.core.cache import cache
 from django.test import Client, TestCase
 from django.utils import timezone
 
+from accounts.testing import create_verified_user
 from auditlog.models import AuditEvent
 
 from .models import AccountSession
@@ -20,7 +21,7 @@ PASSWORD = "SyntheticSessionPassword2026!"
 class SessionControlTests(TestCase):
     def setUp(self):
         cache.clear()
-        self.user = User.objects.create_user(email="session-owner@example.com", password=PASSWORD)
+        self.user = create_verified_user(email="session-owner@example.com", password=PASSWORD)
         self.first = Client(HTTP_USER_AGENT="Mozilla Chrome Linux")
         self.second = Client(HTTP_USER_AGENT="Mozilla Firefox Windows")
         for client in [self.first, self.second]:

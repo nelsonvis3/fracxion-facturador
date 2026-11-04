@@ -17,6 +17,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.management import call_command
+from django.db.models import F
+from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
@@ -51,6 +53,14 @@ Membership.objects.update_or_create(
 reset_user, _ = get_user_model().objects.get_or_create(email="reset@e2e.example")
 reset_user.set_password("SyntheticE2EPassword2026!")
 reset_user.save()
+# Seeded accounts behave like users who already confirmed their signup code.
+get_user_model().objects.filter(
+    email__in=[
+        *(f"{role}@e2e.example" for role in ["owner", "viewer", "accountant"]),
+        "nameless@e2e.example",
+        "reset@e2e.example",
+    ]
+).update(verified_email=F("email"), email_verified_at=timezone.now())
 fixture = {
     "uid": urlsafe_base64_encode(force_bytes(reset_user.pk)),
     "token": default_token_generator.make_token(reset_user),

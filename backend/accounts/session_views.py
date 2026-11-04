@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model, logout, update_session_auth_hash
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.sessions.models import Session
@@ -69,9 +70,13 @@ class AccountSessionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return self.queryset
-        return AccountSession.objects.filter(
+        sessions = AccountSession.objects.filter(
             user=self.request.user, session__expire_date__gt=timezone.now()
         ).select_related("session")
+        # Demo visitors share one account: never show or revoke each other's devices and IPs.
+        if settings.DEMO_LOGIN_EMAIL and self.request.user.email == settings.DEMO_LOGIN_EMAIL:
+            sessions = sessions.filter(session_id=self.request.session.session_key)
+        return sessions
 
     @extend_schema(request=None, responses={200: dict})
     @action(detail=True, methods=["post"])

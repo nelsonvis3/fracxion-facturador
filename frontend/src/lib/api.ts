@@ -27,7 +27,9 @@ export type RegistrationPayload = {
   password_confirm: string;
 };
 
-export type RegistrationResponse = AuthResponse & { tenant: Tenant };
+export type VerificationRequired = { verification_required: true; email: string; email_sent: boolean; csrfToken?: string };
+export type MfaRequired = { mfa_required: true; expires_in: number; csrfToken: string };
+export type RegistrationResponse = VerificationRequired;
 
 export type PasswordResetConfirmation = {
   uid: string;
@@ -202,8 +204,20 @@ export const authApi = {
     return apiRequest<AuthResponse>("/api/auth/mfa/login/", {method: "POST", body: JSON.stringify({code})});
   },
 
-  login(email: string, password: string): Promise<AuthResponse | {mfa_required:true;expires_in:number;csrfToken:string}> {
-    return apiRequest<AuthResponse | {mfa_required:true;expires_in:number;csrfToken:string}>(
+  confirmSignupCode(email: string, code: string): Promise<AuthResponse | MfaRequired> {
+    return apiRequest<AuthResponse | MfaRequired>("/api/auth/signup-code/confirm/", {method: "POST", body: JSON.stringify({email, code})});
+  },
+
+  demoLogin(): Promise<AuthResponse> {
+    return apiRequest<AuthResponse>("/api/auth/demo/", {method: "POST", body: JSON.stringify({})});
+  },
+
+  resendSignupCode(email: string): Promise<DetailResponse> {
+    return apiRequest<DetailResponse>("/api/auth/signup-code/resend/", {method: "POST", body: JSON.stringify({email})});
+  },
+
+  login(email: string, password: string): Promise<AuthResponse | MfaRequired> {
+    return apiRequest<AuthResponse | MfaRequired>(
       "/api/auth/login/",
       {
         method: "POST",

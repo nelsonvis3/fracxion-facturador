@@ -12,6 +12,7 @@
   NODE_VERSION = "22"
   NEXT_TELEMETRY_DISABLED = "1"
   NEXT_PUBLIC_API_BASE_URL = ""
+  NEXT_PUBLIC_DEMO_LOGIN = "1"
 
 # BACKEND_ORIGIN and FRACXION_PROXY_SECRET belong in the Netlify dashboard,
 # available to Functions in the production context. Never commit their values.

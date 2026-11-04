@@ -61,6 +61,11 @@ class User(AbstractUser):
     verified_email = models.EmailField(blank=True, editable=False)
     email_verified_at = models.DateTimeField(null=True, blank=True, editable=False)
     email_verification_nonce = models.UUIDField(default=uuid.uuid4, editable=False)
+    # Signup code: only an HMAC is stored; see accounts/signup_code.py.
+    email_code_hash = models.CharField(max_length=64, blank=True, editable=False)
+    email_code_expires_at = models.DateTimeField(null=True, blank=True, editable=False)
+    email_code_sent_at = models.DateTimeField(null=True, blank=True, editable=False)
+    email_code_attempts = models.PositiveSmallIntegerField(default=0, editable=False)
 
     @property
     def is_email_verified(self):

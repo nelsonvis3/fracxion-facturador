@@ -15,10 +15,11 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { ApiError, authApi, tenantApi } from "@/lib/api";
+import { ApiError, authApi, tenantApi, type AuthResponse, type MfaRequired } from "@/lib/api";
 import { BrandMark } from "@/components/brand-mark";
 import { LoginIntro } from "@/components/login-intro";
 import { useSessionTransition } from "@/components/session-transition";
+import { EmailCodeStep } from "@/components/email-code-step";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function LoginPage() {
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaCode, setMfaCode] = useState("");
   const mfaInput = useRef<HTMLInputElement>(null);
+  const [codeFor, setCodeFor] = useState<{ email: string; sent: boolean } | null>(null);
 
   useEffect(() => {
     if (mfaRequired) mfaInput.current?.focus();
@@ -68,6 +70,43 @@ export default function LoginPage() {
       const response = mfaRequired
         ? await authApi.mfaLogin(mfaCode.trim())
         : await authApi.login(email.trim(), password);
+      await finishLogin(response);
+    } catch (err) {
+      const body = err instanceof ApiError && err.body && typeof err.body === "object" ? err.body as Record<string, unknown> : null;
+      if (err instanceof ApiError && err.status === 403 && body?.verification_required === true && typeof body.email === "string") {
+        setPassword("");
+        setCodeFor({ email: body.email, sent: body.email_sent === true });
+      } else if (err instanceof ApiError) {
+        if (err.status === 401) {
+          setError(mfaRequired ? "Código inválido, utilizado o solicitud vencida. Podés volver al inicio e intentarlo nuevamente." : "El correo o la contraseña no son correctos.");
+        } else if (err.status === 403) {
+          setError(
+            "No se pudo validar la solicitud. Actualizá la página e intentá nuevamente.",
+          );
+        } else {
+          setError(err.message);
+        }
+      } else {
+        setError(
+          "No pudimos conectar con el servidor. Intentá nuevamente en unos momentos.",
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function tryDemo() {
+    if (loading) return;
+    setError("");
+    setLoading(true);
+    try { await finishLogin(await authApi.demoLogin()); }
+    catch (err) { setError(err instanceof ApiError ? err.message : "No pudimos conectar con el servidor. Intentá nuevamente en unos momentos."); }
+    finally { setLoading(false); }
+  }
+
+  async function finishLogin(response: AuthResponse | MfaRequired) {
+      setCodeFor(null);
       if ("mfa_required" in response) {
         setMfaRequired(true);
         setPassword("");
@@ -86,25 +125,6 @@ export default function LoginPage() {
       await present("welcome", name);
       router.replace("/dashboard");
       router.refresh();
-    } catch (err) {
-      if (err instanceof ApiError) {
-        if (err.status === 401) {
-          setError(mfaRequired ? "Código inválido, utilizado o solicitud vencida. Podés volver al inicio e intentarlo nuevamente." : "El correo o la contraseña no son correctos.");
-        } else if (err.status === 403) {
-          setError(
-            "No se pudo validar la solicitud. Actualizá la página e intentá nuevamente.",
-          );
-        } else {
-          setError(err.message);
-        }
-      } else {
-        setError(
-          "No pudimos conectar con el servidor. Intentá nuevamente en unos momentos.",
-        );
-      }
-    } finally {
-      setLoading(false);
-    }
   }
 
   return (
@@ -191,6 +211,12 @@ export default function LoginPage() {
               </p>
             </div>
 
+            {codeFor ? <EmailCodeStep
+              email={codeFor.email}
+              emailSent={codeFor.sent}
+              onVerified={finishLogin}
+              onBack={() => { setCodeFor(null); setError(""); }}
+            /> :
             <form onSubmit={handleSubmit} className="login-form">
               {!mfaRequired && <><div className="field-group">
                 <label htmlFor="email">Correo electrónico</label>
@@ -313,7 +339,16 @@ export default function LoginPage() {
                   </>
                 )}
               </button>
-            </form>
+            </form>}
+
+            {process.env.NEXT_PUBLIC_DEMO_LOGIN === "1" && !codeFor && !mfaRequired && <button
+              type="button"
+              className="mt-4 w-full rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+              onClick={tryDemo}
+              disabled={loading}
+            >
+              Probar la demo sin registrarte (solo lectura)
+            </button>}
 
             <p className="mt-6 text-center text-sm text-slate-600">
               ¿Todavía no tenés una cuenta?{" "}

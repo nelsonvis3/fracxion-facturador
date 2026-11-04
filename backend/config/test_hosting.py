@@ -1,3 +1,4 @@
+from accounts.testing import create_verified_user
 import json
 from io import BytesIO
 from unittest.mock import MagicMock, patch
@@ -201,7 +202,7 @@ class RenderSessionFlowTests(TestCase):
                 CSRF_COOKIE_SECURE=True,
             )
         )
-        get_user_model().objects.create_user(
+        create_verified_user(
             email="hosting@example.com", password="SyntheticTestOnly123!"
         )
         self.client = Client(

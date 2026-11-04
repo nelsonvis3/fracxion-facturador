@@ -10,6 +10,8 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
+from accounts.testing import create_verified_user
+
 from .password_reset import RESET_REQUEST_LIMIT
 
 User = get_user_model()
@@ -23,7 +25,7 @@ class AuthenticationFlowTests(TestCase):
         # de pruebas, por eso lo habilitamos expresamente.
         self.client = Client(enforce_csrf_checks=True)
 
-        self.user = User.objects.create_user(
+        self.user = create_verified_user(
             email="usuario.auth@example.com",
             password="SecureTestPassword123!",
             first_name="Usuario",
@@ -217,7 +219,7 @@ class PasswordResetFlowTests(TestCase):
 
         self.client = Client(enforce_csrf_checks=True)
 
-        self.user = User.objects.create_user(
+        self.user = create_verified_user(
             email="usuario.reset@example.com",
             password="OldSecurePassword123!",
             first_name="Usuario",

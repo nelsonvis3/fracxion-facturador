@@ -4,9 +4,10 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, LoaderCircle, ReceiptText } from "lucide-react";
-import { ApiError, authApi, type RegistrationPayload } from "@/lib/api";
+import { ApiError, authApi, tenantApi, type RegistrationPayload } from "@/lib/api";
 import { Alert, errorMessage } from "@/components/business-ui";
 import { useSessionTransition } from "@/components/session-transition";
+import { EmailCodeStep } from "@/components/email-code-step";
 
 type FieldName = keyof RegistrationPayload;
 type FieldErrors = Partial<Record<FieldName, string>>;
@@ -28,6 +29,7 @@ export default function RegisterPage() {
   const [showPasswords, setShowPasswords] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [error, setError] = useState("");
+  const [pending, setPending] = useState<{ email: string; sent: boolean; name: string } | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -53,10 +55,8 @@ export default function RegisterPage() {
     setBusy(true);
     try {
       const response = await authApi.register(form);
+      setPending({ email: response.email, sent: response.email_sent, name: form.first_name || form.company_name });
       setForm({ first_name: "", last_name: "", company_name: "", email: "", password: "", password_confirm: "" });
-      await present("welcome", response.user.first_name || response.tenant.name);
-      router.replace(`/dashboard/${response.tenant.id}`);
-      router.refresh();
     } catch (err) {
       const nextErrors: FieldErrors = {};
       if (err instanceof ApiError && err.body && typeof err.body === "object") {
@@ -80,7 +80,19 @@ export default function RegisterPage() {
   return <main className="min-h-screen bg-slate-50">
     <section className="auth-card">
       <Link className="business-brand" href="/"><ReceiptText size={23} />Fracxion</Link>
-      <h1>Creá tu cuenta</h1>
+      <h1>{pending ? "Confirmá tu correo" : "Creá tu cuenta"}</h1>
+      {pending ? <EmailCodeStep
+        email={pending.email}
+        emailSent={pending.sent}
+        onBack={() => router.replace("/")}
+        onVerified={async response => {
+          if ("mfa_required" in response) { router.replace("/"); return; }
+          const tenant = (await tenantApi.getMine().catch(() => null))?.results[0];
+          await present("welcome", response.user.first_name || pending.name);
+          router.replace(tenant ? `/dashboard/${tenant.id}` : "/dashboard");
+          router.refresh();
+        }}
+      /> : <>
       <p>Completá tus datos y el nombre de tu empresa para empezar a gestionar clientes, facturas internas y cobros.</p>
       {error && <Alert>{error}</Alert>}
       <form ref={formRef} onSubmit={submit} aria-busy={busy} aria-label="Crear una cuenta">
@@ -116,6 +128,7 @@ export default function RegisterPage() {
         </fieldset>
       </form>
       <Link href="/">Ya tengo una cuenta · Iniciar sesión</Link>
+      </>}
     </section>
   </main>;
 }

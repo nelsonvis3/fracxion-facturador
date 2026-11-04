@@ -52,3 +52,5 @@ services:
         sync: false
       - key: DEFAULT_FROM_EMAIL
         sync: false
+      - key: DEMO_LOGIN_EMAIL
+        value: demo@fracxion.invalid

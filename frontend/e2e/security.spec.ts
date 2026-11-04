@@ -1,5 +1,6 @@
 import type { APIRequestContext } from "@playwright/test";
 import { test, expect } from "./fixtures";
+import { signUp } from "./support";
 
 const api = "http://127.0.0.1:8001";
 const tenant = "00000000-0000-4000-8000-000000000001";
@@ -55,15 +56,13 @@ test("datos de otra empresa no se leen ni se usan como relaciones", async ({ req
   await login(request);
   const other = await playwright.request.newContext();
   try {
-    const registration = await post(other, "/api/auth/register/", {
+    const otherTenant = (await signUp(other, {
       first_name: "Aislamiento",
       company_name: "Empresa ajena sintética",
       email: `isolation.${Date.now()}@e2e.example`,
       password,
       password_confirm: password,
-    });
-    expect(registration.status()).toBe(201);
-    const otherTenant = (await registration.json()).tenant.id as string;
+    })).id;
     const otherRoot = `/api/tenants/${otherTenant}`;
     const customerResponse = await post(other, `${otherRoot}/customers/`, { name: "Cliente privado sintético" });
     expect(customerResponse.status()).toBe(201);

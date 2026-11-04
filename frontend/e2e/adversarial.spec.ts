@@ -1,13 +1,12 @@
 import { expect, test } from "./fixtures";
-import { api, mutate, register } from "./support";
+import { api, mutate, register, signUp } from "./support";
 
 test("ataques controlados a configuración, miembros, invitaciones y análisis no filtran empresas", async ({ page, playwright }) => {
   const first = await register(page);
   const outsider = await playwright.request.newContext();
   try {
     const email = `outsider.${Date.now()}@e2e.example`;
-    const signup = await mutate(outsider, "/api/auth/register/", { first_name: "Other", company_name: "Empresa ajena sintética", email, password: "SyntheticOutsiderPassword2026!", password_confirm: "SyntheticOutsiderPassword2026!" });
-    expect(signup.status()).toBe(201); const other = (await signup.json()).tenant;
+    const other = await signUp(outsider, { first_name: "Other", company_name: "Empresa ajena sintética", email, password: "SyntheticOutsiderPassword2026!", password_confirm: "SyntheticOutsiderPassword2026!" });
     for (const resource of ["settings/", "settings/logo/", "members/", "invitations/", "analytics/overview/", "analytics/records/"]) {
       const denied = await page.request.get(`${api}/api/tenants/${other.id}/${resource}`);
       expect(denied.status()).toBe(403); expect(await denied.text()).not.toContain("Empresa ajena sintética");

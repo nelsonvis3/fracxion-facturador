@@ -16,8 +16,11 @@ Con una sesión iniciada, el esquema OpenAPI completo está en `/api/schema/` y 
 | Método | Ruta | Uso |
 | --- | --- | --- |
 | GET | `/api/auth/csrf/` | Obtener `csrfToken` y su cookie |
-| POST | `/api/auth/register/` | Crear cuenta y empresa propia (`first_name`, `last_name` opcional, `company_name`, `email`, `password`, `password_confirm`) |
-| POST | `/api/auth/login/` | Abrir sesión con `email` y `password` |
+| POST | `/api/auth/register/` | Crear cuenta y empresa propia (`first_name`, `last_name` opcional, `company_name`, `email`, `password`, `password_confirm`); no abre sesión: envía el código por correo |
+| POST | `/api/auth/login/` | Abrir sesión con `email` y `password`; una cuenta sin confirmar responde 403 con `verification_required` y recibe un código |
+| POST | `/api/auth/signup-code/confirm/` | Confirmar el código de 6 dígitos (`email`, `code`) y abrir la sesión; vence a los 15 min y admite 5 intentos |
+| POST | `/api/auth/signup-code/resend/` | Pedir otro código (`email`); respuesta genérica, uno por minuto |
+| POST | `/api/auth/demo/` | Sesión de solo lectura en la empresa de demostración, si `DEMO_LOGIN_EMAIL` está definido |
 | POST | `/api/auth/mfa/login/` | Completar el login con el código TOTP o un código de recuperación |
 | POST | `/api/auth/logout/` | Cerrar la sesión |
 | GET | `/api/auth/me/` | Datos de la cuenta |
