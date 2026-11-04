@@ -69,8 +69,10 @@ capturas ni variables `NEXT_PUBLIC_*`.
 2. Crear el proyecto de Neon en Free, **PostgreSQL 17**, y en la región más cercana
    a Render Virginia (US East). Guardar la URL **pooled** con TLS y su URL directa
    para backups. `DATABASE_URL` acepta `sslmode` y `channel_binding`; conserva las
-   contraseñas escapadas. Las conexiones persistentes y los cursores de servidor
-   están desactivados para funcionar con el pool transaccional.
+   contraseñas escapadas. Los cursores de servidor están desactivados para funcionar
+   con el pool transaccional. La conexión se reutiliza 60 s (`CONN_MAX_AGE`) con
+   `CONN_HEALTH_CHECKS`, que descarta las que Neon cierra al suspender el cómputo:
+   abrir TLS por cada request sumaba casi un segundo.
 3. Crear el proyecto Netlify desde el repositorio. Usar `netlify.toml`: base
    `frontend`, comando `npm run build -- --webpack`, publicación `.next`. Confirmar
    el subdominio real asignado. Aún no anunciar la aplicación: falta conectar API.

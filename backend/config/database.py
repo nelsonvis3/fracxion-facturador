@@ -34,7 +34,8 @@ def database_from_url(value):
             "PASSWORD": unquote(url.password),
             "HOST": url.hostname,
             "PORT": url.port or 5432,
-            "CONN_MAX_AGE": 0,
+            # Reuse the TLS connection: Neon allows it when health checks drop stale ones.
+            "CONN_MAX_AGE": 60,
             "CONN_HEALTH_CHECKS": True,
             "DISABLE_SERVER_SIDE_CURSORS": True,
             "OPTIONS": options,

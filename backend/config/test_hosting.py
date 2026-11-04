@@ -25,7 +25,8 @@ class DatabaseURLTests(SimpleTestCase):
         self.assertEqual(config["NAME"], "db name")
         self.assertEqual(config["OPTIONS"]["channel_binding"], "require")
         self.assertTrue(config["DISABLE_SERVER_SIDE_CURSORS"])
-        self.assertEqual(config["CONN_MAX_AGE"], 0)
+        self.assertEqual(config["CONN_MAX_AGE"], 60)
+        self.assertTrue(config["CONN_HEALTH_CHECKS"])
 
     def test_invalid_and_insecure_urls_do_not_leak_credentials(self):
         for value in [
