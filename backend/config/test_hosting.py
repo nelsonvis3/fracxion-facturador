@@ -13,7 +13,12 @@ from django.http import HttpResponse
 from django.test import Client, RequestFactory, SimpleTestCase, TestCase, override_settings
 
 from config.database import database_from_url
-from config.email_backend import BrevoEmailBackend, EmailDeliveryError, ResendEmailBackend
+from config.email_backend import (
+    BrevoEmailBackend,
+    EmailDeliveryError,
+    MailerooEmailBackend,
+    ResendEmailBackend,
+)
 from config.render_proxy import NetlifyProxyMiddleware
 
 
@@ -136,6 +141,47 @@ class ResendTransportTests(SimpleTestCase):
             ResendEmailBackend().send_messages([message])
         with override_settings(RESEND_API_KEY=""), self.assertRaises(ImproperlyConfigured):
             ResendEmailBackend().send_messages([message])
+
+
+
+@override_settings(MAILEROO_API_KEY="synthetic-maileroo-key", EMAIL_TIMEOUT=10)
+class MailerooTransportTests(SimpleTestCase):
+    @patch("config.email_backend.urlopen")
+    def test_payload_uses_email_objects_and_bearer_key(self, send):
+        send.return_value.__enter__.return_value.status = 200
+        message = EmailMultiAlternatives(
+            "Tu código de Fracxion: 123456",
+            "Código 123456",
+            "Fracxion <no-reply@fracxion.dpdns.org>",
+            ["to@example.com"],
+            reply_to=["Soporte <help@example.com>"],
+        )
+        message.attach_alternative("<p>Código 123456</p>", "text/html")
+        self.assertEqual(MailerooEmailBackend().send_messages([message]), 1)
+        request = send.call_args.args[0]
+        self.assertEqual(request.full_url, "https://smtp.maileroo.com/api/v2/emails")
+        self.assertEqual(request.get_header("Authorization"), "Bearer synthetic-maileroo-key")
+        self.assertEqual(
+            json.loads(request.data),
+            {
+                "from": {"address": "no-reply@fracxion.dpdns.org", "display_name": "Fracxion"},
+                "subject": "Tu código de Fracxion: 123456",
+                "plain": "Código 123456",
+                "html": "<p>Código 123456</p>",
+                "to": [{"address": "to@example.com"}],
+                "reply_to": {"address": "help@example.com", "display_name": "Soporte"},
+            },
+        )
+
+    @patch("config.email_backend.urlopen")
+    def test_rejection_and_missing_key_fail_closed(self, send):
+        send.side_effect = HTTPError("https://smtp.maileroo.com", 401, "x", {}, BytesIO(b"key"))
+        message = EmailMessage("Subject", "Body", "from@example.com", ["to@example.com"])
+        with self.assertRaises(EmailDeliveryError) as error:
+            MailerooEmailBackend().send_messages([message])
+        self.assertNotIn("key", str(error.exception))
+        with override_settings(MAILEROO_API_KEY=""), self.assertRaises(ImproperlyConfigured):
+            MailerooEmailBackend().send_messages([message])
 
 
 @override_settings(

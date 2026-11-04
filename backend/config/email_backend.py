@@ -130,3 +130,31 @@ class ResendEmailBackend(HTTPSEmailBackend):
         if message.reply_to:
             payload["reply_to"] = resend_address(message.reply_to[0])
         return payload
+
+
+def maileroo_address(value):
+    box = mailbox(value)
+    return {"address": box["email"], **({"display_name": box["name"]} if "name" in box else {})}
+
+
+class MailerooEmailBackend(HTTPSEmailBackend):
+    """Maileroo accepts free domains such as dpdns.org, which Resend rejects."""
+
+    key_setting = "MAILEROO_API_KEY"
+    endpoint = "https://smtp.maileroo.com/api/v2/emails"
+
+    def headers(self, key):
+        return {"Authorization": f"Bearer {key}"}
+
+    def payload(self, message, html):
+        payload = {"from": maileroo_address(message.from_email), "subject": message.subject}
+        # An empty plain stops Maileroo from inventing a text part for HTML-only mail.
+        payload["plain"] = message.body if message.content_subtype != "html" else ""
+        if html is not None:
+            payload["html"] = html
+        for field in ("to", "cc", "bcc"):
+            if addresses := getattr(message, field):
+                payload[field] = [maileroo_address(value) for value in addresses]
+        if message.reply_to:
+            payload["reply_to"] = maileroo_address(message.reply_to[0])
+        return payload

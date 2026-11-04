@@ -62,6 +62,11 @@ class ProductionSecurityTests(SimpleTestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         result = self.load_production_settings(resend)
         self.assertNotEqual(result.returncode, 0)
+        maileroo = {**values, "DJANGO_EMAIL_BACKEND": "config.email_backend.MailerooEmailBackend"}
+        result = self.load_production_settings({**maileroo, "MAILEROO_API_KEY": "synthetic-key"})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = self.load_production_settings(maileroo)
+        self.assertNotEqual(result.returncode, 0)
 
     def test_console_mail_remains_forbidden_in_production(self):
         result = self.load_production_settings(

@@ -11,7 +11,8 @@ real ni una garantía de disponibilidad. Oracle queda descartado para este camin
 | Render Web Service | Free | Django y un proceso `run_jobs`, compartiendo 512 MB |
 | Render Key Value | Free | Redis para los límites de intentos; red privada |
 | Neon PostgreSQL | Free | Datos y resultados de trabajos durables |
-| Resend | Free | Correos transaccionales por API HTTPS (3.000/mes, 100/día) |
+| Maileroo | Free | Correos transaccionales por API HTTPS (3.000/mes, 30/hora) |
+| DigitalPlat + Cloudflare | Free | Dominio `fracxion.dpdns.org` y su DNS (SPF, DKIM, DMARC) |
 
 No se crea PostgreSQL en Render: su plan gratuito vence a los 30 días. Neon tiene
 cuotas de almacenamiento, cómputo y transferencia; el worker hace consultas
@@ -50,13 +51,13 @@ recurso. Esta configuración no mantiene el backend despierto mediante pings.
    consultar su estado. Usar las cuentas del propietario del proyecto.
 2. Crear o iniciar sesión en **Netlify** con acceso al repositorio
    `nelsonvis3/fracxion-facturador`. Confirmar el plan Free.
-3. Crear una cuenta **Resend Free** (se puede entrar con GitHub; Brevo exige un
-   teléfono para activar la cuenta). Sin dominio verificado, Resend solo envía desde
-   `onboarding@resend.dev` y solo a la dirección de la cuenta. Para enviar a cualquier
-   usuario hay que verificar un dominio propio en Resend (por ejemplo uno gratuito de
-   DigitalPlat FreeDomain); no se compra un dominio en este plan. La entrega debe
-   comprobarse con un correo real. `config.email_backend.BrevoEmailBackend` sigue
-   disponible si se prefiere Brevo.
+3. Correo: Brevo pide un teléfono para activar la cuenta y Resend rechaza dominios
+   gratuitos como `dpdns.org`. Se usa **Maileroo Free** con `fracxion.dpdns.org`
+   (DigitalPlat FreeDomain), delegado a Cloudflare Free. En Cloudflare van el SPF
+   `v=spf1 include:_spf.maileroo.com ~all`, el DKIM `mta._domainkey` que muestra
+   Maileroo y `_dmarc` con `v=DMARC1; p=none;`. El remitente es
+   `Fracxion <no-reply@fracxion.dpdns.org>`. Brevo y Resend siguen disponibles como
+   backends (`BrevoEmailBackend`, `ResendEmailBackend`).
 
 Las credenciales se cargan directamente en las variables de los proveedores o en
 un archivo local ignorado con permisos 600. No pegarlas en el chat, commits, logs,
@@ -90,7 +91,7 @@ capturas ni variables `NEXT_PUBLIC_*`.
    | `CORS_ALLOWED_ORIGINS` | `https://` + dominio real de Netlify |
    | `CSRF_TRUSTED_ORIGINS` | El mismo origen exacto, sin `/` final |
    | `FRONTEND_PASSWORD_RESET_URL` | Ese origen + `/reset-password` |
-   | `RESEND_API_KEY` | Clave de API de Resend con permiso de envío |
+   | `MAILEROO_API_KEY` | Sending key del dominio en Maileroo |
    | `DEFAULT_FROM_EMAIL` | `Fracxion <remitente-verificado>` |
 
    Render genera `FRACXION_PROXY_SECRET`; el mismo valor se configura en Netlify.
@@ -155,7 +156,7 @@ En local siguen funcionando los ajustes originales de desarrollo y Docker/Caddy.
 - [Netlify: Next.js](https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/)
 - [Netlify: variables de Edge Functions](https://docs.netlify.com/build/edge-functions/environment-variables/)
 - [Netlify: planes](https://www.netlify.com/pricing/)
-- [Resend: enviar correo](https://resend.com/docs/api-reference/emails/send-email)
+- [Maileroo: enviar correo](https://maileroo.com/docs/api-reference/emails/send-email)
 
 ## Validación local de esta preparación — 22 de octubre de 2026
 

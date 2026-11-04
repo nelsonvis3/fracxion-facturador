@@ -47,8 +47,8 @@ services:
       - key: FRONTEND_PASSWORD_RESET_URL
         sync: false
       - key: DJANGO_EMAIL_BACKEND
-        value: config.email_backend.ResendEmailBackend
-      - key: RESEND_API_KEY
+        value: config.email_backend.MailerooEmailBackend
+      - key: MAILEROO_API_KEY
         sync: false
       - key: DEFAULT_FROM_EMAIL
         sync: false
