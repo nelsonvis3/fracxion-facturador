@@ -4,6 +4,10 @@
   publish = ".next"
   edge_functions = "netlify/edge-functions"
 
+# Without the adapter Netlify publishes the raw .next folder and every route 404s.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [build.environment]
   NODE_VERSION = "22"
   NEXT_TELEMETRY_DISABLED = "1"
